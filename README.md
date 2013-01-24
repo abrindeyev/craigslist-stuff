@@ -2,7 +2,7 @@ craigslist-stuff
 ================
 Pet project for Craigslist data mining (housing/rent messages).
 
-Currently only Fremont, CA schools supported.
+Currently only Fremont, CA elementary schools supported.
 
 Usage:
 
