@@ -1,0 +1,73 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "1401",
+               "short_name" : "1401",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Red Hawk Circle",
+               "short_name" : "Red Hawk Cir",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Central Downtown",
+               "short_name" : "Central Downtown",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "administrative_area_level_3", "political" ]
+            },
+            {
+               "long_name" : "Alameda",
+               "short_name" : "Alameda",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94538",
+               "short_name" : "94538",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "1401 Red Hawk Circle, Fremont, CA 94538, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.55503050000001,
+               "lng" : -121.96742670
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.55637948029151,
+                  "lng" : -121.9660777197085
+               },
+               "southwest" : {
+                  "lat" : 37.55368151970851,
+                  "lng" : -121.9687756802915
+               }
+            }
+         },
+         "types" : [ "street_address" ]
+      }
+   ],
+   "status" : "OK"
+}

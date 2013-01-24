@@ -1,0 +1,120 @@
+{
+   "routes" : [
+      {
+         "bounds" : {
+            "northeast" : {
+               "lat" : 37.56619000000001,
+               "lng" : -121.961790
+            },
+            "southwest" : {
+               "lat" : 37.55710000000001,
+               "lng" : -121.975450
+            }
+         },
+         "copyrights" : "Map data ©2013 Google",
+         "legs" : [
+            {
+               "distance" : {
+                  "text" : "1.0 mi",
+                  "value" : 1677
+               },
+               "duration" : {
+                  "text" : "20 mins",
+                  "value" : 1205
+               },
+               "end_address" : "Fremont BART Station, Fremont, CA 94536, USA",
+               "end_location" : {
+                  "lat" : 37.557910,
+                  "lng" : -121.975450
+               },
+               "start_address" : "32 Silk Oak Terrace, Fremont, CA 94536, USA",
+               "start_location" : {
+                  "lat" : 37.56619000000001,
+                  "lng" : -121.962220
+               },
+               "steps" : [
+                  {
+                     "distance" : {
+                        "text" : "200 ft",
+                        "value" : 61
+                     },
+                     "duration" : {
+                        "text" : "1 min",
+                        "value" : 44
+                     },
+                     "end_location" : {
+                        "lat" : 37.565750,
+                        "lng" : -121.961820
+                     },
+                     "html_instructions" : "Head \u003cb\u003esoutheast\u003c/b\u003e on \u003cb\u003eMission Blvd\u003c/b\u003e",
+                     "polyline" : {
+                        "points" : "uchdFzvkgVvAoA"
+                     },
+                     "start_location" : {
+                        "lat" : 37.56619000000001,
+                        "lng" : -121.962220
+                     },
+                     "travel_mode" : "WALKING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "0.9 mi",
+                        "value" : 1453
+                     },
+                     "duration" : {
+                        "text" : "17 mins",
+                        "value" : 1036
+                     },
+                     "end_location" : {
+                        "lat" : 37.55710000000001,
+                        "lng" : -121.97390
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eright\u003c/b\u003e onto \u003cb\u003eWalnut Ave\u003c/b\u003e",
+                     "polyline" : {
+                        "points" : "}`hdFjtkgVVCBAF?F@D?DBPHf@z@NZlGbK`BlC|CtFHLTb@FHbB|CrAlCJ^FJd@bAh@bALRTZfAvBhBjDhAvBP^h@|@Vd@Xb@NTnApB\\`@JLjAlAfAz@d@\\ZT"
+                     },
+                     "start_location" : {
+                        "lat" : 37.565750,
+                        "lng" : -121.961820
+                     },
+                     "travel_mode" : "WALKING"
+                  },
+                  {
+                     "distance" : {
+                        "text" : "0.1 mi",
+                        "value" : 163
+                     },
+                     "duration" : {
+                        "text" : "2 mins",
+                        "value" : 125
+                     },
+                     "end_location" : {
+                        "lat" : 37.557910,
+                        "lng" : -121.975450
+                     },
+                     "html_instructions" : "Turn \u003cb\u003eright\u003c/b\u003e\u003cdiv style=\"font-size:0.9em\"\u003eDestination will be on the left\u003c/div\u003e",
+                     "polyline" : {
+                        "points" : "{jfdFz_ngVaAzB_BxD"
+                     },
+                     "start_location" : {
+                        "lat" : 37.55710000000001,
+                        "lng" : -121.97390
+                     },
+                     "travel_mode" : "WALKING"
+                  }
+               ],
+               "via_waypoint" : []
+            }
+         ],
+         "overview_polyline" : {
+            "points" : "uchdFzvkgVvAoAVCJAL@VLv@vAnJpOdEpHvDjHRj@nAfCb@n@lGzLjB|CnApB\\`@vAzAlBxAZTaAzB_BxD"
+         },
+         "summary" : "Walnut Ave",
+         "warnings" : [
+            "Walking directions are in beta.    Use caution – This route may be missing sidewalks or pedestrian paths."
+         ],
+         "waypoint_order" : []
+      }
+   ],
+   "status" : "OK"
+}
