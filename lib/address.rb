@@ -141,10 +141,18 @@ class AddressHarvester
   def parse
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
-    self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
-    self.set_feature(:sqft, $1.to_i) if @title.match(/(\d{3,4})\s*(?:sq)?ft/)
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG (.*?) -->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+
+    # Getting rent price
+    self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
+
+    # Getting sq ft
+    if @title.match(/(\d{3,4})\s*(?:sq)?ft/)
+      self.set_feature(:sqft, $1.to_i)
+    elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
+      self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
+    end
     if @cltags.include?('city')
       @cltags['city'].gsub(/^\s+/, '')
       @cltags['city'].gsub(/\s+$/, '')
