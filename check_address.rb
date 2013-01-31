@@ -46,7 +46,6 @@ addr = post.get_full_address
 #puts "Checking following address: #{addr}"
 
 geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
-#puts geocode_url
 resp = RestClient.get(geocode_url)
 geo = JSON.parse(resp.body)
 unless geo['status'] == 'OK'
