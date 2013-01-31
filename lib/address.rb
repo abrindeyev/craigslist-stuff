@@ -9,6 +9,8 @@ class AddressHarvester
       'VILLAS PAPILLON' => {
         :street => '4022 Papillon Terrace',
         :hookups => true,
+        :ac => true,
+        :name => 'Villas Papillon Condominiums and Townhouses',
       },
       'Oak Pointe' => {
         :street => '4140 Irvington Ave',
