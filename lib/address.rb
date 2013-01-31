@@ -1,6 +1,8 @@
 require 'rubygems'
 require 'open-uri'
 require 'nokogiri'
+require 'rest-client'
+require 'json'
 
 class AddressHarvester
 
@@ -145,6 +147,19 @@ class AddressHarvester
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG (.*?) -->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+    gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
+    unless gps_data == ''
+      @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
+      @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
+      revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+      resp = RestClient.get(revgeocode_url)
+      geo = JSON.parse(resp.body)
+      unless geo['status'] == 'OK'
+        puts "Geocode failed: #{geo['status']}"
+        exit -1
+      end
+      @formatted_address = geo['results'][0]['formatted_address']
+    end
 
     # Getting rent price
     self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
@@ -168,8 +183,7 @@ class AddressHarvester
   end
 
   def has_full_address_pvt?
-    return false unless 
-    @cltags['xstreet0'] =~ /^(\d{1,5}(\ 1\/[234])?[ A-Za-z]+)/
+    return false unless @cltags['xstreet0'] =~ /^(\d{1,5}(\ 1\/[234])?[ A-Za-z]+)/ or @formatted_address != ''
   end
 
   def has_full_address?
@@ -179,7 +193,7 @@ class AddressHarvester
       return true
     else
       self.get_full_address
-      if @street_address == ''
+      if @street_address == '' and @formatted_address == ''
         return false
       else
         return true
@@ -189,6 +203,7 @@ class AddressHarvester
 
   def get_full_address
     self.parse unless @cltags
+    return @formatted_address if @formatted_address =~ /^\d{3,5}/
     unless self.has_full_address_pvt?
       # Let's begin our gestimates here!
 
