@@ -145,7 +145,7 @@ class AddressHarvester
   end
 
   def has_full_address?
-    return false unless @cltags.include?('xstreet0')
+    #return false unless @cltags.include?('xstreet0')
     if self.has_full_address_pvt?
       @street_address = @cltags['xstreet0']
       return true
@@ -174,6 +174,15 @@ class AddressHarvester
 
       # 2. Raw address search
       #addrs = @body.scan(/^(?n:(?<address1>(\d{1,5}(\ 1\/[234])?(\x20[A-Z]([a-z])+)+ )|(P\.O\.\ Box\ \d{1,5}))\s{1,2}(?i:(?<address2>(((APT|B LDG|DEPT|FL|HNGR|LOT|PIER|RM|S(LIP|PC|T(E|OP))|TRLR|UNIT)\x20\w{1,5})|(BSMT|FRNT|LBBY|LOWR|OFC|PH|REAR|SIDE|UPPR)\.?)\s{1,2})?)(?<city>[A-Z]([a-z])+(\.?)(\x20[A-Z]([a-z])+){0,2})\, \x20(?<state>A[LKSZRAP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADL N]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD] |T[NX]|UT|V[AIT]|W[AIVY])\x20(?<zipcode>(?!0{5})\d{5}(-\d {4})?))$/)
+      unless @street_addr
+        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [a-za-z ]+ (?:st|str|ave|avenue|pkwy|parkway|bldv|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace))\s+(fremont|union\s+city|newark),? ca\s+\d{5}/i)
+        if addrs.uniq.size > 0
+          @cltags['xstreet0'] = addrs.uniq[0][0]
+          @cltags['city'] = addrs.uniq[0][1]
+          @cltags['region'] = 'CA'
+        end
+        #puts addrs.uniq.inspect
+      end
     end
     return "#{@street_addr =~ /^\d+/ ? @street_addr : @cltags['xstreet0'] }, #{@cltags['city']}, #{@cltags['region']}"
   end
