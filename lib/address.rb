@@ -102,7 +102,14 @@ class AddressHarvester
       'Carrington Apartments' => {
         :street => '4875 Mowry Ave',
         :wd => false
-      }
+      },
+      'Avalon Fremont' => {
+        :street => '39939 Stevenson Common',
+        :wd => true,
+        :dw => true,
+        :ac => true,
+        :name => 'Avalon Fremont'
+      },
     }
   end
 
