@@ -110,6 +110,11 @@ class AddressHarvester
         :ac => true,
         :name => 'Avalon Fremont'
       },
+      'Full size -- front load LG washer/dryers' => {
+        :street => '38304 Logan Dr',
+        :name => 'Logan Park Apartments',
+        :wd => true,
+      },
     }
   end
 
