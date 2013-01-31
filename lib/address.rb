@@ -12,77 +12,77 @@ class AddressHarvester
       },
       'Oak Pointe' => {
         :street => '4140 Irvington Ave',
-        :washerdryer => false
+        :wd => false
       },
       'Watermark Place Apartments' => {
         :street => '38680 Waterside Cir',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Watermark Place'
       },
       'Fremont Glen' => {
         :street => '889 Mowry Avenue',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Fremont Glen'
       },
       '888-727-8177' => {
         :street => '38050 Fremont Blvd',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Heritage Village',
       },
       'Heritage Village Apartment Homes' => {
         :street => '38050 Fremont Blvd',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Heritage Village',
       },
       'Bridgeport Apartment Homes' => {
         :street => '36826 Cherry Street',
-        :washerdryer => false
+        :wd => false
       },
       'Park Villa Apartments' => {
         :street => '39501 Fremont Blvd',
-        :washerdryer => false
+        :wd => false
       },
       'The Rexford' => {
         :street => '3400 Country Dr',
-        :washerdryer => false
+        :wd => false
       },
       'Amber Court Apartment Homes' => {
         :street => '34050 Westchester Terrace',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Amber Court',
       },
       'Waterstone' => {
         :street => '39600 Fremont Boulevard',
-        :washerdryer => false
+        :wd => false
       },
       '41777 Grimmer' => {
         :street => '41777 Grimmer Boulevard',
-        :washerdryer => false
+        :wd => false
       },
       'Lakeview Apartments' => {
         :street => '4205 Mowry Avenue',
-        :washerdryer => false
+        :wd => false
       },
       'Pathfinder Village Apartments' => {
         :street => '39800 Fremont Blvd',
-        :washerdryer => false
+        :wd => false
       },
       'Stevenson Place' => {
         :street => '4141 Stevenson Boulevard',
-        :washerdryer => false
+        :wd => false
       },
       'CAMBRIDGE COURT' => {
         :street => 'Rodney Common',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Cambridge Court',
       },
       'Countrywood Apartments' => {
         :street => '4555 Thornton Ave',
-        :washerdryer => false
+        :wd => false
       },
       '37200 Paseo' => {
         :street => '37200 Paseo Padre Pkwy',
-        :washerdryer => false
+        :wd => false
       },
       'Trinity Townhomes' => {
         :street => '39505 Trinity Way',
@@ -91,17 +91,17 @@ class AddressHarvester
       },
       'Alborada Apartments' => {
         :street => '1001 Beethoven Common',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Alborada'
       },
       '1001 Beethoven Common' => {
         :street => '1001 Beethoven Common',
-        :washerdryer => true,
+        :wd => true,
         :name => 'Alborada'
       },
       'Carrington Apartments' => {
         :street => '4875 Mowry Ave',
-        :washerdryer => false
+        :wd => false
       }
     }
   end
