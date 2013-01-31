@@ -132,6 +132,7 @@ class AddressHarvester
       @cltags['city'].gsub(/^\s+/, '')
       @cltags['city'].gsub(/\s+$/, '')
     end
+    self.set_feature(:hookups, true) if @body.match(/hookup/)
     self
   end
 
