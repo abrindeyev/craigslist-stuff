@@ -24,6 +24,11 @@ class AddressHarvester
         :washerdryer => true,
         :name => 'Fremont Glen'
       },
+      '888-727-8177' => {
+        :street => '38050 Fremont Blvd',
+        :washerdryer => true,
+        :name => 'Heritage Village',
+      },
       'Heritage Village Apartment Homes' => {
         :street => '38050 Fremont Blvd',
         :washerdryer => true,
