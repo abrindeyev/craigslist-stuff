@@ -176,16 +176,12 @@ class AddressHarvester
     elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
       self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
     end
-    if @cltags.include?('city')
-      @cltags['city'].gsub(/^\s+/, '')
-      @cltags['city'].gsub(/\s+$/, '')
-    end
     self.set_feature(:hookups, true) if @body.match(/hookup/)
     self
   end
 
   def get_tag(tag_name)
-    @cltags[tag_name]
+    return @cltags.include?(tag_name) ? @cltags[tag_name].strip.squeeze(' ').split(/ /).map{|i| i.capitalize}.join(' ') : ''
   end
 
   def has_full_address_pvt?
