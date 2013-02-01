@@ -243,6 +243,63 @@ class AddressHarvester
     return self.has_full_address? ? @cltags['city'].capitalize : ''
   end
 
+  def get_score
+    score = 0
+    score -= 1000 unless self.get_city == 'Fremont'
+    if self.have_feature?(:sqft)
+      case self.get_feature(:sqft)
+      when 0 .. 799
+        score -= 50 # too small
+      when 800 .. 899
+        score += 5  # slightly better than now
+      when 900 .. 999
+        score += 20 # it's ok
+      when 1000 .. 1099
+        score += 30 # ideal
+      when 1100 .. 1199
+        score += 50 # best
+      when 1200 .. 1300
+        score += 5  # maintanance cost start to rise
+      when 1300 .. 5000
+        score -= 50 # too large
+      end
+    end
+    if self.have_feature?(:neighborhood)
+      case self.get_feature(:neighborhood)
+      when 'Mission San Jose', 'Niles'
+        score += 100
+      when 'Irvington'
+        score += 10
+      when 'Centerville'
+        score -= 40
+      when 'Central Downtown'
+        score += 10
+      end
+    end
+    if self.have_feature?(:rent_price)
+      case self.get_feature(:rent_price)
+      when 0 .. 1499
+        score -= 100 # too good to be true
+      when 1500 .. 1599
+        score -= 50  # too good to be that low 
+      when 1600 .. 1799
+        score += 5   # neutral (almost)
+      when 1800 .. 1999
+        score += 20  # target range
+      when 2000 .. 2099
+        score -= 25  # tough
+      when 2100 .. 2199
+        score -= 50  # too expensive
+      when 2200 .. 10000
+        score -= 200 # can't afford
+      end
+    end
+    score -= 500 if self.have_feature?(:wd) and self.get_feature(:wd) == false
+    score += 100 if self.have_feature?(:wd) and self.get_feature(:wd) == true
+    score += 50 if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
+    score += 10 * self.get_feature(:school_rating) if self.have_feature?(:school_rating)
+    score # return final score
+  end
   # Scoring
   # :neighborhood=>"Mission San Jose" +100
   # :sqft=>1050
