@@ -159,14 +159,12 @@ class AddressHarvester
     unless gps_data == '' and @cltags['xstreet0'] =~ /^\d+ [a-zA-Z]+/
       @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
       @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
-      revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
-      resp = RestClient.get(revgeocode_url)
-      geo = JSON.parse(resp.body)
-      unless geo['status'] == 'OK'
-        puts "Geocode failed: #{geo['status']}"
-        exit -1
+      if @lat and @lon
+        revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+        resp = RestClient.get(revgeocode_url)
+        geo = JSON.parse(resp.body)
+        @formatted_address = geo['results'][0]['formatted_address'] if geo['status'] == 'OK' 
       end
-      @formatted_address = geo['results'][0]['formatted_address']
     end
 
     # Getting rent price
