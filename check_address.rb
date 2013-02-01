@@ -120,3 +120,4 @@ unless geo2['status'] == 'OK'
 end
 puts "Walking to Fremont BART: #{geo2['routes'][0]['legs'][0]['duration']['text']}"
 puts post.get_features.inspect
+puts "Posting score: " + post.get_score.to_s
