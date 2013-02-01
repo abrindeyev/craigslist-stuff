@@ -3,38 +3,46 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 samples = File.join(File.dirname(__FILE__), 'samples')
 
 describe "Address harvester object" do
-  subject { AddressHarvester.new('http://ya.ru') }
-  it { should_not eq(nil) }
   subject { AddressHarvester.new(File.join(samples, '3574423811.html')) }
   it { should_not eq(nil) }
 end
 
-describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('xstreet0') }
+describe "Get xstreet0 tag value" do
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('xstreet0') }
   it { should == '120 Granada' }
 end
 
-describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('city') }
+describe "Get city tag value" do
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('city') }
   it { should == 'Mountain View' }
 end
 
-describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('region') }
-  it { should == 'CA' }
+describe "Get region tag value" do
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('region') }
+  it { should == 'Ca' }
 end
 
-describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574419831.html')).parse.get_tag('region') }
+describe "Missing region tag" do
+  subject { AddressHarvester.new(File.join(samples, '3574419831.html')).get_tag('region') }
   it { should_not == 'CA' }
 end
 
-describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3573633080.html')).has_full_address? }
+describe "Posting with full address from internal pattern database" do
+  subject { AddressHarvester.new(File.join(samples, '3573633080.html')).have_full_address? }
   it { should == true }
 end
 
-describe AddressHarvester, "Address harvester object" do
+describe "Get full address from matched database entry" do
   subject { AddressHarvester.new(File.join(samples, '3573633080.html')).get_full_address }
-  it { should == '4022 Papillon Terrace, FREMONT , CA' }
+  it { should == '4022 Papillon Terrace, Fremont, CA' }
+end
+
+describe "Posting with both GPS and tag street address" do
+  subject { AddressHarvester.new(File.join(samples, '3585854056.html')).get_full_address }
+  it { should == '38700 Tyson Ln, Fremont, California' }
+end
+
+describe "Posting with GPS coordinates only" do
+  subject { AddressHarvester.new(File.join(samples, '3582870190.html')).get_full_address }
+  it { should == '40571 Chapel Way, Fremont, California' }
 end

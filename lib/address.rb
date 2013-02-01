@@ -154,19 +154,19 @@ class AddressHarvester
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
-    @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG (.*?) -->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+    @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+
+    # Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
-    unless gps_data == '' and @cltags['xstreet0'] =~ /^\d+ [a-zA-Z]+/
+    unless gps_data == ''
       @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
       @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
-      revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
-      resp = RestClient.get(revgeocode_url)
-      geo = JSON.parse(resp.body)
-      unless geo['status'] == 'OK'
-        puts "Geocode failed: #{geo['status']}"
-        exit -1
+      if @lat and @lon
+        revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+        resp = RestClient.get(revgeocode_url)
+        geo = JSON.parse(resp.body)
+        @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK' 
       end
-      @formatted_address = geo['results'][0]['formatted_address']
     end
 
     # Getting rent price
@@ -178,64 +178,59 @@ class AddressHarvester
     elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
       self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
     end
-    if @cltags.include?('city')
-      @cltags['city'].gsub(/^\s+/, '')
-      @cltags['city'].gsub(/\s+$/, '')
-    end
     self.set_feature(:hookups, true) if @body.match(/hookup/)
     self
   end
 
   def get_tag(tag_name)
-    @cltags[tag_name]
+    return @cltags.include?(tag_name) ? @cltags[tag_name].strip.squeeze(' ').split(/ /).map{|i| i.capitalize}.join(' ') : ''
   end
 
-  def has_full_address_pvt?
-    return false unless @cltags['xstreet0'] =~ /^(\d{1,5}(\ 1\/[234])?[ A-Za-z]+)/ or @formatted_address != ''
-  end
-
-  def has_full_address?
-    #return false unless @cltags.include?('xstreet0')
-    if self.has_full_address_pvt?
-      @street_address = @cltags['xstreet0']
-      return true
-    else
-      self.get_full_address
-      if @street_address == '' and @formatted_address == ''
-        return false
-      else
-        return true
-      end
-    end
+  def have_full_address?
+    self.get_full_address == '' ? false : true
   end
 
   def get_full_address
-    self.parse unless @cltags
-    return @formatted_address if @formatted_address =~ /^\d{3,5}/
-    unless self.has_full_address_pvt?
-      # Let's begin our gestimates here!
+    addr_street = ''
+    addr_city   = ''
+    addr_state  = ''
+    
+    if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
+      # 1. we have full address in Craigslist tags. Let's use it!
+      addr_street = self.get_tag('xstreet0')
+      addr_city   = self.get_tag('city')
+      addr_state  = self.get_tag('region')
+    elsif @reverse_geocoded_address_components
+      # 2. posting have no address specified in tags but have a map with GPS coordinates
+      #    Let's use reverse geocoded data which is provided by Google Maps API
+      addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
+      addr_city   = @reverse_geocoded_address_components['locality']
+      addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+    else
+      # 3. Begin our gestimates
 
-      # 1. Lookup for known database
+      # 3.1. Lookup for known pattern in `database'
       @PDB.keys.each do |pattern|
         if @body.scan(pattern).size > 0
-          @street_addr = @PDB[pattern][:street] if @body.scan(pattern).size > 0
+          addr_street = @PDB[pattern][:street]
+          addr_city   = 'Fremont'
+          addr_state  = 'CA'
           @features = @features.merge(@PDB[pattern])
         end
       end
 
-      # 2. Raw address search
-      #addrs = @body.scan(/^(?n:(?<address1>(\d{1,5}(\ 1\/[234])?(\x20[A-Z]([a-z])+)+ )|(P\.O\.\ Box\ \d{1,5}))\s{1,2}(?i:(?<address2>(((APT|B LDG|DEPT|FL|HNGR|LOT|PIER|RM|S(LIP|PC|T(E|OP))|TRLR|UNIT)\x20\w{1,5})|(BSMT|FRNT|LBBY|LOWR|OFC|PH|REAR|SIDE|UPPR)\.?)\s{1,2})?)(?<city>[A-Z]([a-z])+(\.?)(\x20[A-Z]([a-z])+){0,2})\, \x20(?<state>A[LKSZRAP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADL N]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD] |T[NX]|UT|V[AIT]|W[AIVY])\x20(?<zipcode>(?!0{5})\d{5}(-\d {4})?))$/)
-      unless @street_addr
+      # 3.2. Raw address search in posting's body
+      if addr_street == ''
         addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [a-za-z ]+ (?:st|str|ave|avenue|pkwy|parkway|bldv|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace))\s+(fremont|union\s+city|newark),? ca\s+\d{5}/i)
         if addrs.uniq.size > 0
-          @cltags['xstreet0'] = addrs.uniq[0][0]
-          @cltags['city'] = addrs.uniq[0][1]
-          @cltags['region'] = 'CA'
+          addr_street = addrs.uniq[0][0]
+          addr_city   = addrs.uniq[0][1]
+          addr_state  = 'CA'
         end
-        #puts addrs.uniq.inspect
       end
     end
-    return "#{@street_addr =~ /^\d+/ ? @street_addr : @cltags['xstreet0'] }, #{@cltags['city']}, #{@cltags['region']}"
+
+    return addr_street == '' ? '' : "#{addr_street}, #{addr_city}, #{addr_state}"
   end
 
   def get_city
