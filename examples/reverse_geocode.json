@@ -1,0 +1,371 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "39298-39412",
+               "short_name" : "39298-39412",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Guardino Drive",
+               "short_name" : "Guardino Dr",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Central Downtown",
+               "short_name" : "Central Downtown",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda",
+               "short_name" : "Alameda",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94538",
+               "short_name" : "94538",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "39298-39412 Guardino Drive, Fremont, CA 94538, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.55700470,
+                  "lng" : -121.96766160
+               },
+               "southwest" : {
+                  "lat" : 37.55625410,
+                  "lng" : -121.9692640
+               }
+            },
+            "location" : {
+               "lat" : 37.55660190,
+               "lng" : -121.96873240
+            },
+            "location_type" : "RANGE_INTERPOLATED",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.55797838029150,
+                  "lng" : -121.9671138197085
+               },
+               "southwest" : {
+                  "lat" : 37.55528041970850,
+                  "lng" : -121.9698117802915
+               }
+            }
+         },
+         "types" : [ "street_address" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Cherry - Guardino",
+               "short_name" : "Cherry - Guardino",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda",
+               "short_name" : "Alameda",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Cherry - Guardino, Fremont, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.57263510,
+                  "lng" : -121.95726980
+               },
+               "southwest" : {
+                  "lat" : 37.5553880,
+                  "lng" : -121.97957110
+               }
+            },
+            "location" : {
+               "lat" : 37.56331480,
+               "lng" : -121.96721820
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.57263510,
+                  "lng" : -121.95726980
+               },
+               "southwest" : {
+                  "lat" : 37.5553880,
+                  "lng" : -121.97957110
+               }
+            }
+         },
+         "types" : [ "neighborhood", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "94538",
+               "short_name" : "94538",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Fremont, CA 94538, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.5654550,
+                  "lng" : -121.9170970
+               },
+               "southwest" : {
+                  "lat" : 37.4532350,
+                  "lng" : -122.0022360
+               }
+            },
+            "location" : {
+               "lat" : 37.50422670,
+               "lng" : -121.96437450
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.5654550,
+                  "lng" : -121.9170970
+               },
+               "southwest" : {
+                  "lat" : 37.4532350,
+                  "lng" : -122.0022360
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda",
+               "short_name" : "Alameda",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Fremont, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.6042340,
+                  "lng" : -121.8677670
+               },
+               "southwest" : {
+                  "lat" : 37.45453880,
+                  "lng" : -122.13055160
+               }
+            },
+            "location" : {
+               "lat" : 37.54826970,
+               "lng" : -121.98857190
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.6042340,
+                  "lng" : -121.8677670
+               },
+               "southwest" : {
+                  "lat" : 37.45453880,
+                  "lng" : -122.13055160
+               }
+            }
+         },
+         "types" : [ "locality", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Alameda",
+               "short_name" : "Alameda",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Alameda, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.90566810,
+                  "lng" : -121.46921390
+               },
+               "southwest" : {
+                  "lat" : 37.45453880,
+                  "lng" : -122.34266480
+               }
+            },
+            "location" : {
+               "lat" : 37.60168920,
+               "lng" : -121.71954590
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.90566810,
+                  "lng" : -121.46921390
+               },
+               "southwest" : {
+                  "lat" : 37.45453880,
+                  "lng" : -122.34266480
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_2", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "California, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53415590,
+                  "lng" : -124.40961960
+               }
+            },
+            "location" : {
+               "lat" : 36.7782610,
+               "lng" : -119.41793240
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53415590,
+                  "lng" : -124.40961960
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_1", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "United States",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 71.3898880,
+                  "lng" : -66.94976079999999
+               },
+               "southwest" : {
+                  "lat" : 18.91106420,
+                  "lng" : 172.45469660
+               }
+            },
+            "location" : {
+               "lat" : 37.090240,
+               "lng" : -95.7128910
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 49.380,
+                  "lng" : -66.940
+               },
+               "southwest" : {
+                  "lat" : 25.820,
+                  "lng" : -124.390
+               }
+            }
+         },
+         "types" : [ "country", "political" ]
+      }
+   ],
+   "status" : "OK"
+}
