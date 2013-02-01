@@ -232,7 +232,7 @@ class AddressHarvester
 
   def get_city
     self.parse unless @cltags
-    return self.has_full_address ? @cltags['city'].capitalize : ''
+    return self.has_full_address? ? @cltags['city'].capitalize : ''
   end
 
   # Scoring
