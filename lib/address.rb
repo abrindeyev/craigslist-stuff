@@ -134,6 +134,14 @@ class AddressHarvester
     self
   end
 
+  def have_feature?(f)
+    @features.include?(f)
+  end
+
+  def get_feature(f)
+    @features.include?(f) ? @features[f] : ''
+  end
+
   def get_features
     @features
   end
