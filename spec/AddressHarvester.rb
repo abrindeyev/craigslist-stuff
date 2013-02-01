@@ -17,9 +17,9 @@ describe "Get city tag value" do
   it { should == 'Mountain View' }
 end
 
-  it { should == 'CA' }
 describe "Get region tag value" do
   subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('region') }
+  it { should == 'Ca' }
 end
 
 describe "Missing region tag" do
@@ -34,5 +34,15 @@ end
 
 describe "Get full address from matched database entry" do
   subject { AddressHarvester.new(File.join(samples, '3573633080.html')).get_full_address }
-  it { should == '4022 Papillon Terrace, FREMONT , CA' }
+  it { should == '4022 Papillon Terrace, Fremont, CA' }
+end
+
+describe "Posting with both GPS and tag street address" do
+  subject { AddressHarvester.new(File.join(samples, '3585854056.html')).get_full_address }
+  it { should == '38700 Tyson Ln, Fremont, California' }
+end
+
+describe "Posting with GPS coordinates only" do
+  subject { AddressHarvester.new(File.join(samples, '3582870190.html')).get_full_address }
+  it { should == '40571 Chapel Way, Fremont, California' }
 end
