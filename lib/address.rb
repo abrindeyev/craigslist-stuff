@@ -148,7 +148,7 @@ class AddressHarvester
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG (.*?) -->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
     gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
-    unless gps_data == ''
+    unless gps_data == '' and @cltags['xstreet0'] =~ /^\d+ [a-zA-Z]+/
       @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
       @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
       revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
