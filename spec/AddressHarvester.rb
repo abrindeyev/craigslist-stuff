@@ -30,7 +30,7 @@ describe AddressHarvester, "Address harvester object" do
 end
 
 describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3573633080.html')).has_full_address? }
+  subject { AddressHarvester.new(File.join(samples, '3573633080.html')).have_full_address? }
   it { should == true }
 end
 

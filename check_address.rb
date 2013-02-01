@@ -34,7 +34,7 @@ def ray_crosses_through_line_segment?(point, a_point_on_polygon, trailing_point_
 end
 
 post = AddressHarvester.new(ARGV[0])
-unless post.has_full_address? 
+unless post.have_full_address? 
   puts "Can't get full address for that posting, giving up!"
   exit -1
 end

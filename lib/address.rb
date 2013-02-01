@@ -192,7 +192,6 @@ class AddressHarvester
     return false unless @cltags['xstreet0'] =~ /^(\d{1,5}(\ 1\/[234])?[ A-Za-z]+)/ or @formatted_address != ''
   end
 
-  def has_full_address?
     #return false unless @cltags.include?('xstreet0')
     if self.has_full_address_pvt?
       @street_address = @cltags['xstreet0']
@@ -205,6 +204,7 @@ class AddressHarvester
         return true
       end
     end
+  def have_full_address?
   end
 
   def get_full_address
