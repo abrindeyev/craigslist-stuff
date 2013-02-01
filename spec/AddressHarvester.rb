@@ -3,8 +3,6 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 samples = File.join(File.dirname(__FILE__), 'samples')
 
 describe "Address harvester object" do
-  subject { AddressHarvester.new('http://ya.ru') }
-  it { should_not eq(nil) }
   subject { AddressHarvester.new(File.join(samples, '3574423811.html')) }
   it { should_not eq(nil) }
 end
