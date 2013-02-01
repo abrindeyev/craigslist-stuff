@@ -10,22 +10,22 @@ describe "Address harvester object" do
 end
 
 describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('xstreet0') }
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('xstreet0') }
   it { should == '120 Granada' }
 end
 
 describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('city') }
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('city') }
   it { should == 'Mountain View' }
 end
 
 describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).parse.get_tag('region') }
   it { should == 'CA' }
+  subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('region') }
 end
 
 describe AddressHarvester, "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574419831.html')).parse.get_tag('region') }
+  subject { AddressHarvester.new(File.join(samples, '3574419831.html')).get_tag('region') }
   it { should_not == 'CA' }
 end
 
