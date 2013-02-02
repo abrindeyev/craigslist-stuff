@@ -191,51 +191,52 @@ class AddressHarvester
   end
 
   def get_full_address
-    addr_street = ''
-    addr_city   = ''
-    addr_state  = ''
+    @addr_street = ''
+    @addr_city   = ''
+    @addr_state  = ''
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
-      addr_street = self.get_tag('xstreet0')
-      addr_city   = self.get_tag('city')
-      addr_state  = self.get_tag('region')
     elsif @reverse_geocoded_address_components
+      @addr_street = self.get_tag('xstreet0')
+      @addr_city   = self.get_tag('city')
+      @addr_state  = self.get_tag('region')
       # 2. posting have no address specified in tags but have a map with GPS coordinates
       #    Let's use reverse geocoded data which is provided by Google Maps API
-      addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
-      addr_city   = @reverse_geocoded_address_components['locality']
-      addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+      @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
+      @addr_city   = @reverse_geocoded_address_components['locality']
+      @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
     else
       # 3. Begin our gestimates
 
       # 3.1. Lookup for known pattern in `database'
       @PDB.keys.each do |pattern|
         if @body.scan(pattern).size > 0
-          addr_street = @PDB[pattern][:street]
-          addr_city   = 'Fremont'
-          addr_state  = 'CA'
+          @addr_street = @PDB[pattern][:street]
+          @addr_city   = 'Fremont'
+          @addr_state  = 'CA'
           @features = @features.merge(@PDB[pattern])
         end
       end
 
       # 3.2. Raw address search in posting's body
-      if addr_street == ''
+      if @addr_street == ''
         addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [a-za-z ]+ (?:st|str|ave|avenue|pkwy|parkway|bldv|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace))\s+(fremont|union\s+city|newark),? ca\s+\d{5}/i)
         if addrs.uniq.size > 0
-          addr_street = addrs.uniq[0][0]
-          addr_city   = addrs.uniq[0][1]
-          addr_state  = 'CA'
+          # TODO: implement black list of addresses for rent agencies
+          @addr_street = addrs.uniq[0][0]
+          @addr_city   = addrs.uniq[0][1]
+          @addr_state  = 'CA'
         end
       end
     end
 
-    return addr_street == '' ? '' : "#{addr_street}, #{addr_city}, #{addr_state}"
+    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{@addr_state}"
   end
 
   def get_city
     self.parse unless @cltags
-    return self.have_full_address? ? @cltags['city'].capitalize : ''
+    return self.have_full_address? ? @addr_city.capitalize : ''
   end
 
   def get_score

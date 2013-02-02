@@ -46,3 +46,8 @@ describe "Posting with GPS coordinates only" do
   subject { AddressHarvester.new(File.join(samples, '3582870190.html')).get_full_address }
   it { should == '40571 Chapel Way, Fremont, California' }
 end
+
+describe "Getting Fremont from image posting" do
+  subject { AddressHarvester.new(File.join(samples, '3587401701.html')).get_city }
+  it { should == 'Fremont' }
+end
