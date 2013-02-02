@@ -51,3 +51,8 @@ describe "Getting Fremont from image posting" do
   subject { AddressHarvester.new(File.join(samples, '3587401701.html')).get_city }
   it { should == 'Fremont' }
 end
+
+describe "Hayward posting doesn't have valid address" do
+  subject { AddressHarvester.new(File.join(samples, '3584993361.html')).have_full_address? }
+  it { should == false }
+end

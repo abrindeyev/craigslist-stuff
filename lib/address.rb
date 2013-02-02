@@ -197,10 +197,10 @@ class AddressHarvester
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
-    elsif @reverse_geocoded_address_components
       @addr_street = self.get_tag('xstreet0')
       @addr_city   = self.get_tag('city')
       @addr_state  = self.get_tag('region')
+    elsif not @reverse_geocoded_address_components.nil? and @reverse_geocoded_address_components.include?('street_number') and not @reverse_geocoded_address_components['street_number'].nil?
       # 2. posting have no address specified in tags but have a map with GPS coordinates
       #    Let's use reverse geocoded data which is provided by Google Maps API
       @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
