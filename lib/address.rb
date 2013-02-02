@@ -71,9 +71,15 @@ class AddressHarvester
         :street => '39800 Fremont Blvd',
         :wd => false
       },
+      '/stevensonplace/?action' => {
+        :street => '4141 Stevenson Boulevard',
+        :wd => false,
+        :name => 'Stevenson Place'
+      },
       'Stevenson Place' => {
         :street => '4141 Stevenson Boulevard',
-        :wd => false
+        :wd => false,
+        :name => 'Stevenson Place'
       },
       'CAMBRIDGE COURT' => {
         :street => 'Rodney Common',
