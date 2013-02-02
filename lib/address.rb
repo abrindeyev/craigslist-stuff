@@ -293,7 +293,7 @@ class AddressHarvester
     score -= 500 if self.have_feature?(:wd) and self.get_feature(:wd) == false
     score += 100 if self.have_feature?(:wd) and self.get_feature(:wd) == true
     score += 50 if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
-    score -= 150 if @body.match(/coin\s+laundry/i)
+    score -= 150 if @body.match(/coin(?:-op)?\s+(laundry|washer)/i)
     unless self.get_feature(:school_rating).nil?
       score += 10 * self.get_feature(:school_rating) if self.get_city.match(/fremont/i)
     end
