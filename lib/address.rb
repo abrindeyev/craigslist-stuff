@@ -256,7 +256,7 @@ class AddressHarvester
 
       # 3.2. Raw address search in posting's body
       if @addr_street == ''
-        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [A-Za-z ]{3,30} (?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter)\.?)\s*(?:(?:unit|#)\s*.{1,6}?)?,?\s+(fremont|union\s+city|newark),?\s*?(?:CA|California)(?:\s+\d{5})?/i)
+        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [0-9A-Za-z ]{3,30} (?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:unit|#)\s*.{1,6}?)?,?\s+(fremont|union\s+city|newark),?\s*?(?:CA|California)(?:\s+\d{5})?/i)
         if addrs.uniq.size > 0
           black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
           addrs.uniq.each do |a|
