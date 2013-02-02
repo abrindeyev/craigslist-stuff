@@ -57,6 +57,11 @@ describe "Posting with full address from body #4 with '# A' unit number have cor
   it { should == '43314 Jerome Ave, Fremont, CA' }
 end
 
+describe "Posting with full address from body #5 have correct address parsed" do
+  subject { AddressHarvester.new(File.join(samples, '3587286246.html')).get_full_address }
+  it { should == '4193 Rainbow Ter, Fremont, CA' }
+end
+
 describe "Get full address from matched database entry" do
   subject { AddressHarvester.new(File.join(samples, '3573633080.html')).get_full_address }
   it { should == '4022 Papillon Terrace, Fremont, CA' }
