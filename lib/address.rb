@@ -243,7 +243,7 @@ class AddressHarvester
 
       # 3.2. Raw address search in posting's body
       if @addr_street == ''
-        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [a-za-z ]+ (?:st|str|ave|av\.?|avenue|pkwy|parkway|blvd\.?|boulevard|center|circle|drv\.?|dr\.?|drive|junction|lake|place|plaza|rd\.?|road|street|terrace)),?\s+(fremont|union\s+city|newark),? CA\s+\d{5}/i)
+        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [a-za-z ]+ (?:st|str|ave|av\.?|avenue|pkwy|parkway|blvd\.?|boulevard|center|circle|drv\.?|dr\.?|drive|junction|lake|place|plaza|rd\.?|road|street|terrace)),?\s+(fremont|union\s+city|newark),?\s*?CA(?:\s+\d{5})?/i)
         if addrs.uniq.size > 0
           # TODO: implement black list of addresses for rent agencies
           @addr_street = addrs.uniq[0][0]
