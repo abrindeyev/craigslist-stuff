@@ -9,31 +9,6 @@ require 'nokogiri'
 require 'lib/address'
 require 'lib/school'
 
-def contains_point?(poly, p)
-  contains_point = false
-  i = -1
-  j = poly.size - 1
-  while (i += 1) < poly.size
-    a_point_on_polygon = poly[i]
-    trailing_point_on_polygon = poly[j]
-    if point_is_between_the_ys_of_the_line_segment?(p, a_point_on_polygon, trailing_point_on_polygon)
-      if ray_crosses_through_line_segment?(p, a_point_on_polygon, trailing_point_on_polygon)
-        contains_point = !contains_point
-      end
-    end
-    j = i
-  end
-  return contains_point
-end
-
-def point_is_between_the_ys_of_the_line_segment?(point, a_point_on_polygon, trailing_point_on_polygon)
-    (a_point_on_polygon['lon'] <= point['lon'] && point['lon'] < trailing_point_on_polygon['lon']) || (trailing_point_on_polygon['lon'] <= point['lon'] && point['lon'] < a_point_on_polygon['lon'])
-end
-
-def ray_crosses_through_line_segment?(point, a_point_on_polygon, trailing_point_on_polygon)
-    (point['lat'] < (trailing_point_on_polygon['lat'] - a_point_on_polygon['lat']) * (point['lon'] - a_point_on_polygon['lon']) / (trailing_point_on_polygon['lon'] - a_point_on_polygon['lon']) + a_point_on_polygon['lat'])
-end
-
 post = AddressHarvester.new(ARGV[0])
 unless post.have_full_address? 
   puts "Can't get full address for that posting, giving up!"
