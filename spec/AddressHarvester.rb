@@ -47,6 +47,11 @@ describe "Posting with full address from body #2 have correct address parsed" do
   it { should == '5647 Robertson Ave, Newark, CA' }
 end
 
+describe "Posting with full address from body #3 have correct address parsed" do
+  subject { AddressHarvester.new(File.join(samples, '3587462071.html')).get_full_address }
+  it { should == '40640 High St., Fremont, CA' }
+end
+
 describe "Get full address from matched database entry" do
   subject { AddressHarvester.new(File.join(samples, '3573633080.html')).get_full_address }
   it { should == '4022 Papillon Terrace, Fremont, CA' }
