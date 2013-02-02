@@ -32,9 +32,19 @@ describe "Posting with full address from internal pattern database" do
   it { should == true }
 end
 
-describe "Posting with full address from body" do
+describe "Posting with full address from body #1" do
   subject { AddressHarvester.new(File.join(samples, '3587519103.html')).have_full_address? }
   it { should == true }
+end
+
+describe "Posting with full address from body #2" do
+  subject { AddressHarvester.new(File.join(samples, '3584363870.html')).have_full_address? }
+  it { should == true }
+end
+
+describe "Posting with full address from body #2 have correct address parsed" do
+  subject { AddressHarvester.new(File.join(samples, '3584363870.html')).get_full_address }
+  it { should == '5647 Robertson Ave, Newark, CA' }
 end
 
 describe "Get full address from matched database entry" do
