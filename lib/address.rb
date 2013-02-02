@@ -125,6 +125,22 @@ class AddressHarvester
         :name => 'Logan Park Apartments',
         :wd => true,
       },
+      'Briarwood' => {
+        :name => 'Briarwood at Central Park',
+        :street => '4200 Bay St',
+        :wd => false,
+      },
+      '2500 Medallion Dr' => {
+        :name => 'Medallion Apartments',
+        :street => '2500 Medallion Drive',
+        :city => 'Union City',
+        :wd => false,
+      },
+      'pathfindervillageapts.com' => {
+        :name => 'Pathfinder Village Apartments',
+        :street => '39800 Fremont Blvd.',
+        :wd => false,
+      },
     }
   end
 
@@ -219,7 +235,7 @@ class AddressHarvester
       @PDB.keys.each do |pattern|
         if @body.scan(pattern).size > 0
           @addr_street = @PDB[pattern][:street]
-          @addr_city   = 'Fremont'
+          @addr_city   = @PDB[pattern][:city] ? @PDB[pattern][:city] : 'Fremont'
           @addr_state  = 'CA'
           @features = @features.merge(@PDB[pattern])
         end
