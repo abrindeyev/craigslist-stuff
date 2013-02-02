@@ -146,6 +146,14 @@ class AddressHarvester
         :street => '39800 Fremont Blvd.',
         :wd => false,
       },
+      'The Presidio Apartments' => {
+        :name => 'Presidio Apartments',
+        :street => '2000 Walnut Ave.',
+        :wd => true,
+        :ac => true,
+        :mw => true,
+        :dw => true,
+      },
     }
   end
 
