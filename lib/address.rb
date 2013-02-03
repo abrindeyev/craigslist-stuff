@@ -170,6 +170,8 @@ class AddressHarvester
       @source = File.read(source)
     end
     @features = {}
+    @score = 0
+    @scoring_log = []
     self.parse
     self
   end
@@ -283,70 +285,71 @@ class AddressHarvester
     return self.have_full_address? ? @addr_city.capitalize : ''
   end
 
+  def update_score(val, reason)
+    @score += val
+    @scoring_log << { :delta => val, :reason => reason }
+  end
+
   def get_score
-    score = 0
-    score -= 1000 unless self.get_city == 'Fremont'
+    self.update_score(-1000, "City is not a Fremont") unless self.get_city == '' or self.get_city == 'Fremont'
     if self.have_feature?(:sqft)
       case self.get_feature(:sqft)
       when 0 .. 799
-        score -= 50 # too small
+        self.update_score(-50, "Area too small: < 799 sqft")
       when 800 .. 899
-        score += 5  # slightly better than now
+        self.update_score(5, "Area too small: 800..899 sqft")
       when 900 .. 999
-        score += 20 # it's ok
+        self.update_score(20, "Area is OK: 900..999 sqft")
       when 1000 .. 1099
-        score += 30 # ideal
+        self.update_score(30, "Area is ideal: 1,000..1,099 sqft")
       when 1100 .. 1199
-        score += 50 # best
-      when 1200 .. 1300
-        score += 5  # maintanance cost start to rise
+        self.update_score(50, "Area is best: 1,100..1,199 sqft")
+      when 1200 .. 1299
+        self.update_score(5, "Area is large: 1,200..1,299 sqft")
       when 1300 .. 5000
-        score -= 50 # too large
+        self.update_score(-100, "Area is too large: > 1,300 sqft")
       end
     end
     if self.have_feature?(:neighborhood)
       case self.get_feature(:neighborhood)
       when 'Mission San Jose', 'Niles'
-        score += 100
+        self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
       when 'Irvington'
-        score += 10
+        self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
       when 'Centerville'
-        score -= 40
-      when 'Central Downtown'
-        score += 10
+        self.update_score(-40, "Bad neighborhood: #{ self.get_feature(:neighborhood) }")
       end
     end
     if self.have_feature?(:rent_price)
       case self.get_feature(:rent_price)
       when 0 .. 1499
-        score -= 100 # too good to be true
+        self.update_score(-100, "Unrealistic rent price: < $1,500") # too good to be true
       when 1500 .. 1599
-        score -= 50  # too good to be that low 
+        self.update_score(-50, "Too low rent price: $1,500..$1,600") # too good to be that low
       when 1600 .. 1799
-        score += 5   # neutral (almost)
+        self.update_score(5, "Neutral rent price: $1,600..$1,799") # almost neutral
       when 1800 .. 1999
-        score += 20  # target range
+        self.update_score(20, "Good rent price: $1,800..$1,999") # target range
       when 2000 .. 2099
-        score -= 25  # tough
+        self.update_score(-25, "Tough rent price: $2,000..$2,099")
       when 2100 .. 2199
-        score -= 50  # too expensive
+        self.update_score(-50, "Too expensive rent price: $2,100..$2,199")
       when 2200 .. 10000
-        score -= 200 # can't afford
+        self.update_score(-200, "Can't afford to rent: > $2,200")
       end
     end
-    score -= 500 if self.have_feature?(:wd) and self.get_feature(:wd) == false
-    score += 100 if self.have_feature?(:wd) and self.get_feature(:wd) == true
-    score += 50 if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
-    score -= 150 if @body.match(/coin(?:-op)?\s+(laundry|washer)/i)
+    self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
+    self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
+    self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
+    self.update_score(-150, "Have coin laundry on-site: no W/D") if @body.match(/coin(?:-op)?\s+(laundry|washer)/i)
     unless self.get_feature(:school_rating).nil?
-      score += 10 * self.get_feature(:school_rating) if self.get_city.match(/fremont/i)
+      self.update_score(10 * self.get_feature(:school_rating), "School: #{self.get_feature(:school_name)}") if self.get_city.match(/fremont/i)
     end
-    score # return final score
+    @score # return final score
   end
-  # Scoring
-  # :neighborhood=>"Mission San Jose" +100
-  # :sqft=>1050
-  # :rent_price=>1825
-  #
-  #
+
+  def get_scoring_log
+    @scoring_log
+  end
+
 end

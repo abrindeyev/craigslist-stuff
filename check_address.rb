@@ -56,5 +56,8 @@ if post.get_city.match(/fremont/i)
   end
   puts "Walking to Fremont BART: #{geo2['routes'][0]['legs'][0]['duration']['text']}"
 end
-puts post.get_features.inspect
 puts "Posting score: " + post.get_score.to_s
+puts "Scoring log:"
+post.get_scoring_log.each do |l|
+  puts (l[:delta] > 0 ? "+#{l[:delta]}" : l[:delta].to_s) + " " + l[:reason]
+end
