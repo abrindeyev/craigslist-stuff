@@ -154,6 +154,11 @@ class AddressHarvester
         :mw => true,
         :dw => true,
       },
+      'Skylark Apartments' => {
+        :name => 'Skylark Apartments',
+        :street => '34655 Skylark Dr',
+        :city => 'Union City',
+      },
     }
   end
 
