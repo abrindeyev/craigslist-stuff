@@ -175,6 +175,11 @@ class AddressHarvester
         :street => '34655 Skylark Dr',
         :city => 'Union City',
       },
+      'rancholunasol.com' => {
+        :name => 'Rancho Luna',
+        :street => '3939 Monroe Avenue',
+        :wd => false,
+      },
     }
   end
 
