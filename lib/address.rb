@@ -14,140 +14,151 @@ class AddressHarvester
   
     @PDB = {
       'VILLAS PAPILLON' => {
+        :name => 'Villas Papillon',
         :street => '4022 Papillon Terrace',
         :hookups => true,
         :ac => true,
-        :name => 'Villas Papillon Condominiums and Townhouses',
       },
       'Oak Pointe' => {
+        :name => 'Oak Pointe',
         :street => '4140 Irvington Ave',
         :wd => false
       },
       'Watermark Place Apartments' => {
+        :name => 'Watermark Place',
         :street => '38680 Waterside Cir',
         :wd => true,
-        :name => 'Watermark Place'
       },
       'Fremont Glen' => {
+        :name => 'Fremont Glen',
         :street => '889 Mowry Avenue',
         :wd => true,
-        :name => 'Fremont Glen'
       },
       '888-727-8177' => {
+        :name => 'Heritage Village',
         :street => '38050 Fremont Blvd',
         :wd => true,
-        :name => 'Heritage Village',
       },
       'Heritage Village Apartment Homes' => {
+        :name => 'Heritage Village',
         :street => '38050 Fremont Blvd',
         :wd => true,
-        :name => 'Heritage Village',
       },
       'Bridgeport Apartment Homes' => {
+        :name => 'Bridgeport',
         :street => '36826 Cherry Street',
         :wd => false
       },
       'Park Villa Apartments' => {
+        :name => 'Park Villa',
         :street => '39501 Fremont Blvd',
         :wd => false
       },
       'The Rexford' => {
+        :name => 'Rexford',
         :street => '3400 Country Dr',
-        :wd => false
+        :wd => false,
       },
       'Amber Court Apartment Homes' => {
+        :name => 'Amber Court',
         :street => '34050 Westchester Terrace',
         :wd => true,
-        :name => 'Amber Court',
       },
       'Waterstone' => {
+        :name => 'Waterstone',
         :street => '39600 Fremont Boulevard',
         :wd => false
       },
       '41777 Grimmer' => {
+        :name => 'Colonial Gardens',
         :street => '41777 Grimmer Boulevard',
         :wd => false
       },
       'Lakeview Apartments' => {
+        :name => 'Lakeview',
         :street => '4205 Mowry Avenue',
-        :wd => false
+        :wd => false,
       },
       'Pathfinder Village Apartments' => {
+        :name => 'Pathfinder Village',
         :street => '39800 Fremont Blvd',
         :wd => false
       },
+      'pathfindervillageapts.com' => {
+        :name => 'Pathfinder Village',
+        :street => '39800 Fremont Blvd.',
+        :wd => false,
+      },
       '/stevensonplace/?action' => {
+        :name => 'Stevenson Place',
         :street => '4141 Stevenson Boulevard',
         :wd => false,
-        :name => 'Stevenson Place'
       },
       'Stevenson Place' => {
+        :name => 'Stevenson Place',
         :street => '4141 Stevenson Boulevard',
         :wd => false,
-        :name => 'Stevenson Place'
       },
       'CAMBRIDGE COURT' => {
+        :name => 'Cambridge Court',
         :street => 'Rodney Common',
         :wd => true,
-        :name => 'Cambridge Court',
       },
       'Countrywood Apartments' => {
+        :name => 'Countrywood',
         :street => '4555 Thornton Ave',
         :wd => false
       },
       '37200 Paseo' => {
+        :name => 'Paseo Place',
         :street => '37200 Paseo Padre Pkwy',
-        :wd => false
+        :wd => false,
       },
       'Trinity Townhomes' => {
+        :name => 'Trinity Townhomes',
         :street => '39505 Trinity Way',
         :hookups => true,
-        :name => 'Trinity Townhomes',
       },
       'Alborada Apartments' => {
+        :name => 'Alborada',
         :street => '1001 Beethoven Common',
         :wd => true,
-        :name => 'Alborada'
       },
       '1001 Beethoven Common' => {
+        :name => 'Alborada',
         :street => '1001 Beethoven Common',
         :wd => true,
-        :name => 'Alborada'
       },
       'Carrington Apartments' => {
+        :name => 'Carrington',
         :street => '4875 Mowry Ave',
-        :wd => false
+        :wd => false,
       },
       'Avalon Fremont' => {
+        :name => 'Avalon Fremont',
         :street => '39939 Stevenson Common',
         :wd => true,
         :dw => true,
         :ac => true,
-        :name => 'Avalon Fremont'
       },
       'Full size -- front load LG washer/dryers' => {
-        :street => '38304 Logan Dr',
         :name => 'Logan Park Apartments',
+        :street => '38304 Logan Dr',
         :wd => true,
       },
       'Briarwood' => {
-        :name => 'Briarwood at Central Park',
+        :name => 'Briarwood',
         :street => '4200 Bay St',
         :wd => false,
       },
       '2500 Medallion Dr' => {
-        :name => 'Medallion Apartments',
+        :name => 'Medallion',
         :street => '2500 Medallion Drive',
         :city => 'Union City',
         :wd => false,
       },
-      'pathfindervillageapts.com' => {
-        :name => 'Pathfinder Village Apartments',
-        :street => '39800 Fremont Blvd.',
-        :wd => false,
-      },
       'The Presidio Apartments' => {
-        :name => 'Presidio Apartments',
+        :name => 'Presidio',
         :street => '2000 Walnut Ave.',
         :wd => true,
         :ac => true,
@@ -155,7 +166,7 @@ class AddressHarvester
         :dw => true,
       },
       'Skylark Apartments' => {
-        :name => 'Skylark Apartments',
+        :name => 'Skylark',
         :street => '34655 Skylark Dr',
         :city => 'Union City',
       },
