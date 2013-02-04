@@ -389,7 +389,7 @@ class AddressHarvester
   end
 
   def get_receipt
-    t = ERB.new(open(File.join(File.dirname(__FILE__), 'iphone.erb')).read)
+    t = ERB.new(open(File.join(File.dirname(__FILE__), '..', 'iphone.erb')).read)
     return t.result(post.get_binding)
   end
 end
