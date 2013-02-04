@@ -44,6 +44,7 @@ else
     break if uri == last_seen_posting_uri
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
+    post.backup_source_to('/var/lib/craiglist_dumps')
     unless post.have_full_address? 
       puts "[---]"
       next

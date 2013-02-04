@@ -394,4 +394,15 @@ class AddressHarvester
     t = ERB.new(open(File.join(File.dirname(__FILE__), '..', 'iphone.erb')).read)
     return t.result(self.get_binding)
   end
+
+  def get_filename
+    return self.have_feature?(:posting_uri) ? self.get_feature(:posting_uri).match(/\d+\.html/).to_s : nil
+  end
+
+  def backup_source_to(dir)
+    return false unless File.exists?(dir)
+    File.open(File.join(dir, self.get_filename), 'w') do |f|
+      f.write(@source)
+    end
+  end
 end
