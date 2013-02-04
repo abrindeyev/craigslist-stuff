@@ -24,7 +24,7 @@ Twitter.configure do |config|
     config.oauth_token_secret = o['oauth_token_secret']
 end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
-last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
+last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting').read.gsub(/\n/,'')
 last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read : ''
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
