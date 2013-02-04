@@ -183,6 +183,12 @@ class AddressHarvester
     @features = {}
     @score = 0
     @scoring_log = []
+
+    # Verified address of object in posting
+    @addr_street = ''
+    @addr_city   = ''
+    @addr_state  = ''
+
     self.parse
     self
   end
@@ -207,6 +213,7 @@ class AddressHarvester
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
+    self.match_against_database if @body != ''
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
 
     # Trying to get GPS coordinates and reverse-geocode them through Google Maps API
@@ -239,14 +246,24 @@ class AddressHarvester
     return @cltags.include?(tag_name) ? @cltags[tag_name].strip.squeeze(' ').split(/ /).map{|i| i.capitalize}.join(' ') : ''
   end
 
+  def match_against_database
+    @PDB.keys.each do |pattern|
+      if @body.scan(pattern).size > 0
+        @addr_street = @PDB[pattern][:street]
+        @addr_city   = @PDB[pattern].include?(:city) ? @PDB[pattern][:city] : 'Fremont'
+        @addr_state  = 'CA'
+        @PDB[pattern].each_pair {|k,v| self.set_feature(k,v)}
+        break # allow only first match to prevent mixing up attributes from different db entries
+      end
+    end
+  end
+
   def have_full_address?
     self.get_full_address == '' ? false : true
   end
 
   def get_full_address
-    @addr_street = ''
-    @addr_city   = ''
-    @addr_state  = ''
+    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{@addr_state}" if @addr_street != ''
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
@@ -262,17 +279,7 @@ class AddressHarvester
     else
       # 3. Begin our gestimates
 
-      # 3.1. Lookup for known pattern in `database'
-      @PDB.keys.each do |pattern|
-        if @body.scan(pattern).size > 0
-          @addr_street = @PDB[pattern][:street]
-          @addr_city   = @PDB[pattern][:city] ? @PDB[pattern][:city] : 'Fremont'
-          @addr_state  = 'CA'
-          @features = @features.merge(@PDB[pattern])
-        end
-      end
-
-      # 3.2. Raw address search in posting's body
+      # 3.1. Raw address search in posting's body
       if @addr_street == ''
         addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [0-9A-Za-z ]{3,30} (?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:unit|#)\s*.{1,6}?)?,?\s+(fremont|union\s+city|newark),?\s*?(?:CA|California)(?:\s+\d{5})?/i)
         if addrs.uniq.size > 0
