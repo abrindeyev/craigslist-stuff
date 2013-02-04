@@ -122,7 +122,7 @@
             <div id="home" class="current">
                 <div class="scroll">
                     <ul class="rounded">
-                        <% if get_feature(:rent_price) != '' %><li>Price <small class="counter"><%= get_feature(:rent_price) %></small></li><% end %>
+                        <% if get_feature(:rent_price) != '' %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
                         <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
                         <% if get_feature(:name) != '' %><li>Matched as <small class="counter"><%= get_feature(:name) %></small></li><% end %>
                         <% if get_feature(:neighborhood) != '' %><li>Neighborhood <small class="counter"><%= get_feature(:neighborhood) %></small></li><% end %>
