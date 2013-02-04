@@ -6,6 +6,8 @@ require 'rest-client'
 require 'uri'
 require 'json'
 require 'nokogiri'
+require 'yaml'
+require 'twitter'
 require 'lib/address'
 require 'lib/school'
 
@@ -14,8 +16,15 @@ STDOUT.sync = true
 source_url = 'http://sfbay.craigslist.org/search/apa/eby?zoomToPosting=&altView=&query=&srchType=A&minAsk=&maxAsk=2200&bedrooms=2&nh=54'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
 links = page.xpath("//body/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
-last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
+o = YAML.load_file('.settings.yaml')
+Twitter.configure do |config|
+    config.consumer_key = o['consumer_key']
+    config.consumer_secret = o['consumer_secret']
+    config.oauth_token = o['oauth_token']
+    config.oauth_token_secret = o['oauth_token_secret']
+end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
+last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
 last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read : ''
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
@@ -70,5 +79,6 @@ else
     full_link = "http://#{external_ip}/#{filename}"
     short_link = open("http://clck.ru/--?url="+full_link).read
     puts short_link
+    Twitter.update("[#{post.get_score}] $#{post.get_feature(:rent_price)} " + (post.have_feature(:name) ? post.get_feature(:name) : post.get_full_address) + " #{short_link}")
   end
 end
