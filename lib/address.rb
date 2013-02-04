@@ -195,7 +195,7 @@ class AddressHarvester
     @features = {
       :posting_uri => uri
     }
-    @score = 0
+    @score = nil
     @scoring_log = []
 
     # Verified address of object in posting
@@ -323,6 +323,8 @@ class AddressHarvester
   end
 
   def get_score
+    return @score unless @score.nil?
+    @score = 0
     self.update_score(-1000, "City is not a Fremont") unless self.get_city == '' or self.get_city == 'Fremont'
     if self.have_feature?(:sqft)
       case self.get_feature(:sqft)
