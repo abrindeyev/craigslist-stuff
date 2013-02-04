@@ -35,7 +35,7 @@ else
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
     unless post.have_full_address? 
-      puts " [---]"
+      puts "[---]"
       next
     end
     addr = post.get_full_address
