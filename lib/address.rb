@@ -124,6 +124,11 @@ class AddressHarvester
         :street => '1001 Beethoven Common',
         :wd => true,
       },
+      '/ca_alboradaapartments/floorplans/' => {
+        :name => 'Alborada',
+        :street => '1001 Beethoven Common',
+        :wd => true,
+      },
       '1001 Beethoven Common' => {
         :name => 'Alborada',
         :street => '1001 Beethoven Common',
