@@ -68,7 +68,7 @@ else
       f.write(receipt)
     end
     full_link = "http://#{external_ip}/#{filename}"
-    short_link = open("http://clck.ru/--?url= "+full_link).read
+    short_link = open("http://clck.ru/--?url="+full_link).read
     puts short_link
   end
 end
