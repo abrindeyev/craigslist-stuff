@@ -1,0 +1,138 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title><%= (get_feature(:name) == '' ? (@addr_street == '' ? get_feature(:price) : @addr_street ) : get_feature(:name)) %></title>
+        <link rel="stylesheet" href="jQTouch/themes/css/jqtouch.css" title="jQTouch">
+        <link rel="stylesheet" href="jQTouch//themes/css/apple.css" title="Apple">
+
+        <!-- Either, (1) Zepto:  Un-comment these 2 lines (order matters)  -->
+        <script src="jQTouch//lib/zepto/zepto.js" type="text/javascript" charset="utf-8"></script>
+        <script src="jQTouch//src/jqtouch.js" type="text/javascript" charset="utf-8"></script>
+        
+        <!-- Or,     (2) jQuery: Un-comment these 3 lines (order matters)  -->
+        <!-- <script src="../../lib/jquery/jquery-1.7.min.js" type="application/x-javascript" charset="utf-8"></script> -->
+        <!-- <script src="../../src/jqtouch.js" type="text/javascript" charset="utf-8"></script> -->
+        <!-- <script src="../../src/jqtouch-jquery.js" type="application/x-javascript" charset="utf-8"></script> -->
+
+        <script src="jQTouch/extensions/jqt.themeswitcher.js" type="application/x-javascript" charset="utf-8"></script>
+        <script src="jQTouch/extensions/jqt.actionsheet.js" type="application/x-javascript" charset="utf-8"></script>
+        <script src="jQTouch/extensions/jqt.menusheet.js" type="application/x-javascript" charset="utf-8"></script>
+
+        <script type="text/javascript" charset="utf-8">
+            var jQT = new $.jQTouch({
+                icon: 'jqtouch.png',
+                icon4: 'jqtouch4.png',
+                addGlossToIcon: false,
+                startupScreen: 'jqt_startup.png',
+                statusBar: 'black-translucent',
+                themeSelectionSelector: '#jqt #themes ul',
+                preloadImages: []
+            });
+
+            // Some sample Javascript functions:
+            $(function(){
+
+                // Show a swipe event on swipe test
+                $('#swipeme').swipe(function(evt, data) {
+                    var details = !data ? '': '<strong>' + data.direction + '/' + data.deltaX +':' + data.deltaY + '</strong>!';
+                    $(this).html('You swiped ' + details );
+                    $(this).parent().after('<li>swiped!</li>')
+                });
+
+                $('#tapme').tap(function(){
+                    $(this).parent().after('<li>tapped!</li>')
+                });
+
+                $('a[target="_blank"]').bind('click', function() {
+                    return true;
+                });
+
+                // Page animation callback events
+                $('#pageevents').
+                    bind('pageAnimationStart', function(e, info){ 
+                        $(this).find('.info').append('Started animating ' + info.direction + '&hellip;  And the link ' +
+                            'had this custom data: ' + $(this).data('referrer').data('custom') + '<br>');
+                    }).
+                    bind('pageAnimationEnd', function(e, info){
+                        $(this).find('.info').append('Finished animating ' + info.direction + '.<br><br>');
+
+                    });
+                
+                // Page animations end with AJAX callback event, example 1 (load remote HTML only first time)
+                $('#callback').bind('pageAnimationEnd', function(e, info){
+
+                    // Make sure the data hasn't already been loaded (we'll set 'loaded' to true a couple lines further down)
+                    if (!$(this).data('loaded')) {
+                        
+                        // Append a placeholder in case the remote HTML takes its sweet time making it back
+                        // Then, overwrite the "Loading" placeholder text with the remote HTML
+                        $(this).append($('<div>Loading</div>').load('ajax.html .info', function() {        
+                            // Set the 'loaded' var to true so we know not to reload
+                            // the HTML next time the #callback div animation ends
+                            $(this).parent().data('loaded', true);  
+                        }));
+                    }
+                });
+                // Orientation callback event
+                $('#jqt').bind('turn', function(e, data){
+                    $('#orient').html('Orientation: ' + data.orientation);
+                });
+                
+            });
+        </script>
+        <style type="text/css" media="screen">
+            #jqt.fullscreen #home .info {
+                display: none;
+            }
+            div#jqt #about {
+                padding: 100px 10px 40px;
+                text-shadow: rgba(0, 0, 0, 0.3) 0px -1px 0;
+                color: #999;
+                font-size: 13px;
+                text-align: center;
+                background: #161618;
+            }
+            div#jqt #about p {
+                margin-bottom: 8px;
+            }
+            div#jqt #about a {
+                color: #fff;
+                font-weight: bold;
+                text-decoration: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="jqt" class="">
+            <div id="scoringlog">
+                <div class="toolbar">
+                    <h1>Scoring Report</h1>
+                    <a href="#" class="back">Back</a>
+                </div>
+                <ul class="edgetoedge scroll">
+                  <% for log_entry in get_scoring_log %>
+                    <li><%= HTMLEntities.new.encode(log_entry[:reason]) %> <small<%= ' style="color: red;"' if log_entry[:delta] < 0 %>><%= '+' if log_entry[:delta] > 0 %><%= log_entry[:delta] %></small></li>
+                  <% end %>
+                </ul>
+                <ul class="edgetoedge info">
+                  <li><a href="<%= get_feature(:posting_uri) %>" target="_blank">go to posting</a></li>
+                </ul>
+            </div>
+            <div id="home" class="current">
+                <div class="scroll">
+                    <ul class="rounded">
+                        <% if get_feature(:rent_price) != '' %><li>Price <small class="counter"><%= get_feature(:rent_price) %></small></li><% end %>
+                        <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
+                        <% if get_feature(:name) != '' %><li>Matched as <small class="counter"><%= get_feature(:name) %></small></li><% end %>
+                        <% if get_feature(:neighborhood) != '' %><li>Neighborhood <small class="counter"><%= get_feature(:neighborhood) %></small></li><% end %>
+                        <li class="arrow"><a href="#scoringlog">Score <small class="counter"><%= get_score %></small></a></li>
+                    </ul>
+                </div>
+                <ul class="edgetoedge info">
+                  <li><a href="<%= get_feature(:posting_uri) %>" target="_blank">go to posting</a></li>
+                </ul>
+            </div>
+        </div>
+    </body>
+</html>

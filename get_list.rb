@@ -15,6 +15,7 @@ source_url = 'http://sfbay.craigslist.org/search/apa/eby?zoomToPosting=&altView=
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
 links = page.xpath("//body/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
 last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
+external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
 last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read : ''
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
@@ -59,6 +60,15 @@ else
     geo['results'][0]['address_components'].each {|h| n = h['short_name'] if h['types'][0] == 'neighborhood' }
     post.set_feature(:neighborhood, n)
 
-    puts "[#{ post.get_score.to_s }]"
+    print "[#{ post.get_score.to_s }] "
+
+    receipt = post.get_receipt
+    filename = post.get_feature(:posting_uri).match(/\d+\.html/).to_s
+    File.open("/var/www/html/#{filename}", 'w') do |f|
+      f.write(receipt)
+    end
+    full_link = "http://#{external_ip}/#{filename}"
+    short_link = open("http://clck.ru/--?url= "+full_link).read
+    puts short_link
   end
 end

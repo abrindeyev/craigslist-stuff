@@ -3,6 +3,8 @@ require 'open-uri'
 require 'nokogiri'
 require 'rest-client'
 require 'json'
+require 'erb'
+require 'htmlentities'
 
 class AddressHarvester
 
@@ -183,14 +185,16 @@ class AddressHarvester
     }
   end
 
-  def initialize(source)
+  def initialize(uri)
     self.init
-    if source.match(/^http:\/\//)
-      @source = open(source).read
+    if uri.match(/^http:\/\//)
+      @source = open(uri).read
     else
-      @source = File.read(source)
+      @source = File.read(uri)
     end
-    @features = {}
+    @features = {
+      :posting_uri => uri
+    }
     @score = 0
     @scoring_log = []
 
@@ -380,4 +384,12 @@ class AddressHarvester
     @scoring_log
   end
 
+  def get_binding
+    binding()
+  end
+
+  def get_receipt
+    t = ERB.new(open(File.join(File.dirname(__FILE__), 'iphone.erb')).read)
+    return t.result(post.get_binding)
+  end
 end
