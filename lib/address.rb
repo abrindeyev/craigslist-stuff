@@ -346,7 +346,7 @@ class AddressHarvester
     end
     if self.have_feature?(:neighborhood)
       case self.get_feature(:neighborhood)
-      when 'Mission San Jose', 'Niles'
+      when 'Mission San Jose', 'Niles', 'Parkmont'
         self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
       when 'Irvington'
         self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
