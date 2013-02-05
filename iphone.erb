@@ -123,7 +123,7 @@
                 <div class="scroll">
                     <ul class="rounded">
                         <% if have_full_address? %><li><a href="http://maps.apple.com/?q=<%= URI.escape(get_full_address) %>"><%= HTMLEntities.new.encode(get_full_address) %></a></li><% end %>
-                        <% if get_feature(:bedrooms) != '' %><li>Bedrooms <small class="counter">$<%= get_feature(:bedrooms) %></small></li><% end %>
+                        <% if get_feature(:bedrooms) != '' %><li>Bedrooms <small class="counter"><%= get_feature(:bedrooms) %></small></li><% end %>
                         <% if get_feature(:rent_price) != '' %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
                         <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
                         <% if get_feature(:name) != '' %><li>Matched as <small class="counter"><%= get_feature(:name) %></small></li><% end %>
