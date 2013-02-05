@@ -80,6 +80,11 @@ else
     full_link = "http://#{external_ip}/#{filename}"
     short_link = open("http://clck.ru/--?url="+full_link).read
     puts short_link
-    Twitter.update("[#{post.get_score}] $#{post.get_feature(:rent_price)} " + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) + " #{short_link}")
+    begin
+      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} " + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) + " #{short_link}"
+      Twitter.update(tweet)
+    rescue Twitter::Error::Forbidden
+      puts "Caught an exception during posting following tweet: [#{tweet}]: #{$!}"
+    end
   end
 end
