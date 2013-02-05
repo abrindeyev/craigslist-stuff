@@ -13,7 +13,7 @@ describe "#new" do
     @matcher.get_schools.should be_an_instance_of Array
   end
 
-  it "contains 34 school polygons in Fremont district" do
+  it "contains 33 school polygons in Fremont district" do
     @matcher.get_schools.size.should eq(33)
   end
 
