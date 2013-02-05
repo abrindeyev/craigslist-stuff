@@ -182,6 +182,22 @@ class AddressHarvester
         :street => '3939 Monroe Avenue',
         :wd => false,
       },
+      'Pebble Creek Communites' => {
+        :name => 'Pebble Creek',
+        :street => '40777 High Street, Fremont, CA 94538',
+        :dw => true,
+        :mw => true,
+        :ac => true,
+        :uri => 'http://www.pebblecreekcommunities.com',
+      },
+      '510-651-9080' => {
+        :name => 'Pebble Creek',
+        :street => '40777 High Street, Fremont, CA 94538',
+        :dw => true,
+        :mw => true,
+        :ac => true,
+        :uri => 'http://www.pebblecreekcommunities.com',
+      },
     }
   end
 
