@@ -186,6 +186,7 @@ class AddressHarvester
   end
 
   def initialize(uri)
+    return nil if uri.nil? or uri == ''
     self.init
     if uri.match(/^http:\/\//)
       @source = open(uri).read
@@ -245,6 +246,9 @@ class AddressHarvester
 
     # Getting rent price
     self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
+
+    # Getting # of bedrooms
+    self.set_feature(:bedrooms, $1.to_i) if @title.match(/ (\d)br /)
 
     # Getting sq ft
     if @title.match(/(\d{3,4})\s*(?:sq)?ft/)

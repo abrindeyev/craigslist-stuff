@@ -2,9 +2,23 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 
 samples = File.join(File.dirname(__FILE__), 'samples')
 
-describe "Address harvester object" do
-  subject { AddressHarvester.new(File.join(samples, '3574423811.html')) }
-  it { should_not eq(nil) }
+describe "#new" do
+  context "with nil parameter" do
+    it "should return empty object with nil" do
+      AddressHarvester.new(nil).should be_an_instance_of AddressHarvester
+    end
+  end
+  context "with local filename" do
+    it "should return object reference" do
+      AddressHarvester.new(File.join(samples, '3574423811.html')).should_not eql nil
+    end
+    it "shouldn't have # of bedrooms" do
+      AddressHarvester.new(File.join(samples, 'removed.html')).have_feature?(:bedrooms).should eql false
+    end
+    it "should return correct # of bedrooms" do
+      AddressHarvester.new(File.join(samples, '3574423811.html')).get_feature(:bedrooms).should eql 2
+    end
+  end
 end
 
 describe "Get xstreet0 tag value" do
