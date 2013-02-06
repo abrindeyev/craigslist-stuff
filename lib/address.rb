@@ -74,6 +74,7 @@ class AddressHarvester
       '41777 Grimmer' => {
         :name => 'Colonial Gardens',
         :street => '41777 Grimmer Boulevard',
+        :uri => 'http://www.woodmontrentals.com/colonial-gardens-apartments/',
         :wd => false
       },
       'Lakeview Apartments' => {
@@ -197,6 +198,16 @@ class AddressHarvester
         :mw => true,
         :ac => true,
         :uri => 'http://www.pebblecreekcommunities.com',
+      },
+      'Monte Merano' => {
+        :name => 'Monte Merano',
+        :street => '39149 Guardino Drive',
+        :wd => true,
+      },
+      'Logan Park Apartments' => {
+        :name => 'Logan Park',
+        :street => '38200 Logan Drive',
+        :wd => false,
       },
     }
   end
