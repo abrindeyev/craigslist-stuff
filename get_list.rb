@@ -79,7 +79,7 @@ else
       f.write(receipt)
     end
     begin
-      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{(post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
+      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
       if tweet == last_tweet
         puts "duplicate, not tweeting!"
       else
