@@ -437,7 +437,7 @@ class AddressHarvester
       end
     end
 
-    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{@addr_state}"
+    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{self.get_state}"
   end
 
   def get_city
