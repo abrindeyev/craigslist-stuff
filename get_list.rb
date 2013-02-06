@@ -38,6 +38,7 @@ else
       f << started_at_posting_uri
   end
   i = 0
+  last_tweet = ''
   links.each do |a|
     i = i + 1
     uri = a['href']
@@ -77,12 +78,18 @@ else
     File.open("/var/www/html/#{filename}", 'w') do |f|
       f.write(receipt)
     end
-    full_link = "http://#{external_ip}/#{filename}"
-    short_link = open("http://clck.ru/--?url="+full_link).read
-    puts short_link
     begin
-      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} " + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) + " #{short_link}"
-      Twitter.update(tweet)
+      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{(post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
+      if tweet == last_tweet
+        puts "duplicate, not tweeting!"
+      else
+        full_link = "http://#{external_ip}/#{filename}"
+        short_link = open("http://clck.ru/--?url="+full_link).read
+        puts short_link
+        tweeted = "#{tweet} #{short_link}"
+        Twitter.update(tweet)
+        last_tweet = tweet
+      end
     rescue Twitter::Error::Forbidden
       puts "Caught an exception during posting following tweet: [#{tweet}]: #{$!}"
     end
