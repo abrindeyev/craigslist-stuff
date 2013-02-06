@@ -33,6 +33,7 @@ class AddressHarvester
       'Watermark Place' => {
         :street => '38680 Waterside Cir',
         :matchers => ['Watermark Place Apartments'],
+        :rentsentinel_key => 'Watermark Place',
         :features => {
           :wd => true,
         },
@@ -47,6 +48,7 @@ class AddressHarvester
       'Heritage Village' => {
         :street => '38050 Fremont Blvd',
         :matchers => ['888-727-8177', 'Heritage Village Apartment Homes'],
+        :rentsentinel_key => 'Heritage Village Apartments',
         :features => {
           :wd => true,
         },
@@ -89,6 +91,7 @@ class AddressHarvester
       'Colonial Gardens' => {
         :street => '41777 Grimmer Boulevard',
         :uri => 'http://www.woodmontrentals.com/colonial-gardens-apartments/',
+        :rentsentinel_key => 'Colonial Gardens Apartments',
         :matchers => ['41777 Grimmer'],
         :features => {
           :wd => false,
@@ -125,6 +128,7 @@ class AddressHarvester
       'Countrywood' => {
         :street => '4555 Thornton Ave',
         :matchers => ['Countrywood Apartments'],
+        :rentsentinel_key => 'Countrywood Apartment Homes',
         :features => {
           :wd => false,
         },
@@ -146,6 +150,7 @@ class AddressHarvester
       'Alborada' => {
         :street => '1001 Beethoven Common',
         :matchers => ['Alborada Apartments', '/ca_alboradaapartments/floorplans/', '1001 Beethoven Common'],
+        :rentsentinel_key => 'Alborada',
         :features => {
           :wd => true,
         },
@@ -160,6 +165,17 @@ class AddressHarvester
       'Avalon Fremont' => {
         :street => '39939 Stevenson Common',
         :matchers => ['Avalon Fremont'],
+        :features => {
+          :wd => true,
+          :dw => true,
+          :ac => true,
+        },
+      },
+      'Avalon Union City' => {
+        :street => '24 Union Square',
+        :city => 'Union City',
+        :uri => 'http://www.avaloncommunities.com/california/union-city-apartments/avalon-union-city/',
+        :rentsentinel_key => 'Avalon Union City',
         :features => {
           :wd => true,
           :dw => true,
@@ -235,6 +251,40 @@ class AddressHarvester
           :wd => false,
         },
       },
+      'Mission Peaks I' => {
+        :street => '1401 Red Hawk Circle',
+        :rentsentinel_key => 'Mission Peaks I',
+        :features => {
+          :wd => true,
+        },
+      },
+      'Mission Peaks II' => {
+        :street => '39451 Gallaudet Drive',
+        :rentsentinel_key => 'Mission Peaks II',
+        :features => {
+          :wd => true,
+        },
+      },
+      'Parkside' => {
+        :street => '1501 Decoto Road',
+        :city => 'Union City',
+        :rentsentinel_key => 'Parkside',
+        :features => {
+          :dw => true,
+          :ac => true,
+        },
+      },
+      'Verandas' => {
+        :street => '33 Union Square',
+        :city => 'Union City',
+        :uri => 'http://www.breproperties.com/california/union-city-apartments/verandas/sfo1108#/Community-Overview',
+        :rentsentinel_key => 'Verandas',
+        :features => {
+          :dw => true,
+          :ac => true,
+          :wd => true,
+        },
+      },
     }
   end
 
@@ -249,6 +299,7 @@ class AddressHarvester
     @features = {
       :posting_uri => uri
     }
+    @merged_complex = ''
     @score = nil
     @scoring_log = []
 
@@ -281,19 +332,36 @@ class AddressHarvester
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
-    self.match_against_database if @body != ''
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
 
+    # Tracking of RentSentinel.com postings
+    rentsentinel_links = doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
+    if rentsentinel_links.size > 0
+      # rentsentinel.com form detected by address
+      rsdoc = Nokogiri::HTML(open(rentsentinel_links[0]).read)
+      apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      if apartments_name != ''
+        # trying to find a match in our database
+        @PDB.each_pair do |name, complex|
+          self.merge_attributes_from_db(name, complex) if complex.include?(:rentsentinel_key) and complex[:rentsentinel_key] == apartments_name
+        end
+      end
+    end
+
+    self.match_against_database if @body != '' unless self.have_full_address?
+
     # Trying to get GPS coordinates and reverse-geocode them through Google Maps API
-    gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
-    unless gps_data == ''
-      @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
-      @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
-      if @lat and @lon
-        revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
-        resp = RestClient.get(revgeocode_url)
-        geo = JSON.parse(resp.body)
-        @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK' 
+    unless self.have_full_address?
+      gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
+      unless gps_data == ''
+        @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
+        @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
+        if @lat and @lon
+          revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+          resp = RestClient.get(revgeocode_url)
+          geo = JSON.parse(resp.body)
+          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK' 
+        end
       end
     end
 
@@ -319,17 +387,16 @@ class AddressHarvester
 
   def match_against_database
     @PDB.each_pair do |name, complex|
-      complex[:matchers].each do |pattern|
-        if @body.scan(pattern).size > 0
-          @addr_street = complex[:street]
-          @addr_city   = complex.include?(:city) ? complex[:city] : 'Fremont'
-          @addr_state  = 'CA'
-          self.set_feature(:name, name)
-          complex[:features].each_pair {|k,v| self.set_feature(k,v)}
-          break # allow only first match to prevent mixing up attributes from different db entries
+      if complex.include?(:matchers)
+        complex[:matchers].each do |pattern|
+          self.merge_attributes_from_db(name, complex) if @body.scan(pattern).size > 0
         end
       end
     end
+  end
+
+  def get_state
+    @addr_state.length == 2 ? @addr_state.upcase : @addr_state.capitalize
   end
 
   def have_full_address?
@@ -337,7 +404,7 @@ class AddressHarvester
   end
 
   def get_full_address
-    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{@addr_state}" if @addr_street != ''
+    return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{self.get_state}" if @addr_street != ''
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
@@ -465,4 +532,16 @@ class AddressHarvester
       f.write(@source)
     end
   end
+
+  def merge_attributes_from_db(name, complex)
+    raise "merge_attributes_from_db() already merged while merging [#{name}] after [#{@merged_complex}]" if @merged_complex != ''
+    @addr_street = complex[:street]
+    @addr_city   = complex.include?(:city) ? complex[:city] : 'Fremont'
+    @addr_state  = 'CA'
+    self.set_feature(:name, name)
+    self.set_feature(:uri, complex[:uri]) if complex.include?(:uri)
+    complex[:features].each_pair {|k,v| self.set_feature(k,v)}
+    @merged_complex = name
+  end
+
 end
