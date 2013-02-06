@@ -80,6 +80,19 @@
                 });
                 
             });
+
+<% if have_full_address? %>
+            $(document).ready(function($){
+                var deviceAgent = navigator.userAgent.toLowerCase();
+                var agentID = deviceAgent.match(/(iphone|ipod)/);
+                if (agentID) {
+                    $('#address_link').attr('href', 'comgooglemaps://?q=<%= URI.escape(get_full_address) %>');
+                }else
+                 { 
+                     $('#address_link').attr('href', 'http://maps.apple.com/?q=<%= URI.escape(get_full_address) %>');
+                 }
+            });
+<% end %>
         </script>
         <style type="text/css" media="screen">
             #jqt.fullscreen #home .info {
@@ -122,7 +135,7 @@
             <div id="home" class="current">
                 <div class="scroll">
                     <ul class="rounded">
-                        <% if have_full_address? %><li><a target="_blank" href="http://maps.apple.com/?q=<%= URI.escape(get_full_address) %>"><%= HTMLEntities.new.encode(get_full_address) %></a></li><% end %>
+                        <% if have_full_address? %><li class="forward"><a id="address_link" target="_blank" href=""><%= HTMLEntities.new.encode(get_full_address) %></a></li><% end %>
                         <% if get_feature(:bedrooms) != '' %><li>Bedrooms <small class="counter"><%= get_feature(:bedrooms) %></small></li><% end %>
                         <% if get_feature(:rent_price) != '' %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
                         <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
