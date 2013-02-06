@@ -286,6 +286,14 @@ class AddressHarvester
           :wd => true,
         },
       },
+      'Pepper Tree' => {
+        :street => '37767 Fremont Blvd.',
+        :uri => 'http://thepeppertreeapartments.com',
+        :matchers => ['Pepper Tree Apartments'],
+        :features => {
+          :wd => false,
+        },
+      },
     }
   end
 
