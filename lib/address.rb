@@ -294,6 +294,13 @@ class AddressHarvester
           :wd => false,
         },
       },
+      'Boulevard' => {
+        :street => '40001 Fremont Boulevard',
+        :uri => 'http://www.essexapartmenthomes.com/apartment/boulevard-apartment-homes-fremont-ca-8i04lx170701',
+        :matchers => ['Boulevard Apartment Homes'],
+        :features => {
+        },
+      },
     }
   end
 
