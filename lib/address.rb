@@ -198,6 +198,11 @@ class AddressHarvester
         :ac => true,
         :uri => 'http://www.pebblecreekcommunities.com',
       },
+      'Monte Merano' => {
+        :name => 'Monte Merano',
+        :street => '39149 Guardino Drive',
+        :wd => true,
+      },
     }
   end
 
