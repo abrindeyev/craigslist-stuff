@@ -15,199 +15,225 @@ class AddressHarvester
     ]
   
     @PDB = {
-      'VILLAS PAPILLON' => {
-        :name => 'Villas Papillon',
+      'Villas Papillon' => {
         :street => '4022 Papillon Terrace',
-        :hookups => true,
-        :ac => true,
+        :matchers => ['VILLAS PAPILLON'],
+        :features => {
+          :hookups => true,
+          :ac => true,
+        },
       },
       'Oak Pointe' => {
-        :name => 'Oak Pointe',
         :street => '4140 Irvington Ave',
-        :wd => false
+        :matchers => ['Oak Pointe'],
+        :features => {
+          :wd => false,
+        },
       },
-      'Watermark Place Apartments' => {
-        :name => 'Watermark Place',
+      'Watermark Place' => {
         :street => '38680 Waterside Cir',
-        :wd => true,
+        :matchers => ['Watermark Place Apartments'],
+        :features => {
+          :wd => true,
+        },
       },
       'Fremont Glen' => {
-        :name => 'Fremont Glen',
         :street => '889 Mowry Avenue',
-        :wd => true,
+        :matchers => ['Fremont Glen'],
+        :features => {
+          :wd => true,
+        },
       },
-      '888-727-8177' => {
-        :name => 'Heritage Village',
+      'Heritage Village' => {
         :street => '38050 Fremont Blvd',
-        :wd => true,
+        :matchers => ['888-727-8177', 'Heritage Village Apartment Homes'],
+        :features => {
+          :wd => true,
+        },
       },
-      'Heritage Village Apartment Homes' => {
-        :name => 'Heritage Village',
-        :street => '38050 Fremont Blvd',
-        :wd => true,
-      },
-      'Bridgeport Apartment Homes' => {
-        :name => 'Bridgeport',
+      'Bridgeport' => {
         :street => '36826 Cherry Street',
-        :wd => false
+        :matchers => ['Bridgeport Apartment Homes'],
+        :features => {
+          :wd => false,
+        },
       },
-      'Park Villa Apartments' => {
-        :name => 'Park Villa',
+      'Park Villa' => {
         :street => '39501 Fremont Blvd',
-        :wd => false
+        :matchers => ['Park Villa Apartments'],
+        :features => {
+          :wd => false,
+        },
       },
-      'The Rexford' => {
-        :name => 'Rexford',
+      'Rexford' => {
         :street => '3400 Country Dr',
-        :wd => false,
+        :matchers => ['The Rexford'],
+        :features => {
+          :wd => false,
+        },
       },
-      'Amber Court Apartment Homes' => {
-        :name => 'Amber Court',
+      'Amber Court' => {
         :street => '34050 Westchester Terrace',
-        :wd => true,
+        :matchers => ['Amber Court Apartment Homes'],
+        :features => {
+          :wd => true,
+        },
       },
       'Waterstone' => {
-        :name => 'Waterstone',
         :street => '39600 Fremont Boulevard',
-        :wd => false
+        :matchers => ['Waterstone'],
+        :features => {
+          :wd => false,
+        },
       },
-      '41777 Grimmer' => {
-        :name => 'Colonial Gardens',
+      'Colonial Gardens' => {
         :street => '41777 Grimmer Boulevard',
         :uri => 'http://www.woodmontrentals.com/colonial-gardens-apartments/',
-        :wd => false
+        :matchers => ['41777 Grimmer'],
+        :features => {
+          :wd => false,
+        },
       },
-      'Lakeview Apartments' => {
-        :name => 'Lakeview',
+      'Lakeview' => {
         :street => '4205 Mowry Avenue',
-        :wd => false,
+        :matchers => ['Lakeview Apartments'],
+        :features => {
+          :wd => false,
+        },
       },
-      'Pathfinder Village Apartments' => {
-        :name => 'Pathfinder Village',
+      'Pathfinder Village' => {
         :street => '39800 Fremont Blvd',
-        :wd => false
-      },
-      'pathfindervillageapts.com' => {
-        :name => 'Pathfinder Village',
-        :street => '39800 Fremont Blvd.',
-        :wd => false,
-      },
-      '/stevensonplace/?action' => {
-        :name => 'Stevenson Place',
-        :street => '4141 Stevenson Boulevard',
-        :wd => false,
+        :matchers => ['Pathfinder Village Apartments', 'pathfindervillageapts.com'],
+        :features => {
+          :wd => false,
+        },
       },
       'Stevenson Place' => {
-        :name => 'Stevenson Place',
         :street => '4141 Stevenson Boulevard',
-        :wd => false,
+        :matchers => ['Stevenson Place', '/stevensonplace/?action'],
+        :features => {
+          :wd => false,
+        },
       },
-      'CAMBRIDGE COURT' => {
-        :name => 'Cambridge Court',
+      'Cambridge Court' => {
         :street => 'Rodney Common',
-        :wd => true,
+        :matchers => ['CAMBRIDGE COURT'],
+        :features => {
+          :wd => true,
+        },
       },
-      'Countrywood Apartments' => {
-        :name => 'Countrywood',
+      'Countrywood' => {
         :street => '4555 Thornton Ave',
-        :wd => false
+        :matchers => ['Countrywood Apartments'],
+        :features => {
+          :wd => false,
+        },
       },
-      '37200 Paseo' => {
-        :name => 'Paseo Place',
+      'Paseo Place' => {
         :street => '37200 Paseo Padre Pkwy',
-        :wd => false,
+        :matchers => ['37200 Paseo'],
+        :features => {
+          :wd => false,
+        },
       },
       'Trinity Townhomes' => {
-        :name => 'Trinity Townhomes',
         :street => '39505 Trinity Way',
-        :hookups => true,
+        :matchers => ['Trinity Townhomes'],
+        :features => {
+          :hookups => true,
+        },
       },
-      'Alborada Apartments' => {
-        :name => 'Alborada',
+      'Alborada' => {
         :street => '1001 Beethoven Common',
-        :wd => true,
+        :matchers => ['Alborada Apartments', '/ca_alboradaapartments/floorplans/', '1001 Beethoven Common'],
+        :features => {
+          :wd => true,
+        },
       },
-      '/ca_alboradaapartments/floorplans/' => {
-        :name => 'Alborada',
-        :street => '1001 Beethoven Common',
-        :wd => true,
-      },
-      '1001 Beethoven Common' => {
-        :name => 'Alborada',
-        :street => '1001 Beethoven Common',
-        :wd => true,
-      },
-      'Carrington Apartments' => {
-        :name => 'Carrington',
+      'Carrington' => {
         :street => '4875 Mowry Ave',
-        :wd => false,
+        :matchers => ['Carrington Apartments'],
+        :features => {
+          :wd => false,
+        },
       },
       'Avalon Fremont' => {
-        :name => 'Avalon Fremont',
         :street => '39939 Stevenson Common',
-        :wd => true,
-        :dw => true,
-        :ac => true,
-      },
-      'Full size -- front load LG washer/dryers' => {
-        :name => 'Logan Park Apartments',
-        :street => '38304 Logan Dr',
-        :wd => true,
-      },
-      'Briarwood' => {
-        :name => 'Briarwood',
-        :street => '4200 Bay St',
-        :wd => false,
-      },
-      '2500 Medallion Dr' => {
-        :name => 'Medallion',
-        :street => '2500 Medallion Drive',
-        :city => 'Union City',
-        :wd => false,
-      },
-      'The Presidio Apartments' => {
-        :name => 'Presidio',
-        :street => '2000 Walnut Ave.',
-        :wd => true,
-        :ac => true,
-        :mw => true,
-        :dw => true,
-      },
-      'Skylark Apartments' => {
-        :name => 'Skylark',
-        :street => '34655 Skylark Dr',
-        :city => 'Union City',
-      },
-      'rancholunasol.com' => {
-        :name => 'Rancho Luna',
-        :street => '3939 Monroe Avenue',
-        :wd => false,
-      },
-      'Pebble Creek Communites' => {
-        :name => 'Pebble Creek',
-        :street => '40777 High Street, Fremont, CA 94538',
-        :dw => true,
-        :mw => true,
-        :ac => true,
-        :uri => 'http://www.pebblecreekcommunities.com',
-      },
-      '510-651-9080' => {
-        :name => 'Pebble Creek',
-        :street => '40777 High Street, Fremont, CA 94538',
-        :dw => true,
-        :mw => true,
-        :ac => true,
-        :uri => 'http://www.pebblecreekcommunities.com',
-      },
-      'Monte Merano' => {
-        :name => 'Monte Merano',
-        :street => '39149 Guardino Drive',
-        :wd => true,
+        :matchers => ['Avalon Fremont'],
+        :features => {
+          :wd => true,
+          :dw => true,
+          :ac => true,
+        },
       },
       'Logan Park Apartments' => {
-        :name => 'Logan Park',
+        :street => '38304 Logan Dr',
+        :matchers => ['Full size -- front load LG washer/dryers'],
+        :features => {
+          :wd => true,
+        },
+      },
+      'Briarwood' => {
+        :street => '4200 Bay St',
+        :matchers => ['Briarwood'],
+        :features => {
+          :wd => false,
+        },
+      },
+      'Medallion' => {
+        :street => '2500 Medallion Drive',
+        :city => 'Union City',
+        :matchers => ['2500 Medallion Dr'],
+        :features => {
+          :wd => false,
+        },
+      },
+      'Presidio' => {
+        :street => '2000 Walnut Ave.',
+        :matchers => ['The Presidio Apartments'],
+        :features => {
+          :wd => true,
+          :ac => true,
+          :mw => true,
+          :dw => true,
+        },
+      },
+      'Skylark' => {
+        :street => '34655 Skylark Dr',
+        :city => 'Union City',
+        :matchers => ['Skylark Apartments'],
+        :features => {},
+      },
+      'Rancho Luna' => {
+        :street => '3939 Monroe Avenue',
+        :matchers => ['rancholunasol.com'],
+        :features => {
+          :wd => false,
+        },
+      },
+      'Pebble Creek' => {
+        :street => '40777 High Street, Fremont, CA 94538',
+        :uri => 'http://www.pebblecreekcommunities.com',
+        :matchers => ['Pebble Creek Communites', '510-651-9080'],
+        :features => {
+          :dw => true,
+          :mw => true,
+          :ac => true,
+        },
+      },
+      'Monte Merano' => {
+        :street => '39149 Guardino Drive',
+        :matchers => ['Monte Merano'],
+        :features => {
+          :wd => true,
+        },
+      },
+      'Logan Park' => {
         :street => '38200 Logan Drive',
-        :wd => false,
+        :matchers => ['Logan Park Apartments'],
+        :features => {
+          :wd => false,
+        },
       },
     }
   end
@@ -292,13 +318,16 @@ class AddressHarvester
   end
 
   def match_against_database
-    @PDB.keys.each do |pattern|
-      if @body.scan(pattern).size > 0
-        @addr_street = @PDB[pattern][:street]
-        @addr_city   = @PDB[pattern].include?(:city) ? @PDB[pattern][:city] : 'Fremont'
-        @addr_state  = 'CA'
-        @PDB[pattern].each_pair {|k,v| self.set_feature(k,v)}
-        break # allow only first match to prevent mixing up attributes from different db entries
+    @PDB.each_pair do |name, complex|
+      complex[:matchers].each do |pattern|
+        if @body.scan(pattern).size > 0
+          @addr_street = complex[:street]
+          @addr_city   = complex.include?(:city) ? complex[:city] : 'Fremont'
+          @addr_state  = 'CA'
+          self.set_feature(:name, name)
+          complex[:features].each_pair {|k,v| self.set_feature(k,v)}
+          break # allow only first match to prevent mixing up attributes from different db entries
+        end
       end
     end
   end
