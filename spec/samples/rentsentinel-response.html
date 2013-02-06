@@ -1,0 +1,402 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1"><title>
+	Contact Mission Peaks I - 
+</title><link href="../_css/reset.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+    <script type="text/javascript">
+        function checkDate(sender, args) {
+            if (sender._selectedDate < new Date()) {
+                alert("Expected Move In date cannot be earlier than today!");
+                sender._selectedDate = new Date();
+                // set the date back to the current date
+                sender._textbox.set_Value(sender._selectedDate.format(sender._format))
+                return false;
+            }
+        }
+    </script>
+
+    <style type="text/css">
+        a
+        {
+            text-decoration:none;
+        }
+        a:hover
+        {
+            text-decoration:none;
+        }
+        body
+        {
+            font:arial;
+        }
+        #contact_container
+        {
+            margin: 10px auto;
+            padding: 0;
+            width: 800px;
+            
+        }
+        #contact_mainform
+        {
+            margin: 10px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            background-color: white;
+            
+        }
+        #contact_leftcolumn
+        {
+            float: left;
+            border-right: solid 1px #e7e7e7;
+            color: #384048;
+            padding: 10px;
+            width: 220px;
+            font: normal 11px arial;
+            line-height: 18px;
+            background-color:#98b6d8;
+        }
+        #contact_leftcolumn p {color: #384048;}
+        #contact_leftcolumn p span {font-size: 14px; font-weight: bold; color: #1a3553;}
+        #contact_leftcolumn p span.desc { font-size:12px; font-weight:normal; color: #1a3553;}
+        #contact_rightcolumn
+        {
+        
+            margin-left: 240px;
+            background-color: #fafafa;
+            padding: 10px 10px 10px 15px;
+        }
+        h1
+        {font: normal 32px arial;}
+        h2
+        {
+            font: normal 20px arial; color: #1a3553;
+        }
+        h3
+        {
+            font: normal 14px arial;
+            margin: 10px;
+        }
+        input, select, textarea
+        {
+            border: solid 1px #95d6ff;
+            font-size: 16px;
+            padding: 3px;
+            width: 300px;
+        }
+        
+        .calendarimage {width: auto;}
+        
+        .SendButton{ cursor: pointer; width: 125px;}
+        .CloseButton { cursor: pointer; width: 125px;}
+        .successWrapper{
+	        width:600px;
+	        text-align:center;
+	        padding-top:25px;
+        }
+        .successWrapper
+        {
+            text-align:center;
+            margin:auto;
+               
+        }
+        .copySuccess{
+	        color:#0fbd0f;
+	        font-size:2.8em;
+        }
+        .copyMain{
+	        color:#b2aeae;
+	        font-size:1.8em;
+	        padding-left:40px;
+	        padding-right:40px;
+        }
+        .copyLink{
+	        color:#7ec8ef;
+	        font-size:1.2em;
+        }
+        .copyHeader{
+	        font-size:1.8em;
+	        margin-bottom:10px;
+        }
+        .copyDetail{
+	        font-size:1.3em;
+	        color:#b2aeae;
+        }
+        .copyContest
+        {
+            color:#B2AEAE;
+            font-size:1.1em;
+        }
+        .successMsg{
+	        width:550px;
+	        -moz-border-radius: 15px;
+	        border-radius: 15px;
+	        background-color:#231f20;
+	        margin-top:30px;
+	        margin-bottom:75px;
+	        text-align:center;
+	        color:white;
+	        padding-bottom:10px;
+	        padding-top:15px;
+	        margin:auto;
+	        margin-bottom:50px;
+        }
+        .successMsg p{
+	        margin-left:83px;
+	        margin-right:83px;
+        }        
+        
+	
+html .ajax__calendar table th,
+html .ajax__calendar table td,
+html .ajax__calendar table caption {padding:0;}
+
+    </style>
+<link href="/WebResource.axd?d=Vpp3DCfIi_uw_RT-iUdhN8WdckISetqmDzLyR5E9gkEPPNKSgyve30BtSB3nrgQQ2DIismG9O2AkjdSqegQnn9KcZnG7UqUV9k7nVLhHIfoB0hEi1wVediFk7wdAZoy1xPUWyl28YWoXgsdql2P-A4Wv_G41&amp;t=634711601135455279" type="text/css" rel="stylesheet" /></head>
+<body>
+    <form name="frm_EmailLeadPopup" method="post" action="CLContact.aspx?C=5381&amp;RT=T&amp;Adid=20265896&amp;psid=0&amp;subID=f&amp;ID=154903" onsubmit="javascript:return WebForm_OnSubmit();" id="frm_EmailLeadPopup">
+<div>
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTEyODYzNDE4MTAPFgIeDFByZXZpb3VzUGFnZQUBIxYEAgEPZBYCZg9kFgJmDxYCHgRUZXh0BRpDb250YWN0IE1pc3Npb24gUGVha3MgSSAtIGQCAw9kFgQCAw9kFg4CAQ8WBB4DYWx0BQdXZWxjb21lHgNzcmMFIX4vUGhvdG9zL24vMzM3LzUzODEvbGcvNTM4MUxYLnBuZ2QCAw8WAh8BBQ9NaXNzaW9uIFBlYWtzIElkAgUPFgIfAQUhQmUgcGFydCBvZiBvdXIgcGVhY2VmdWwgY29tbXVuaXR5ZAIHDxYCHwEFE0ZyZW1vbnQsIENhbGlmb3JuaWFkAgkPFgIfAQULRGVzY3JpcHRpb25kAgsPFgIfAQXbAlRoaXMgZmFidWxvdXMgdHdvIGJlZHJvb20sIHR3byBiYXRocm9vbSBmbG9vcnBsYW4gaGFzIGEgdS1zaGFwZWQga2l0Y2hlbiBkZXNpZ24gd2hpY2ggcHJvdmlkZXMgcGxlbnR5IG9mIGNvdW50ZXIgc3BhY2UgYW5kIHJvb20gdG8gY29vay4gICBUaGlzIHVuaXQgYWxzbyBmZWF0dXJlcyBhIGZ1bGwgc2l6ZSB3YXNoZXIgYW5kIGRyeWVyLCBsYXJnZSBsaXZpbmcgcm9vbSBhbmQgZGluaW5nIHJvb20sIHdvb2QgYnVybmluZyBmaXJlcGxhY2UgYW5kIGEgdGVycmFjZSB3aXRoIGFkZGl0aW9uYWwgc3RvcmFnZS4gIFRoaXMgaXMgd2hhdCB5b3UndmUgYmVlbiBsb29raW5nIGZvciwgY29tZSBzZWUgaXQgdG9kYXkhZAIxDw8WAh4HRW5hYmxlZGdkZAIFD2QWBGYPFgIeB1Zpc2libGVnZAIBDw8WAh8FaGRkGAIFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYBBQxpbWdfQ2FsZW5kYXIFEGNhcHRjaGFfVmFsaWRhdGUPBSQ3OTAyN2EzYS03NjAwLTQzNGMtOWY2Yy01YWUyODYzODM2ZGFk2J0vQ8h4LR3z2S/58xerjhilquI=" />
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['frm_EmailLeadPopup'];
+if (!theForm) {
+    theForm = document.frm_EmailLeadPopup;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=NVK9jBaXUx_04W3DOwZ8X4RYUn3QN2BA4DjROSOh_9xAx89sPGhzJUx6SR2Swzt0ATQYK2ewuVpz_rU4l2zeewmbIII1&amp;t=634605294709717464" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=oeuzETtEA_ktcAscHD5R02yLnX0WPh5q9SBptAjyquboasKVA6WW_JIaWoy5AnI6bC1nOFxQHJhGGiQ_ucMQVhZ_lS3qQtiYmXoDErM1ZUKpuvpUdizp8b4hY9q9Ag9GLwmegBTPBU6_7Gc_7sCwR3QYb2I1&amp;t=330d1e5a" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=1JJOpj707ZiM471n9zyqH-9pJpcBgGnEA_WK6EtUlkpxAxoiq_3AKMx1aj5zcJg7Pl_e5ShMeH4cl_Mu8_iw099QZbkBH8_yhHBTLqOIdBrB19xseVC0Npftd0h59qx7V2Gqa9Mo1rUviBO7yRk-WOLqbZg1&amp;t=609b88bb" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=XcwMbeCsnKRHRvR_4hW_MtkFLfRVCYx-GmTyJPD_boDbDzfGF42rZWCHb4qqz5vqWWgMGrueCiZyEyxmMRmbCd7PgKvxf57tdes_j7sVfup3jNPH_K5hi2dlLAWLcIfmUvXnzuKP3-vFt79fieXH6ONSFZyrxKD3c6JtoAM5UJOwP_MH0&amp;t=609b88bb" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=u9OiPpUmuBxzuZpLV_txMMANOapvX3Dav99Hu-jvUjOdu3TvQ-V-yXh96My_BnVCv8XPXYQyrz-ter_W-e_NNtgwpFqfgVc9E9LDzFJt9EOdZ1r8tVYzvuptmOsIuSwbgm09swEaMLACN3N3qTwNGtk6vDc1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=mUchPMVBkvbJteXoBGszZ-lEgxSCkNi6RiZoT1YvjIpKd8LI4YrRQ70MKJXATsUsMXt45Ob7Y4g5gGxm7IGUbDMrHJMBheQ8ZaY2lg0BUPpD0U52VaA_ijS1OrOJvNDLg065ttXMHLk1uxgV2EkPQYY5iIg1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=AANE0nHlISCkgMpv-XdSR-C0Ez5YYjBiBPJ8HfWx2BWRhIVY_S21cA06OBI6OnBSgw_IXP96b0rZBSZORYm33HQLPSk5zl4XL1SpjK7VavOD9R_1MV8iPFN1EjZeJQrUotSuMCIfJhwchh0KNlbyK8P0q-k1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=4RP-nXIsdRR8nDOZk8G-FWqBnf4TNuqxYe6tmvTiBpvo-oz0LXOFvbZJwUHm-mu2UEG8r-FU1a_rNh3eSMKkCJnkD45nWiW4Ypz55-YcKn4v5rNMXMFO8pMapEXoNq3hck1rIs6eNaSvYRaRsThglSITAMI1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=lK258vwnZ31wOB352kfrnt8m4Wrgg7toPABMRF0lEtrkIAt-CgOadbiA854y-zu7MJ9GAPqXnDSi4nvFpcV0Dl65mlYxswPvcQ1iKqEG3qwUerJlsQ1-bx0wo22MJsNTpUgUZuQDU8UrcAO3my6X6U-0p5Y1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=HZETWjwrWw_uRXQN6z7nDwgosZW89MkX2lnCnaCYdu8d02m4bWe_gMwNtHkJyiEqjG_AShze4KyHUZ794FDoGy8RoNQAp0y6c0nkGf7NdXGqkVtWJaK5LB3YAGdpGsE1VKjN-IqB-yl1P2C5moFvc6XZkxc1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=ZAtVXohv5sGZqssn6yxKbJDUkIlYiT01uGuy_gL3CFXUXcRnIXaCqQFxZ9kfk5LcXKuMKq50k7eQOFs9vB79_U-usbwNhQGgLt6sA5fCw589d4HFt0fXyPyG5wGV32a-JRYw2Oo-ZE0D_Ms1Bq7sdfe8Tzs1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=7ZArDbhiHViILQQPIpVDM6MEC8FUi0LXsFSRTkDkEpj8-IGNkkNOITdjibbQMHDW9Cv8WWsEbP_VJdj_tqVae9QPrQ7ApliKVOkF2vr8CnHMuu2kCuRG313K7tUSZYfBIyojlzqRRFRy4hiSYyR9aBYLBmo1&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=Nqg8dJS3nsA9qA8FXxa-MiqdeIJwyuUfq4jr5_sA51BjxUEZafaoEz3tWq5ZfMYyFqIC2WClNX-wcE-8W8KbD7G1lSIv-asn2nyhUCbOBIQahc1LR0ynitGSHr4GkVtpv1ttlMako1yI8N3oir1m2BBDc841&amp;t=ffffffffa8b3cb5c" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+function WebForm_OnSubmit() {
+if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;
+return true;
+}
+//]]>
+</script>
+
+<div>
+
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEWFQLir5zZAQKjia2QBgKWkvXABwK/jOXUCALd9dLMDwLxzevABwKnq73bCAKF2IOzBAKa2IOzBAKb2IOzBAKY2IOzBAKZ2IOzBAKe2IOzBAK25uvWCwK35uvWCwK05uvWCwK15uvWCwKy5uvWCwLb8uihDgKZg4WiAgKQ/p2iDxsm0KTGnQRqzCPdriayBEn3ihK1" />
+</div>
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ScriptManager1', document.getElementById('frm_EmailLeadPopup'));
+Sys.WebForms.PageRequestManager.getInstance()._updateControls([], [], [], 90);
+//]]>
+</script>
+
+    <div id="contact_container">
+    
+        <div id="contact_mainform">
+        <div id="divBody">
+            <div id="contact_leftcolumn">
+                <img src="../Photos/n/337/5381/lg/5381LX.png" id="img_Banner" alt="Welcome" style="width: 90%" />
+                <h2>
+                    Mission Peaks I</h2>
+                <p>You viewed an ad titled:<br /><span>
+                    Be part of our peaceful community</span></p>
+                    <p>Located in:<br /><span>Fremont, California</span></p>
+                    <p>Description<br /><span class="desc">This fabulous two bedroom, two bathroom floorplan has a u-shaped kitchen design which provides plenty of counter space and room to cook.   This unit also features a full size washer and dryer, large living room and dining room, wood burning fireplace and a terrace with additional storage.  This is what you've been looking for, come see it today!</span></p>
+            </div>
+            <div id="contact_rightcolumn">
+            <h1>
+                    Thanks for viewing our ad!</h1>
+                <p style="font: normal 11px/16px arial; color: Gray;">
+                    To send us a comment or question, please fill out the form below. The more information
+                    you provide, the better we can help you. Be sure to include correct contact information.
+                    Thank you!</p>
+                    
+                <div id="form">
+                    <p>
+                        First Name
+                        <span id="rfv_ResponseEmail" style="color:Red;display:none;">*Required</span><br />
+                        <input name="txt_FirstName" type="text" id="txt_FirstName" />
+                    </p>
+                    <p>
+                        Last Name
+                        <br />
+                        <input name="txt_LastName" type="text" id="txt_LastName" /></p>
+                    <p>
+                        Contact Email
+                        <span id="rfv_ContactEmail" style="color:Red;display:none;">*Required</span>
+                        <span id="rev_EmailAddress" style="color:Red;display:none;">*Invalid</span><br />
+                        <input name="txt_ContactEmail" type="text" id="txt_ContactEmail" style="width:300px;" />
+                    </p>
+                    <p>
+                        Contact Phone <span style="font-style: italic;">(XXX-XXX-XXXX)</span>
+                        <span id="reg_ContactPhone" style="color:Red;display:none;">*Invalid</span><br />
+                        <input name="txt_ContactPhone" type="text" id="txt_ContactPhone" />
+                    </p>
+                    <p>
+                        Desired Move-In Date<br />
+                        <input name="txt_MoveInDate" type="text" maxlength="11" id="txt_MoveInDate" />&nbsp;
+                        <input type="image" name="img_Calendar" id="img_Calendar" class="calendarimage" src="../_images/calendar.png" alt="Click to show calendar" style="border-width:0px;" />
+                        
+                    </p>
+                    <p>
+                        Desired Bedrooms<br />
+                        <select name="ddl_BedroomPreferences" id="ddl_BedroomPreferences">
+	<option value="0">0</option>
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+
+</select>
+                    </p>
+                     <p>
+                        Desired Bathrooms<br />
+                        <select name="ddl_BathroomPreferences" id="ddl_BathroomPreferences">
+	<option value="1">1</option>
+	<option value="2">2</option>
+	<option value="3">3</option>
+	<option value="4">4</option>
+	<option value="5">5</option>
+
+</select>
+                    </p>
+                    <p>Comments<br />  <textarea name="txt_Comments" rows="5" cols="20" id="txt_Comments" style="width:450px;"></textarea>
+                        
+                    </p>
+                    <p>To confirm that you're a real person, please type the word in the image into the box below.
+                   <div style="margin: 0; margin-bottom: 5px; padding: 0; width: 200px; border: solid 1px #cccccc;">
+                     <div style='background-color:White;'><img src="CaptchaImage.axd?guid=79027a3a-7600-434c-9f6c-5ae2863836da" border='0' width=200 height=60></div></div>
+                                    <input name="txt_Captcha" type="text" id="txt_Captcha" style="width:250px;" />&nbsp;
+                                    <span id="rfv_Captcha" style="color:Red;visibility:hidden;">Please Enter Captcha</span><br />
+                                    <span id="lbl_CaptchaError" style="color:Red;"></span>
+                    </p>
+                    <p style="margin-top: 15px;">
+                      <input type="submit" name="btn_Submit" value="Send" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;btn_Submit&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="btn_Submit" class="SendButton" style="width:70px;" />&nbsp;&nbsp;&nbsp;
+                                    <input type="button" value="Close" class="CloseButton" onclick="javascript:window.close()" />
+                    </p>
+                </div>
+                 
+            </div>
+            </div>
+
+        </div>
+    </div>
+
+        
+    <p style="text-align: center;color: gray;">This form provided by RentSentinel. Learn more at <a href="http://www.rentsentinel.com">www.rentsentinel.com</a>.</p>
+    
+<script type="text/javascript">
+//<![CDATA[
+var Page_Validators =  new Array(document.getElementById("rfv_ResponseEmail"), document.getElementById("rfv_ContactEmail"), document.getElementById("rev_EmailAddress"), document.getElementById("reg_ContactPhone"), document.getElementById("rfv_Captcha"));
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+var rfv_ResponseEmail = document.all ? document.all["rfv_ResponseEmail"] : document.getElementById("rfv_ResponseEmail");
+rfv_ResponseEmail.controltovalidate = "txt_FirstName";
+rfv_ResponseEmail.errormessage = "*Required";
+rfv_ResponseEmail.display = "Dynamic";
+rfv_ResponseEmail.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+rfv_ResponseEmail.initialvalue = "";
+var rfv_ContactEmail = document.all ? document.all["rfv_ContactEmail"] : document.getElementById("rfv_ContactEmail");
+rfv_ContactEmail.controltovalidate = "txt_ContactEmail";
+rfv_ContactEmail.errormessage = "*Required";
+rfv_ContactEmail.display = "Dynamic";
+rfv_ContactEmail.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+rfv_ContactEmail.initialvalue = "";
+var rev_EmailAddress = document.all ? document.all["rev_EmailAddress"] : document.getElementById("rev_EmailAddress");
+rev_EmailAddress.controltovalidate = "txt_ContactEmail";
+rev_EmailAddress.errormessage = "*Invalid";
+rev_EmailAddress.display = "Dynamic";
+rev_EmailAddress.evaluationfunction = "RegularExpressionValidatorEvaluateIsValid";
+rev_EmailAddress.validationexpression = "^[\\.\\+_a-zA-Z0-9-]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*(\\.[a-zA-Z]{2,6})$";
+var reg_ContactPhone = document.all ? document.all["reg_ContactPhone"] : document.getElementById("reg_ContactPhone");
+reg_ContactPhone.controltovalidate = "txt_ContactPhone";
+reg_ContactPhone.errormessage = "*Invalid";
+reg_ContactPhone.display = "Dynamic";
+reg_ContactPhone.evaluationfunction = "RegularExpressionValidatorEvaluateIsValid";
+reg_ContactPhone.validationexpression = "\\d{3}-\\d{3}-\\d{4}";
+var rfv_Captcha = document.all ? document.all["rfv_Captcha"] : document.getElementById("rfv_Captcha");
+rfv_Captcha.controltovalidate = "txt_Captcha";
+rfv_Captcha.errormessage = "Please Enter Captcha";
+rfv_Captcha.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
+rfv_Captcha.initialvalue = "";
+//]]>
+</script>
+
+
+<script type="text/javascript">
+//<![CDATA[
+
+var Page_ValidationActive = false;
+if (typeof(ValidatorOnLoad) == "function") {
+    ValidatorOnLoad();
+}
+
+function ValidatorOnSubmit() {
+    if (Page_ValidationActive) {
+        return ValidatorCommonOnSubmit();
+    }
+    else {
+        return true;
+    }
+}
+        Sys.Application.initialize();
+
+document.getElementById('rfv_ResponseEmail').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('rfv_ResponseEmail'));
+}
+
+document.getElementById('rfv_ContactEmail').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('rfv_ContactEmail'));
+}
+
+document.getElementById('rev_EmailAddress').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('rev_EmailAddress'));
+}
+
+document.getElementById('reg_ContactPhone').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('reg_ContactPhone'));
+}
+Sys.Application.add_init(function() {
+    $create(AjaxControlToolkit.CalendarBehavior, {"animated":false,"button":$get("img_Calendar"),"id":"calendarButtonExtender"}, {"dateSelectionChanged":checkDate}, null, $get("txt_MoveInDate"));
+});
+
+document.getElementById('rfv_Captcha').dispose = function() {
+    Array.remove(Page_Validators, document.getElementById('rfv_Captcha'));
+}
+//]]>
+</script>
+</form>
+</body>
+</html>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('[id$=txt_MoveInDate]').keydown(function (e) { e.preventDefault() });
+    });
+</script>
