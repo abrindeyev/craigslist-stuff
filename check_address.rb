@@ -56,6 +56,7 @@ if post.get_city.match(/fremont/i)
   end
   puts "Walking to Fremont BART: #{geo2['routes'][0]['legs'][0]['duration']['text']}"
 end
+puts "Matched as #{post.get_feature(:name)}" if post.have_feature?(:name)
 puts "Posting score: " + post.get_score.to_s
 puts "Scoring log:"
 post.get_scoring_log.each do |l|
