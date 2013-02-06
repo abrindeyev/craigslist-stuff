@@ -21,6 +21,12 @@ describe "#new" do
   end
 end
 
+describe "Apartments detector" do
+  it "should detect 'Pebble Creek Communities'" do
+    AddressHarvester.new(File.join(samples, '3598509706.html')).get_feature(:name).should eql 'Pebble Creek'
+  end
+end
+
 describe "Get xstreet0 tag value" do
   subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('xstreet0') }
   it { should == '120 Granada' }

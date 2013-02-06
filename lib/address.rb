@@ -231,7 +231,7 @@ class AddressHarvester
       'Pebble Creek' => {
         :street => '40777 High Street, Fremont, CA 94538',
         :uri => 'http://www.pebblecreekcommunities.com',
-        :matchers => ['Pebble Creek Communites', '510-651-9080'],
+        :matchers => ['Pebble Creek Communities', '510-651-9080'],
         :features => {
           :dw => true,
           :mw => true,
