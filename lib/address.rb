@@ -301,6 +301,16 @@ class AddressHarvester
         :features => {
         },
       },
+      'Arbordale Gardens' => {
+        :street => '42010 Blacow Rd',
+        :uri => 'http://arbordalegardens.com',
+        :matchers => ['Arbordale Gardens'],
+        :features => {
+          :wd => false,
+          :dw => true,
+          :parking_lots => 1,
+        },
+      },
     }
   end
 
