@@ -87,7 +87,7 @@ else
         short_link = open("http://clck.ru/--?url="+full_link).read
         puts short_link
         tweeted = "#{tweet} #{short_link}"
-        Twitter.update(tweet)
+        Twitter.update(tweeted)
         last_tweet = tweet
       end
     rescue Twitter::Error::Forbidden
