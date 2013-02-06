@@ -203,6 +203,11 @@ class AddressHarvester
         :street => '39149 Guardino Drive',
         :wd => true,
       },
+      'Logan Park Apartments' => {
+        :name => 'Logan Park',
+        :street => '38200 Logan Drive',
+        :wd => false,
+      },
     }
   end
 
