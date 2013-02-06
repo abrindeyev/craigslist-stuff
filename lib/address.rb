@@ -357,10 +357,10 @@ class AddressHarvester
       end
     end
 
-    self.match_against_database if @body != '' unless self.have_full_address?
+    self.match_against_database if @body != '' if @addr_street == ''
 
     # Trying to get GPS coordinates and reverse-geocode them through Google Maps API
-    unless self.have_full_address?
+    if @addr_street == ''
       gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
       unless gps_data == ''
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
