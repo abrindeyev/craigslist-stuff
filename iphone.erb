@@ -126,7 +126,7 @@
                         <% if get_feature(:bedrooms) != '' %><li>Bedrooms <small class="counter"><%= get_feature(:bedrooms) %></small></li><% end %>
                         <% if get_feature(:rent_price) != '' %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
                         <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
-                        <% if get_feature(:name) != '' %><li>Matched as <small class="counter"><%= get_feature(:name) %></small></li><% end %>
+                        <% if get_feature(:name) != '' %><li<% if get_feature(:uri) != '' %> class="forward"><a href="<%= get_feature(:uri) %>" target="_blank"<% end %>>Matched as <small class="counter"><%= get_feature(:name) %></small><% if get_feature(:uri) != '' %></a><% end %></li><% end %>
                         <% if get_feature(:neighborhood) != '' %><li>Neighborhood <small class="counter"><%= get_feature(:neighborhood) %></small></li><% end %>
                         <li class="arrow"><a href="#scoringlog">Score <small class="counter"><%= get_score %></small></a></li>
                     </ul>
