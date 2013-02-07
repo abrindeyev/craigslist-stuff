@@ -70,7 +70,7 @@ else
 
     n = ''
     geo['results'][0]['address_components'].each {|h| n = h['short_name'] if h['types'][0] == 'neighborhood' }
-    post.set_feature(:neighborhood, n)
+    post.set_feature(:neighborhood, n) unless n == ''
 
     print "[#{ post.get_score.to_s }] "
 
