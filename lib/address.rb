@@ -351,7 +351,7 @@ class AddressHarvester
   end
 
   def get_feature(f)
-    @features.include?(f) ? @features[f] : ''
+    @features.include?(f) ? @features[f] : nil
   end
 
   def get_features
