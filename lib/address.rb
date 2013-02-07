@@ -151,7 +151,7 @@ class AddressHarvester
       'Alborada' => {
         :street => '1001 Beethoven Common',
         :matchers => ['Alborada Apartments', '/ca_alboradaapartments/floorplans/', '1001 Beethoven Common'],
-        :rentsentinel_key => 'Alborada',
+        :rentsentinel_key => ['Alborada', 'Alborada Apartments'],
         :features => {
           :wd => true,
         },
