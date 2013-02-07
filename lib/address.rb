@@ -557,6 +557,7 @@ class AddressHarvester
     self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
     self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
     self.update_score(-150, "Have coin laundry on-site: no W/D") if @body.match(/coin(?:-op)?\s+(laundry|washer)/i)
+    self.update_score(-300, "Offers month to month lease") if @body.match(/month(?: |-)+to(?: |-)+month/i)
     unless self.get_feature(:school_rating).nil?
       self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
     end
