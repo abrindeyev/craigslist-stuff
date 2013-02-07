@@ -18,12 +18,21 @@ describe "#new" do
     it "should return correct # of bedrooms" do
       AddressHarvester.new(File.join(samples, '3574423811.html')).get_feature(:bedrooms).should eql 2
     end
+    it "shoudn't have valid address for simple postings without map and inline address" do
+      AddressHarvester.new(File.join(samples, '3598149448.html')).have_full_address?.should eql false
+    end
   end
 end
 
 describe "Apartments detector" do
   it "should detect 'Pebble Creek Communities'" do
     AddressHarvester.new(File.join(samples, '3598509706.html')).get_feature(:name).should eql 'Pebble Creek'
+  end
+end
+
+describe "Score engine" do
+  it "should return score for postings without any address" do
+    AddressHarvester.new(File.join(samples, '3598149448.html')).get_score.should_not be_nil
   end
 end
 
