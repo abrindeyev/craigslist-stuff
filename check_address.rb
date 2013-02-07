@@ -10,6 +10,7 @@ require 'lib/address'
 require 'lib/school'
 
 post = AddressHarvester.new(ARGV[0])
+raise "Post has been removed" if post.has_been_removed?
 unless post.have_full_address? 
   puts "Can't get full address for that posting, giving up!"
   exit -1

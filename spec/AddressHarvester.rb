@@ -21,6 +21,9 @@ describe "#new" do
     it "shoudn't have valid address for simple postings without map and inline address" do
       AddressHarvester.new(File.join(samples, '3598149448.html')).have_full_address?.should eql false
     end
+    it "should detect removed posting" do
+      AddressHarvester.new(File.join(samples, 'removed.html')).has_been_removed?.should eql true
+    end
   end
 end
 

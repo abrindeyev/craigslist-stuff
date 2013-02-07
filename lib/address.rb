@@ -342,8 +342,17 @@ class AddressHarvester
     @addr_city   = ''
     @addr_state  = ''
 
-    self.parse
+    if @source.match(/This posting has been flagged for removal/)
+      @post_has_been_removed = true
+    else
+      @post_has_been_removed = false
+      self.parse
+    end
     self
+  end
+
+  def has_been_removed?
+    @post_has_been_removed
   end
 
   def have_feature?(f)
