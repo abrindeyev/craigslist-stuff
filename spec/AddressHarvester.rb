@@ -42,6 +42,12 @@ describe "Score engine" do
   end
 end
 
+describe "Raw address detector" do
+  it "should return '40711 Robin Street, Fremont, CA'" do
+    AddressHarvester.new(File.join(samples, '3599138803.html')).get_full_address.should eql '40711 Robin Street, Fremont, CA'
+  end
+end
+
 describe "Get xstreet0 tag value" do
   subject { AddressHarvester.new(File.join(samples, '3574423811.html')).get_tag('xstreet0') }
   it { should == '120 Granada' }

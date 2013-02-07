@@ -368,7 +368,11 @@ class AddressHarvester
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
 
-    # Tracking of RentSentinel.com postings
+    # ----------------------------------------------------------------------------------
+    # Getting data for full mailing address (@addr_* variables)
+    #
+    # 1. Most reliable method -> matching against our own database of patterns
+    # 1.1. Tracking of RentSentinel.com postings
     rentsentinel_links = doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
     if rentsentinel_links.size > 0
       # rentsentinel.com form detected by address
@@ -387,9 +391,25 @@ class AddressHarvester
       end
     end
 
+    # 1.2. Looking for known patterns in posting's body
     self.match_against_database if @body != '' if @addr_street == ''
 
-    # Trying to get GPS coordinates and reverse-geocode them through Google Maps API
+    # 2. Looking for raw mailing addresses in posting's body
+    if @addr_street == ''
+      addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [0-9A-Za-z ]{3,30} (?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*.{1,6}?)?,?\s+(fremont|union\s+city|newark),?\s*?(?:CA|California)(?:\s+\d{5})?/i)
+      if addrs.uniq.size > 0
+        black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
+        addrs.uniq.each do |a|
+          if not black_list.include?(a[0])
+            @addr_street = a[0]
+            @addr_city   = a[1]
+            @addr_state  = 'CA'
+          end
+        end
+      end
+    end
+
+    # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     if @addr_street == ''
       gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
       unless gps_data == ''
@@ -403,6 +423,7 @@ class AddressHarvester
         end
       end
     end
+    # ----------------------------------------------------------------------------------
 
     # Getting rent price
     self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
@@ -443,6 +464,7 @@ class AddressHarvester
   end
 
   def get_full_address
+    # returning full mailing address if it was previously parsed inside parse()
     return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{self.get_state}" if @addr_street != ''
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
@@ -456,25 +478,9 @@ class AddressHarvester
       @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
       @addr_city   = @reverse_geocoded_address_components['locality']
       @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
-    else
-      # 3. Begin our gestimates
-
-      # 3.1. Raw address search in posting's body
-      if @addr_street == ''
-        addrs = @body.gsub('<br>',' ').scan(/(\d{1,5} [0-9A-Za-z ]{3,30} (?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*.{1,6}?)?,?\s+(fremont|union\s+city|newark),?\s*?(?:CA|California)(?:\s+\d{5})?/i)
-        if addrs.uniq.size > 0
-          black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
-          addrs.uniq.each do |a|
-            if not black_list.include?(a[0])
-              @addr_street = a[0]
-              @addr_city   = a[1]
-              @addr_state  = 'CA'
-            end
-          end
-        end
-      end
     end
 
+    # return empty string if all gestimates failed
     return @addr_street == '' ? '' : "#{@addr_street}, #{@addr_city}, #{self.get_state}"
   end
 
