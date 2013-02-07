@@ -311,6 +311,14 @@ class AddressHarvester
           :parking_lots => 1,
         },
       },
+      'Woods' => {
+        :street => '40640 High St.',
+        :uri => 'http://www.essexapartmenthomes.com/apartment/the-woods-fremont-ca-5ti800170664',
+        :matchers => ['Woods Apartment Homes'],
+        :features => {
+          :wd => true,
+        },
+      },
     }
   end
 

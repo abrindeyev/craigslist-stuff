@@ -28,6 +28,9 @@ describe "Apartments detector" do
   it "should detect 'Pebble Creek Communities'" do
     AddressHarvester.new(File.join(samples, '3598509706.html')).get_feature(:name).should eql 'Pebble Creek'
   end
+  it "should detect 'Woods'" do
+    AddressHarvester.new(File.join(samples, '3599422360.html')).get_feature(:name).should eql 'Woods'
+  end
 end
 
 describe "Score engine" do
