@@ -369,7 +369,12 @@ class AddressHarvester
       if apartments_name != ''
         # trying to find a match in our database
         @PDB.each_pair do |name, complex|
-          self.merge_attributes_from_db(name, complex) if complex.include?(:rentsentinel_key) and complex[:rentsentinel_key] == apartments_name
+          if complex.include?(:rentsentinel_key)
+            matchers = complex[:rentsentinel_key].kind_of?(String) ? [ complex[:rentsentinel_key] ] : complex[:rentsentinel_key]
+            matchers.each do |pattern|
+              self.merge_attributes_from_db(name, complex) if pattern == apartments_name
+            end
+          end
         end
       end
     end
