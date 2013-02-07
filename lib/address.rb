@@ -319,6 +319,14 @@ class AddressHarvester
           :wd => true,
         },
       },
+      'Garden Village' => {
+        :street => '36707 San Pedro Drive',
+        :matchers => ['Garden Village Apartments'],
+        :features => {
+          :wd => false,
+          :dw => true,
+        },
+      },
     }
   end
 
