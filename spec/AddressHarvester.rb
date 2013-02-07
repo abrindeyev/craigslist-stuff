@@ -31,8 +31,11 @@ describe "Apartments detector" do
 end
 
 describe "Score engine" do
-  it "should return score for postings without any address" do
+  it "should return non-nil score for postings without any address" do
     AddressHarvester.new(File.join(samples, '3598149448.html')).get_score.should_not be_nil
+  end
+  it "should return digital score for postings without any address" do
+    AddressHarvester.new(File.join(samples, '3598149448.html')).get_score.should be_a(Fixnum)
   end
 end
 
