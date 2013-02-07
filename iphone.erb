@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title><%= (get_feature(:name) == '' ? (@addr_street == '' ? get_feature(:price) : @addr_street ) : get_feature(:name)) %></title>
+        <title><%= (get_feature(:name) ? (@addr_street == '' ? get_feature(:price) : @addr_street ) : get_feature(:name)) %></title>
         <link rel="stylesheet" href="jQTouch/themes/css/jqtouch.css" title="jQTouch">
         <link rel="stylesheet" href="jQTouch//themes/css/apple.css" title="Apple">
 
@@ -136,11 +136,11 @@
                 <div class="scroll">
                     <ul class="rounded">
                         <% if have_full_address? %><li class="forward"><a id="address_link" target="_blank" href=""><%= HTMLEntities.new.encode(get_full_address) %></a></li><% end %>
-                        <% if get_feature(:bedrooms) != '' %><li>Bedrooms <small class="counter"><%= get_feature(:bedrooms) %></small></li><% end %>
-                        <% if get_feature(:rent_price) != '' %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
-                        <% if get_feature(:sqft) != '' %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
-                        <% if get_feature(:name) != '' %><li<% if get_feature(:uri) != '' %> class="forward"><a href="<%= get_feature(:uri) %>" target="_blank"<% end %>>Matched as <small class="counter"><%= get_feature(:name) %></small><% if get_feature(:uri) != '' %></a><% end %></li><% end %>
-                        <% if get_feature(:neighborhood) != '' %><li>Neighborhood <small class="counter"><%= get_feature(:neighborhood) %></small></li><% end %>
+                        <% if get_feature(:bedrooms) %><li>Bedrooms <small class="counter"><%= get_feature(:bedrooms) %></small></li><% end %>
+                        <% if get_feature(:rent_price) %><li>Price <small class="counter">$<%= get_feature(:rent_price) %></small></li><% end %>
+                        <% if get_feature(:sqft) %><li>Area, sq. ft. <small class="counter"><%= get_feature(:sqft) %></small></li><% end %>
+                        <% if get_feature(:name) %><li<% if get_feature(:uri) %> class="forward"><a href="<%= get_feature(:uri) %>" target="_blank"<% end %>>Matched as <small class="counter"><%= get_feature(:name) %></small><% if get_feature(:uri) %></a><% end %></li><% end %>
+                        <% if get_feature(:neighborhood) %><li>Neighborhood <small class="counter"><%= get_feature(:neighborhood) %></small></li><% end %>
                         <li class="arrow"><a href="#scoringlog">Score <small class="counter"><%= get_score %></small></a></li>
                     </ul>
                 </div>
