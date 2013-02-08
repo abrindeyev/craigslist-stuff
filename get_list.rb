@@ -26,6 +26,7 @@ end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
 last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
 last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read.gsub(/\n/,'') : ''
+puts "Last seen posting uri: #{last_seen_posting_uri}\n"
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
   exit -1
@@ -34,6 +35,7 @@ else
   # remember current position in file before processing
   # that help not to process same postings in case of 
   # fatal error in any of that again and again
+  puts "We'll start next time on this URI: [#{started_at_posting_uri}]"
   open(last_seen_file, 'w') do |f|
       f << started_at_posting_uri
   end
