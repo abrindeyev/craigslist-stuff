@@ -77,7 +77,8 @@ class AddressHarvester
       },
       'Amber Court' => {
         :street => '34050 Westchester Terrace',
-        :matchers => ['Amber Court Apartment Homes'],
+        :uri => 'http://woodmontrentals.com/amber-court-apartments',
+        :matchers => ['Amber Court Apartment Homes', 'Amber Court Apartments', '34050 Westchester Terr'],
         :features => {
           :wd => true,
         },
