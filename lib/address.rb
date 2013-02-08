@@ -597,6 +597,7 @@ class AddressHarvester
   end
 
   def merge_attributes_from_db(name, complex)
+    return if @merged_complex == name
     raise "merge_attributes_from_db() already merged while merging [#{name}] after [#{@merged_complex}]" if @merged_complex != ''
     @addr_street = complex[:street]
     @addr_city   = complex.include?(:city) ? complex[:city] : 'Fremont'
