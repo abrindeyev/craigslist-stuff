@@ -81,20 +81,23 @@ else
     File.open("/var/www/html/#{filename}", 'w') do |f|
       f.write(receipt)
     end
-    begin
-      tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
-      if tweet == last_tweet
-        puts "duplicate, not tweeting!"
-      else
-        full_link = "http://#{external_ip}/#{filename}"
-        short_link = open("http://clck.ru/--?url="+full_link).read
-        puts short_link
-        tweeted = "#{tweet} #{short_link}"
-        Twitter.update(tweeted)
-        last_tweet = tweet
+    if post.get_score > 0
+      begin
+        tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
+        if tweet == last_tweet
+          puts "duplicate, not tweeting!"
+        else
+          full_link = "http://#{external_ip}/#{filename}"
+          short_link = open("http://clck.ru/--?url="+full_link).read
+          puts short_link
+          tweeted = "#{tweet} #{short_link}"
+          Twitter.update(tweeted)
+          last_tweet = tweet
+        end
+      rescue Twitter::Error::Forbidden
+        puts "Caught an exception during posting following tweet: [#{tweet}]: #{$!}"
       end
-    rescue Twitter::Error::Forbidden
-      puts "Caught an exception during posting following tweet: [#{tweet}]: #{$!}"
-    end
+    else
+      puts "#{full_link} : score < 0, not tweeting"
   end
 end
