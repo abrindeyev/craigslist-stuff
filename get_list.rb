@@ -49,7 +49,7 @@ else
     post = AddressHarvester.new(uri)
     next if post.has_been_removed?
     post.backup_source_to('/var/lib/craiglist_dumps')
-    unless post.have_full_address? 
+    if post.have_full_address? 
       addr = post.get_full_address
 
       geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
