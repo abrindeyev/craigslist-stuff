@@ -220,6 +220,7 @@ class AddressHarvester
         :street => '34655 Skylark Dr',
         :city => 'Union City',
         :matchers => ['Skylark Apartments'],
+        :rentsentinel_key => 'Skylark',
         :features => {},
       },
       'Rancho Luna' => {
