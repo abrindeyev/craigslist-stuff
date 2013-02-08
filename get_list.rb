@@ -99,5 +99,6 @@ else
       end
     else
       puts "#{full_link} : score < 0, not tweeting"
+    end
   end
 end
