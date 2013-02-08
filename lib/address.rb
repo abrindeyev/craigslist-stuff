@@ -328,6 +328,13 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Marbaya' => {
+        :street => '36000 Fremont Boulevard',
+        :uri => 'http://kcmapts.com/Marbaya',
+        :matchers => ['Marbaya'],
+        :features => {
+        },
+      },
     }
   end
 
