@@ -50,29 +50,27 @@ else
     next if post.has_been_removed?
     post.backup_source_to('/var/lib/craiglist_dumps')
     unless post.have_full_address? 
-      puts "[---]"
-      next
+      addr = post.get_full_address
+
+      geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
+      resp = RestClient.get(geocode_url)
+      geo = JSON.parse(resp.body)
+      unless geo['status'] == 'OK'
+        puts "#{uri} : geocode failed: #{geo['status']}"
+        next
+      end
+      a_lat = geo['results'][0]['geometry']['location']['lat']
+      a_lng = geo['results'][0]['geometry']['location']['lng']
+
+      s = SchoolMatcher.new(a_lat, a_lng)
+      post.set_feature(:school_name, s.get_school_name)
+      post.set_feature(:school_rating, s.get_rating)
+      post.set_feature(:school_addr, s.get_school_address)
+
+      n = ''
+      geo['results'][0]['address_components'].each {|h| n = h['short_name'] if h['types'][0] == 'neighborhood' }
+      post.set_feature(:neighborhood, n) unless n == ''
     end
-    addr = post.get_full_address
-
-    geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
-    resp = RestClient.get(geocode_url)
-    geo = JSON.parse(resp.body)
-    unless geo['status'] == 'OK'
-      puts "#{uri} : geocode failed: #{geo['status']}"
-      next
-    end
-    a_lat = geo['results'][0]['geometry']['location']['lat']
-    a_lng = geo['results'][0]['geometry']['location']['lng']
-
-    s = SchoolMatcher.new(a_lat, a_lng)
-    post.set_feature(:school_name, s.get_school_name)
-    post.set_feature(:school_rating, s.get_rating)
-    post.set_feature(:school_addr, s.get_school_address)
-
-    n = ''
-    geo['results'][0]['address_components'].each {|h| n = h['short_name'] if h['types'][0] == 'neighborhood' }
-    post.set_feature(:neighborhood, n) unless n == ''
 
     print "[#{ post.get_score.to_s }] "
 
@@ -83,7 +81,7 @@ else
     end
     if post.get_score > 0
       begin
-        tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address)
+        tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]')
         if tweet == last_tweet
           puts "duplicate, not tweeting!"
         else
