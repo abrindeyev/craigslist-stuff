@@ -49,6 +49,9 @@ describe "Raw address detector" do
   it "should return '40711 Robin Street, Fremont, CA'" do
     AddressHarvester.new(File.join(samples, '3599138803.html')).get_full_address.should eql '40711 Robin Street, Fremont, CA'
   end
+  it "should return '23 Raintree Court, Hayward, CA'" do
+    AddressHarvester.new(File.join(samples, '3601613904.html')).get_full_address.should eql '23 Raintree Court, Hayward, CA'
+  end
 end
 
 describe "Get xstreet0 tag value" do
