@@ -336,6 +336,15 @@ class AddressHarvester
         :features => {
         },
       },
+      'Creekside Village' => {
+        :street => '2999 Sequoia Terrace',
+        :uri => 'http://www.sheaapartments.com/apartments/creekside-village/',
+        :matchers => ['Creekside Village'],
+        :features => {
+          :wd => true,
+          :dw => true,
+        },
+      },
     }
   end
 
