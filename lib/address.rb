@@ -345,6 +345,16 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Eaves Union City' => {
+        :street => '2175 Decoto Road',
+        :city => 'Union City',
+        :uri => 'http://www.eavesbyavalon.com/california/union-city-apartments/eaves-union-city/',
+        :rentsentinel_key => 'eaves Union City',
+        :features => {
+          :wd => false,
+          :dw => true,
+        },
+      },
     }
   end
 
