@@ -81,7 +81,7 @@ else
     File.open("/var/www/html/#{filename}", 'w') do |f|
       f.write(receipt)
     end
-    if post.get_score > 0
+    if post.get_score > -200
       begin
         tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]')
         if tweet == last_tweet
