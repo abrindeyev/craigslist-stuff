@@ -482,7 +482,7 @@ class AddressHarvester
     elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
       self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
     end
-    self.set_feature(:hookups, true) if @body.match(/hookup/)
+    self.set_feature(:hookups, true) if not self.have_feature?(:wd) and @body.match(/hookup/)
     self
   end
 
