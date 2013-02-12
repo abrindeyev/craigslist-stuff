@@ -355,6 +355,16 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Hastings Terrace' => {
+        :street => '38660 Hastings Street',
+        :uri => 'http://www.hastingsterrace.com',
+        :matchers => ['HASTINGS TERRACE APTS', '38660 Hastings St'],
+        :features => {
+          :wd => false,
+          :dw => true,
+          :ac => true,
+        },
+      },
     }
   end
 
