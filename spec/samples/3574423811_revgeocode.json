@@ -1,0 +1,373 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Mon, 11 Feb 2013 18:05:22 GMT
+Expires: Tue, 12 Feb 2013 18:05:22 GMT
+Cache-Control: public, max-age=86400
+Vary: Accept-Language
+Access-Control-Allow-Origin: *
+Server: mafe
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Transfer-Encoding: chunked
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "144",
+               "short_name" : "144",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Granada Drive",
+               "short_name" : "Granada Dr",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Rex Manor",
+               "short_name" : "Rex Manor",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Mountain View",
+               "short_name" : "Mountain View",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Santa Clara",
+               "short_name" : "Santa Clara",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94043",
+               "short_name" : "94043",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "144 Granada Drive, Mountain View, CA 94043, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.3996840,
+               "lng" : -122.0861230
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.40103298029150,
+                  "lng" : -122.0847740197085
+               },
+               "southwest" : {
+                  "lat" : 37.39833501970850,
+                  "lng" : -122.0874719802915
+               }
+            }
+         },
+         "types" : [ "street_address" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Rex Manor",
+               "short_name" : "Rex Manor",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Mountain View",
+               "short_name" : "Mountain View",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Santa Clara",
+               "short_name" : "Santa Clara",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Rex Manor, Mountain View, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.410140,
+                  "lng" : -122.07837310
+               },
+               "southwest" : {
+                  "lat" : 37.397340,
+                  "lng" : -122.09117290
+               }
+            },
+            "location" : {
+               "lat" : 37.40416940,
+               "lng" : -122.08516480
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.410140,
+                  "lng" : -122.07837310
+               },
+               "southwest" : {
+                  "lat" : 37.397340,
+                  "lng" : -122.09117290
+               }
+            }
+         },
+         "types" : [ "neighborhood", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "94043",
+               "short_name" : "94043",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Mountain View",
+               "short_name" : "Mountain View",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Mountain View, CA 94043, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.46408690,
+                  "lng" : -122.03598990
+               },
+               "southwest" : {
+                  "lat" : 37.38574390,
+                  "lng" : -122.108420
+               }
+            },
+            "location" : {
+               "lat" : 37.4284340,
+               "lng" : -122.07238160
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.46408690,
+                  "lng" : -122.03598990
+               },
+               "southwest" : {
+                  "lat" : 37.38574390,
+                  "lng" : -122.108420
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Mountain View",
+               "short_name" : "Mountain View",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Santa Clara",
+               "short_name" : "Santa Clara",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Mountain View, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.45087890,
+                  "lng" : -122.04467210
+               },
+               "southwest" : {
+                  "lat" : 37.35654110,
+                  "lng" : -122.11786190
+               }
+            },
+            "location" : {
+               "lat" : 37.38605170,
+               "lng" : -122.08385110
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.45087890,
+                  "lng" : -122.04467210
+               },
+               "southwest" : {
+                  "lat" : 37.35654110,
+                  "lng" : -122.11786190
+               }
+            }
+         },
+         "types" : [ "locality", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Santa Clara",
+               "short_name" : "Santa Clara",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Santa Clara, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.4846370,
+                  "lng" : -121.2081780
+               },
+               "southwest" : {
+                  "lat" : 36.89415490,
+                  "lng" : -122.2024760
+               }
+            },
+            "location" : {
+               "lat" : 37.29389070,
+               "lng" : -121.71954590
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.4846370,
+                  "lng" : -121.2081780
+               },
+               "southwest" : {
+                  "lat" : 36.89415490,
+                  "lng" : -122.2024760
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_2", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "California, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53415590,
+                  "lng" : -124.40961960
+               }
+            },
+            "location" : {
+               "lat" : 36.7782610,
+               "lng" : -119.41793240
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53415590,
+                  "lng" : -124.40961960
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_1", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "United States",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 71.3898880,
+                  "lng" : -66.94976079999999
+               },
+               "southwest" : {
+                  "lat" : 18.91106420,
+                  "lng" : 172.45469660
+               }
+            },
+            "location" : {
+               "lat" : 37.090240,
+               "lng" : -95.7128910
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 49.380,
+                  "lng" : -66.940
+               },
+               "southwest" : {
+                  "lat" : 25.820,
+                  "lng" : -124.390
+               }
+            }
+         },
+         "types" : [ "country", "political" ]
+      }
+   ],
+   "status" : "OK"
+}
