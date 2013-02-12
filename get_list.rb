@@ -43,10 +43,11 @@ else
   i = 0
   last_tweet = ''
   links.each do |a|
-    i = i + 1
     uri = a['href']
     posting_id = uri.match(/^.*\/(\d+)\.html$/)[1].to_i
     break if posting_id <= last_seen_posting_id
+    i = i + 1
+    puts "************ PROCESSED LINKS ************" if i == 1
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
     next if post.has_been_removed?
@@ -102,4 +103,5 @@ else
       puts "#{full_link} : score < #{threshold}, not tweeting"
     end
   end
+  puts "*****************************************" if i == 0
 end
