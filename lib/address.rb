@@ -483,6 +483,7 @@ class AddressHarvester
       self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
     end
     self.set_feature(:hookups, true) if not self.have_feature?(:wd) and @body.match(/hookup/)
+    self.set_feature(:mw, true) if @body.match(/microwave/)
     self
   end
 
@@ -599,6 +600,7 @@ class AddressHarvester
     unless self.get_feature(:school_rating).nil?
       self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
     end
+    self.update_score(10, "Have microwave") if self.have_feature?(:mw)
     @score # return final score
   end
 
