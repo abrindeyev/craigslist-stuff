@@ -108,6 +108,7 @@ class AddressHarvester
       },
       'Pathfinder Village' => {
         :street => '39800 Fremont Blvd',
+        :uri => 'http://www.pathfindervillageapts.com',
         :matchers => ['Pathfinder Village Apartments', 'pathfindervillageapts.com'],
         :features => {
           :wd => false,
