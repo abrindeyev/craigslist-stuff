@@ -493,7 +493,11 @@ class AddressHarvester
     elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
       self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
     end
-    self.set_feature(:hookups, true) if not self.have_feature?(:wd) and @body.match(/hookup/)
+    if @body.match(/hook ?up/i)
+      self.set_feature(:hookups, true) if not self.have_feature?(:wd)
+    else
+      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,)\s*dryer/i)
+    end
     self.set_feature(:mw, true) if @body.match(/microwave/)
     self
   end
