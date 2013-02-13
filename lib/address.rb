@@ -260,6 +260,7 @@ class AddressHarvester
         :rentsentinel_key => 'Mission Peaks I',
         :features => {
           :wd => true,
+          :mw => true,
         },
       },
       'Mission Peaks II' => {
