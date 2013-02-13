@@ -500,6 +500,7 @@ class AddressHarvester
       self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,)\s*dryer/i)
     end
     self.set_feature(:mw, true) if @body.match(/microwave/)
+    self.set_feature(:mw, true) if @body.match(/microwave/i)
     self
   end
 
