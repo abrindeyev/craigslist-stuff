@@ -100,9 +100,6 @@ describe "Raw address detector" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false', :response => s('3584993361_revgeocode.json'))
     AddressHarvester.new(s('3584993361.html')).have_full_address?.should be_false
   end
-  it "should return '4022 Papillon Terrace, Fremont, CA'" do
-    AddressHarvester.new(s('3573633080.html')).get_full_address.should eql '4022 Papillon Terrace, Fremont, CA'
-  end
   it "should return '39800 Fremont Blvd., Fremont, CA'" do
     AddressHarvester.new(s('3587519103.html')).get_full_address.should eql '39800 Fremont Blvd., Fremont, CA'
   end
