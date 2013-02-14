@@ -499,7 +499,8 @@ class AddressHarvester
     else
       self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer/i)
     end
-    self.set_feature(:mw, true) if @body.match(/microwave/)
+    self.set_feature(:condo, true) if @body.match(/\bcondo/i)
+    self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self
   end
@@ -618,6 +619,8 @@ class AddressHarvester
       self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
     end
     self.update_score(10, "Have microwave") if self.have_feature?(:mw)
+    self.update_score(20, "Condominium") if self.have_feature?(:condo)
+    self.update_score(30, "Townhouse") if self.have_feature?(:townhouse)
     @score # return final score
   end
 
