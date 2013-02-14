@@ -497,7 +497,7 @@ class AddressHarvester
     if @body.match(/hook ?up/i)
       self.set_feature(:hookups, true) if not self.have_feature?(:wd)
     else
-      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,)\s*dryer/i)
+      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer/i)
     end
     self.set_feature(:mw, true) if @body.match(/microwave/)
     self.set_feature(:mw, true) if @body.match(/microwave/i)
