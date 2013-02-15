@@ -24,6 +24,10 @@ Twitter.configure do |config|
     config.oauth_token_secret = o['oauth_token_secret']
 end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
+
+seen_hash_file = File.join(File.dirname(__FILE__), 'seen_db.json')
+seen_hash = File.exist?(seen_hash_file) ? JSON.parse(open(seen_hash_file).read) : {}
+
 last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
 last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read.gsub(/\n/,'') : ''
 last_seen_posting_id = last_seen_posting_uri.match(/^.*\/(\d+)\.html$/)[1].to_i
@@ -51,6 +55,10 @@ else
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
     next if post.has_been_removed?
+    seen_hash[uri] = post.get_posting_update_time
+    File.open(seen_hash_file, 'w') do |f|
+      f.write(seen_hash.to_json)
+    end
     post.backup_source_to('/var/lib/craiglist_dumps')
     if post.have_full_address? 
       addr = post.get_full_address
@@ -103,5 +111,5 @@ else
       puts "#{full_link} : score < #{threshold}, not tweeting"
     end
   end
-  puts "*****************************************" if i == 0
+  puts "*****************************************"
 end
