@@ -390,7 +390,7 @@ class AddressHarvester
     @addr_city   = ''
     @addr_state  = ''
 
-    if @source.match(/This posting has been flagged for removal/)
+    if @source.match(/This posting has been flagged for removal|This posting has been deleted by its author/)
       @post_has_been_removed = true
     else
       @post_has_been_removed = false

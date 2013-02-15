@@ -26,6 +26,9 @@ describe "#new" do
     it "shoudn't have valid address for simple postings without map and inline address" do
       AddressHarvester.new(s('3598149448.html')).have_full_address?.should eql false
     end
+    it "should detect deleted posting" do
+      AddressHarvester.new(s('deleted.html')).has_been_removed?.should eql true
+    end
     it "should detect removed posting" do
       AddressHarvester.new(s('removed.html')).has_been_removed?.should eql true
     end
@@ -56,7 +59,7 @@ describe "Posting info parser" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false', :response => s('3602181818_revgeocode.json'))
     AddressHarvester.new(s('3602181818.html')).get_posting_update_time.should eql '2013-02-07, 11:29PM PST'
   end
-  it "should return empty string when post was deleted" do
+  it "should return empty string when post was removed" do
     AddressHarvester.new(s('removed.html')).get_posting_update_time.should eql ''
   end
 end
