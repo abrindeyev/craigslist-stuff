@@ -424,6 +424,7 @@ class AddressHarvester
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+    @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]
 
     # ----------------------------------------------------------------------------------
     # Getting data for full mailing address (@addr_* variables)
@@ -658,6 +659,15 @@ class AddressHarvester
     self.set_feature(:uri, complex[:uri]) if complex.include?(:uri)
     complex[:features].each_pair {|k,v| self.set_feature(k,v)}
     @merged_complex = name
+  end
+
+  def get_posting_update_time
+    return '' if @posting_info.nil?
+    if @posting_info.include?('Posted')
+      return @posting_info.has_key?('Edited') ? @posting_info['Edited'] : @posting_info['Posted']
+    else
+      return ''
+    end
   end
 
 end
