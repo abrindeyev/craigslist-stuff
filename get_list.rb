@@ -28,37 +28,29 @@ external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
 seen_hash_file = File.join(File.dirname(__FILE__), 'seen_db.json')
 seen_hash = File.exist?(seen_hash_file) ? JSON.parse(open(seen_hash_file).read) : {}
 
-last_seen_file = File.join(File.dirname(__FILE__), '.last_seen_posting')
-last_seen_posting_uri = File.exist?(last_seen_file) ? open(last_seen_file).read.gsub(/\n/,'') : ''
-last_seen_posting_id = last_seen_posting_uri.match(/^.*\/(\d+)\.html$/)[1].to_i
-puts "Last seen posting uri: #{last_seen_posting_uri}\n"
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
   exit -1
 else
-  started_at_posting_uri = links.first['href']
-  # remember current position in file before processing
-  # that help not to process same postings in case of 
-  # fatal error in any of that again and again
-  puts "We'll start next time on this URI: [#{started_at_posting_uri}]"
-  open(last_seen_file, 'w') do |f|
-      f << started_at_posting_uri
-  end
   i = 0
   last_tweet = ''
   links.each do |a|
     uri = a['href']
-    posting_id = uri.match(/^.*\/(\d+)\.html$/)[1].to_i
-    break if posting_id <= last_seen_posting_id
     i = i + 1
     puts "************ PROCESSED LINKS ************" if i == 1
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
     next if post.has_been_removed?
+    next if seen_hash.include?(uri) and seen_hash[uri] == post.get_posting_update_time
+    posting_update_detected = seen_hash.include?(uri) ? true : false
+
+    # Remember document and save index immediately
     seen_hash[uri] = post.get_posting_update_time
     File.open(seen_hash_file, 'w') do |f|
       f.write(seen_hash.to_json)
     end
+
+    # Backup source to dump directory
     post.backup_source_to('/var/lib/craiglist_dumps')
     if post.have_full_address? 
       addr = post.get_full_address
@@ -93,7 +85,7 @@ else
     threshold = -200
     if post.get_score > threshold
       begin
-        tweet = "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]')
+        tweet = (posting_update_detected ? 'UPDATE: ' : '') + "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]')
         if tweet == last_tweet
           puts "duplicate, not tweeting!"
         else
