@@ -36,12 +36,18 @@ else
   i = 0
   last_tweet = ''
   links.each do |a|
+    failure_detected = false
     uri = a['href']
     i = i + 1
-    printf("%d. %s ", i, uri)
-    post = AddressHarvester.new(uri)
+    begin
+      post = AddressHarvester.new(uri)
+    rescue 
+      puts "Caught an exception during object creation on #{uri}: #{$!}"
+      failure_detected = true
+    end
     next if post.has_been_removed?
     next if seen_hash.include?(uri) and seen_hash[uri] == post.get_posting_update_time
+    printf("%d. %s ", i, uri)
     posting_update_detected = seen_hash.include?(uri) ? true : false
 
     # Remember document and save index immediately
@@ -49,6 +55,7 @@ else
     File.open(seen_hash_file, 'w') do |f|
       f.write(seen_hash.to_json)
     end
+    next if failure_detected
 
     # Backup source to dump directory
     post.backup_source_to('/var/lib/craiglist_dumps')
