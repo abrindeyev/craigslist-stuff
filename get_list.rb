@@ -28,6 +28,7 @@ external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
 seen_hash_file = File.join(File.dirname(__FILE__), 'seen_db.json')
 seen_hash = File.exist?(seen_hash_file) ? JSON.parse(open(seen_hash_file).read) : {}
 
+i_tweeted = false
 if links.size == 0
   puts 'Got zero results. Something wrong on Craigslist!'
   exit -1
@@ -37,7 +38,6 @@ else
   links.each do |a|
     uri = a['href']
     i = i + 1
-    puts "************ PROCESSED LINKS ************" if i == 1
     printf("%d. %s ", i, uri)
     post = AddressHarvester.new(uri)
     next if post.has_been_removed?
@@ -84,6 +84,7 @@ else
     end
     threshold = -200
     if post.get_score > threshold
+      i_tweeted = true
       begin
         tweet = (posting_update_detected ? 'UPDATE: ' : '') + "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]')
         if tweet == last_tweet
@@ -103,5 +104,5 @@ else
       puts "#{full_link} : score < #{threshold}, not tweeting"
     end
   end
-  puts "*****************************************"
+  puts "************ PROCESSED LINKS ************" if i_tweeted
 end
