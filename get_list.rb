@@ -45,6 +45,7 @@ else
       puts "Caught an exception during object creation on #{uri}: #{$!}"
       failure_detected = true
     end
+    next if post.nil?
     next if post.has_been_removed?
     next if seen_hash.include?(uri) and seen_hash[uri] == post.get_posting_update_time
     printf("%d. %s ", i, uri)
