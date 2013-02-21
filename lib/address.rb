@@ -670,4 +670,23 @@ class AddressHarvester
     end
   end
 
+  def is_scam?
+    # we'll catch most legitimate postings here
+    return false if self.have_full_address?
+
+    # scammers hate to leave phone numbers
+    # lazy people don't post property addresses
+    # but almost always post their cells or emails asking to contact them
+    return false if @body.match(/\(?\s*?\d{3}\s*?\)?[. -]*?\d{3}[. -]*?\d{2}[. -]*?\d{2}/)
+    return false if @body.match(/[a-zA-Z0-9._]+?@[a-zA-Z0-9.]+?\.[a-zA-Z0-9]{2,5}/)
+
+    # scammers always post in plain-text
+    # but some agents use tools like vFlyer marketing
+    # which puts entire posting as image file hosted elsewhere
+    return false if @body.match(/<img /i)
+
+    # All guessings fails. It's probably a scam now
+    return true
+  end
+
 end

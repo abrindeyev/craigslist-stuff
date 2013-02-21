@@ -182,3 +182,31 @@ describe "Townhouse fuzzy detector" do
     AddressHarvester.new(s('3597290743.html')).have_feature?(:townhouse).should be_true
   end
 end
+
+describe "Scam postings detector" do
+  it "should not detect image-only posts as scam" do
+    AddressHarvester.new(s('3623902742.html')).is_scam?.should_not be_true
+  end
+  it "should not detect scam here #1" do
+    AddressHarvester.new(s('3629310553.html')).is_scam?.should_not be_true
+  end
+  it "should not detect scam here #2" do
+    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.565935,-122.024472&sensor=false', :response => s('3629352252_revgeocode.json'))
+    AddressHarvester.new(s('3629352252.html')).is_scam?.should_not be_true
+  end
+  it "should not detect scam here #3" do
+    AddressHarvester.new(s('3625753185.html')).is_scam?.should_not be_true
+  end
+  it "should detect scam here #1" do
+    AddressHarvester.new(s('3629679038.html')).is_scam?.should be_true
+  end
+  it "should detect scam here #2" do
+    AddressHarvester.new(s('3628785789.html')).is_scam?.should be_true
+  end
+  it "should detect scam here #3" do
+    AddressHarvester.new(s('3628519763.html')).is_scam?.should be_true
+  end
+  it "should detect scam here #4" do
+    AddressHarvester.new(s('3627509426.html')).is_scam?.should be_true
+  end
+end
