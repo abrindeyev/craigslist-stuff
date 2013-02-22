@@ -143,6 +143,9 @@ describe "Raw address detector" do
   it "should return '38593 Royal Ann Cmn, Fremont, CA'" do
     AddressHarvester.new(s('3626121593.html')).get_full_address.should eql '38593 Royal Ann Cmn, Fremont, CA'
   end
+  it "should return '37120 Spruce St, Newark, CA'" do
+    AddressHarvester.new(s('3633731850.html')).get_full_address.should eql '37120 Spruce St, Newark, CA'
+  end
 end
 
 describe "Washer/dryer/hookups fuzzy detector" do

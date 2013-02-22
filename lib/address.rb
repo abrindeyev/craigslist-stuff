@@ -11,7 +11,8 @@ class AddressHarvester
   def init
 
     @agents_blacklist = [
-      '33584 Alvarado Niles Rd'
+      '33584 Alvarado Niles Rd',
+      '41111 Mission Blvd.',
     ]
   
     @PDB = {
