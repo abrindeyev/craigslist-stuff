@@ -552,6 +552,7 @@ class AddressHarvester
       @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
       @addr_city   = @reverse_geocoded_address_components['locality']
       @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+      self.set_feature(:address_was_reverse_geocoded, true)
     end
 
     # return empty string if all gestimates failed
