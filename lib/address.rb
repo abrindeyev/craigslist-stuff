@@ -369,6 +369,13 @@ class AddressHarvester
           :ac => true,
         },
       },
+      'Durham Greens' => {
+        :street => '43555 Grimmer Blvd',
+        :matchers => ['Durham Greens'],
+        :features => {
+          :wd => false,
+        },
+      },
     }
   end
 
