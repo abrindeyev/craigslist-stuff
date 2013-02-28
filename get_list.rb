@@ -94,7 +94,7 @@ else
     if post.get_score > threshold
       i_tweeted = true
       begin
-        tweet = (posting_update_detected ? 'UPDATE: ' : '') + "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]') + (post.is_scam? ? ' #scam' : '')
+        tweet = (posting_update_detected ? 'UPDATE: ' : '') + "[#{post.get_score}] $#{post.get_feature(:rent_price)} / " + (post.have_feature?(:bedrooms) ? "#{post.get_feature(:bedrooms)}br / " : '') + (post.have_full_address? ? (post.have_feature?(:name) ? post.get_feature(:name) : post.get_full_address) : '[no address]') + ((post.is_scam? and not posting_update_detected) ? ' #scam' : '')
         if tweet == last_tweet
           puts "duplicate, not tweeting!"
         else
