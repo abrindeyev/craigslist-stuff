@@ -60,7 +60,7 @@ else
     next if failure_detected
 
     # Backup source to dump directory
-    post.backup_source_to('/var/lib/craiglist_dumps')
+    post.backup_source_to('/opt/craigslist_dumps')
     if post.have_full_address? 
       addr = post.get_full_address
 
@@ -88,7 +88,7 @@ else
 
     receipt = post.get_receipt
     filename = post.get_feature(:posting_uri).match(/\d+\.html/).to_s
-    File.open("/var/www/html/#{filename}", 'w') do |f|
+    File.open("/opt/craigslist_receipts/#{filename}", 'w') do |f|
       f.write(receipt)
     end
     threshold = -200
