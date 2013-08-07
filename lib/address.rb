@@ -385,6 +385,15 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Fremont Park' => {
+        :street => '4737 Thornton Avenue',
+        :matchers => ['Fremont Park Apartments'],
+        :features => {
+          :wd => false,
+          :ac => true,
+          :dw => true,
+        },
+      },
     }
   end
 
