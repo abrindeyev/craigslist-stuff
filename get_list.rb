@@ -15,7 +15,7 @@ STDOUT.sync = true
 
 source_url = 'http://sfbay.craigslist.org/search/apa/eby?zoomToPosting=&altView=&query=&srchType=A&minAsk=&maxAsk=2200&bedrooms=2&nh=54'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
-links = page.xpath("//body/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
+links = page.xpath("//body/article[@id='pagecontainer']/section[@class='body']/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
 o = YAML.load_file('.settings.yaml')
 Twitter.configure do |config|
     config.consumer_key = o['consumer_key']
@@ -38,6 +38,7 @@ else
   links.each do |a|
     failure_detected = false
     uri = a['href']
+    uri = "http://sfbay.craigslist.com#{uri}"
     i = i + 1
     begin
       post = AddressHarvester.new(uri)
@@ -59,7 +60,7 @@ else
     next if failure_detected
 
     # Backup source to dump directory
-    post.backup_source_to('/var/lib/craiglist_dumps')
+    post.backup_source_to('/opt/craigslist_dumps')
     if post.have_full_address? 
       addr = post.get_full_address
 
@@ -87,7 +88,7 @@ else
 
     receipt = post.get_receipt
     filename = post.get_feature(:posting_uri).match(/\d+\.html/).to_s
-    File.open("/var/www/html/#{filename}", 'w') do |f|
+    File.open("/opt/craigslist_receipts/#{filename}", 'w') do |f|
       f.write(receipt)
     end
     threshold = -200

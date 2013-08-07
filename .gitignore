@@ -1,3 +1,6 @@
 jq
+seen_db.json
 .last_seen_posting
+.my_ext_ip_address
+.settings.yaml
 .rspec
