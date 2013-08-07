@@ -387,6 +387,7 @@ class AddressHarvester
     else
       @source = File.read(uri)
     end
+    @source = @source.force_encoding("ISO-8859-1").encode("utf-8", 'replace' => nil) if @source.respond_to?('force_encoding') and @source.respond_to?('encoding')
     @features = {
       :posting_uri => uri
     }
