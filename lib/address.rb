@@ -376,6 +376,15 @@ class AddressHarvester
           :wd => false,
         },
       },
+      'Rancho Luna' => {
+        :street => '3939 Monroe Ave',
+        :matchers => ['www.RanchoLunaApts.com'],
+        :features => {
+          :wd => false,
+          :ac => true,
+          :dw => true,
+        },
+      },
     }
   end
 

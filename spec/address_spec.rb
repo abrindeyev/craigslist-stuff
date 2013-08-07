@@ -82,6 +82,10 @@ describe "Apartments detector" do
     FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
     AddressHarvester.new(s('3591325547.html')).get_feature(:name).should eql 'Alborada'
   end
+  it "should detect 'Rancho Luna'" do
+    #FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
+    AddressHarvester.new(s('3987415202.html')).get_feature(:name).should eql 'Rancho Luna'
+  end
 end
 
 describe "Score engine" do
