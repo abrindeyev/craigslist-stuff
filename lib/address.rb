@@ -431,7 +431,7 @@ class AddressHarvester
 
   def parse
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
-    @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']/text()").to_s
+    @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
     @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]

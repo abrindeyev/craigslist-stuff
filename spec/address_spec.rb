@@ -213,3 +213,12 @@ describe "Scam postings detector" do
     AddressHarvester.new(s('3627509426.html')).is_scam?.should be_true
   end
 end
+
+describe "Price detector" do
+  it "should detect $1750 in v.20130301 template" do
+    AddressHarvester.new(s('3612351233.html')).get_feature(:rent_price).should eql 1750
+  end
+  it "should detect $2150 in v.20130807 template" do
+    AddressHarvester.new(s('3986833599.html')).get_feature(:rent_price).should eql 2150
+  end
+end
