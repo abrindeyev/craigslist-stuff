@@ -8,8 +8,8 @@ require 'json'
 require 'nokogiri'
 require 'yaml'
 require 'twitter'
-require 'lib/address'
-require 'lib/school'
+require './lib/address'
+require './lib/school'
 
 STDOUT.sync = true
 
