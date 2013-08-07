@@ -23,7 +23,7 @@ Twitter.configure do |config|
     config.oauth_token = o['oauth_token']
     config.oauth_token_secret = o['oauth_token_secret']
 end
-external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read
+external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read.chomp
 
 seen_hash_file = File.join(File.dirname(__FILE__), 'seen_db.json')
 seen_hash = File.exist?(seen_hash_file) ? JSON.parse(open(seen_hash_file).read) : {}
@@ -99,7 +99,7 @@ else
         if tweet == last_tweet
           puts "duplicate, not tweeting!"
         else
-          full_link = "http://#{external_ip}/#{filename}"
+          full_link = "http://#{external_ip}/html/#{filename}"
           short_link = open("http://clck.ru/--?url="+full_link).read
           puts short_link
           tweeted = "#{tweet} #{short_link}"
