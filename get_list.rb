@@ -15,7 +15,7 @@ STDOUT.sync = true
 
 source_url = 'http://sfbay.craigslist.org/search/apa/eby?zoomToPosting=&altView=&query=&srchType=A&minAsk=&maxAsk=2200&bedrooms=2&nh=54'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
-links = page.xpath("//body/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
+links = page.xpath("//body/article[@id='pagecontainer']/section[@class='body']/blockquote[@id='toc_rows']/p[@class='row']/a[@href]")
 o = YAML.load_file('.settings.yaml')
 Twitter.configure do |config|
     config.consumer_key = o['consumer_key']
@@ -38,6 +38,7 @@ else
   links.each do |a|
     failure_detected = false
     uri = a['href']
+    uri = "http://sfbay.craigslist.com#{uri}"
     i = i + 1
     begin
       post = AddressHarvester.new(uri)
