@@ -454,6 +454,8 @@ class AddressHarvester
     doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']").to_s
     @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
+    @attributes = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']").to_s
+    @body += @attributes
     @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
     @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]
 
@@ -529,7 +531,7 @@ class AddressHarvester
     if @body.match(/hook ?up/i)
       self.set_feature(:hookups, true) if not self.have_feature?(:wd)
     else
-      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer/i)
+      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer|w\/d in unit/i) if self.get_feature(:wd).nil?
     end
     self.set_feature(:condo, true) if @body.match(/\bcondo/i)
     self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)

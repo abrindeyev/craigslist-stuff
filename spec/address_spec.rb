@@ -175,6 +175,10 @@ describe "Washer/dryer/hookups fuzzy detector" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.603313,-122.071328&sensor=false', :response => s('3595693913_revgeocode.json'))
     AddressHarvester.new(s('3595693913.html')).have_feature?(:wd).should be_true
   end
+  it "should detect washer and dryer #5" do
+    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false', :response => s('3987654283_revgeocode.json'))
+    AddressHarvester.new(s('3987654283.html')).have_feature?(:wd).should be_true
+  end
   it "should not detect washer and dryer when hookups are detected" do
     AddressHarvester.new(s('3579783466.html')).have_feature?(:wd).should_not be_true
   end
