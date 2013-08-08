@@ -394,6 +394,16 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Ardenwood Forest' => {
+        :street => '5016 Paseo Padre Pkwy',
+        :matchers => ['Ardenwood Forest Condominiums', '888-334-0161'],
+        :features => {
+          :wd => true,
+          :ac => false,
+          :dw => true,
+          :mw => true,
+        },
+      },
     }
   end
 
