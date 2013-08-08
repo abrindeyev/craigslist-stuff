@@ -231,6 +231,7 @@ describe "Price detector" do
     AddressHarvester.new(s('3612351233.html')).get_feature(:rent_price).should eql 1750
   end
   it "should detect $2150 in v.20130807 template" do
+    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.573500,-122.046900&sensor=false', :response => s('3986833599_revgeocode.json'))
     AddressHarvester.new(s('3986833599.html')).get_feature(:rent_price).should eql 2150
   end
 end
