@@ -226,13 +226,6 @@ class AddressHarvester
         :rentsentinel_key => 'Skylark',
         :features => {},
       },
-      'Rancho Luna' => {
-        :street => '3939 Monroe Avenue',
-        :matchers => ['rancholunasol.com'],
-        :features => {
-          :wd => false,
-        },
-      },
       'Pebble Creek' => {
         :street => '40777 High Street, Fremont, CA 94538',
         :uri => 'http://www.pebblecreekcommunities.com',
@@ -378,7 +371,7 @@ class AddressHarvester
       },
       'Rancho Luna' => {
         :street => '3939 Monroe Ave',
-        :matchers => ['www.RanchoLunaApts.com'],
+        :matchers => ['www.RanchoLunaApts.com', 'rancholunasol.com'],
         :features => {
           :wd => false,
           :ac => true,
