@@ -406,6 +406,14 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Casa Arroyo' => {
+        :street => '405 Rancho Arroyo Pkwy',
+        :matchers => ['CASA ARROYO', '510-793-8710'],
+        :features => {
+          :wd => false,
+          :dw => true,
+        },
+      },
     }
   end
 
