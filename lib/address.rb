@@ -423,6 +423,15 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Suburbian Garden' => {
+        :street => '3750 Tamayo Street',
+        :matchers => ['Suburbian Garden'],
+        :features => {
+          :wd => false,
+          :dw => true,
+          :mw => true,
+        },
+      },
     }
   end
 
