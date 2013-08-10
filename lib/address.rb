@@ -380,7 +380,7 @@ class AddressHarvester
       },
       'Rancho Luna' => {
         :street => '3939 Monroe Ave',
-        :matchers => ['www.RanchoLunaApts.com', 'www.rancholunaapts.com', 'rancholunasol.com', 'RANCHO LUNA'],
+        :matchers => ['www.RanchoLunaApts.com', 'www.rancholunaapts.com', 'rancholunasol.com', 'RANCHO LUNA', 'Rancho Luna'],
         :features => {
           :wd => false,
           :ac => true,

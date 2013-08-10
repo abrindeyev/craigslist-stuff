@@ -91,6 +91,9 @@ describe "Apartments detector" do
   it "should detect 'Rancho Luna' #3" do
     AddressHarvester.new(s('3992986304.html')).get_feature(:name).should eql 'Rancho Luna'
   end
+  it "should detect 'Rancho Luna' #4" do
+    AddressHarvester.new(s('3991905116.html')).get_feature(:name).should eql 'Rancho Luna'
+  end
   it "should detect 'Fremont Park'" do
     AddressHarvester.new(s('3982386449.html')).get_feature(:name).should eql 'Fremont Park'
   end
