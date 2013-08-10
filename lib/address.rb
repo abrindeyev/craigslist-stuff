@@ -432,6 +432,13 @@ class AddressHarvester
           :mw => true,
         },
       },
+      'Crossroads Village' => {
+        :street => '39438 Stratton Common',
+        :matchers => ['Crossroads Village'],
+        :features => {
+          :wd => false,
+        },
+      },
     }
   end
 
