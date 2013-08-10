@@ -342,6 +342,15 @@ class AddressHarvester
           :dw => true,
         },
       },
+      'Eaves Fremont' => {
+        :street => '231 Woodcreek Commons',
+        :uri => 'http://www.eavesbyavalon.com/california/union-city-apartments/eaves-union-city/',
+        :rentsentinel_key => 'eaves Fremont',
+        :features => {
+          :wd => true,
+          :dw => true,
+        },
+      },
       'Eaves Union City' => {
         :street => '2175 Decoto Road',
         :city => 'Union City',
