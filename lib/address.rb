@@ -397,6 +397,15 @@ class AddressHarvester
           :mw => true,
         },
       },
+      'Carriage House' => {
+        :street => '3900 Monroe Avenue',
+        :matchers => ['CARRIAGE HOUSE', 'www.rentcarriagehouse.com'],
+        :features => {
+          :wd => false,
+          :ac => true,
+          :dw => true,
+        },
+      },
     }
   end
 
