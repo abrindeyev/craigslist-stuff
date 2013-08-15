@@ -203,6 +203,9 @@ describe "Washer/dryer/hookups fuzzy detector" do
   it "should detect hook ups #2" do
     AddressHarvester.new(s('3597290743.html')).have_feature?(:hookups).should be_true
   end
+  it "should not detect washer and dryer while coin laundry onsite #1" do
+    AddressHarvester.new(s('4003746196.html')).have_feature?(:coin_laundry).should be_true
+  end
 end
 
 describe "Condominiums fuzzy detector" do

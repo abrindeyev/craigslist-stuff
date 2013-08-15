@@ -572,6 +572,8 @@ class AddressHarvester
     end
     if @body.match(/hook ?up/i)
       self.set_feature(:hookups, true) if not self.have_feature?(:wd)
+    elsif @body.match(/coin(?:-+op(?:erated)*)?\s+(laundry|washer)/i)
+      self.set_feature(:coin_laundry, true)
     else
       self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer|w\/d in unit/i) if self.get_feature(:wd).nil?
     end
@@ -688,7 +690,7 @@ class AddressHarvester
     self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
     self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
     self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
-    self.update_score(-150, "Have coin laundry on-site: no W/D") if @body.match(/coin(?:-op)?\s+(laundry|washer)/i)
+    self.update_score(-150, "Have coin laundry on-site: no W/D") if self.have_feature?(:coin_laundry)
     self.update_score(+10, "No pets requirement") if @body.match(/no\s+pets/i)
     self.update_score(+25, "No smoking requirement") if @body.match(/no\s+(smoke|smoking|smokers)/i)
     self.update_score(-300, "Offers month to month lease") if @body.match(/month(?: |-)+to(?: |-)+month/i)
