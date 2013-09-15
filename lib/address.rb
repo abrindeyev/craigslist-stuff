@@ -17,6 +17,14 @@ class AddressHarvester
     ]
   
     @PDB = {
+      'Paragon Fremont' => {
+        :street => '3700 Beacon Ave',
+        :matchers => ['Paragon in Fremont CA'],
+        :features => {
+          :wd => true,
+          :ac => true,
+        },
+      },
       'Villas Papillon' => {
         :street => '4022 Papillon Terrace',
         :matchers => ['VILLAS PAPILLON'],
