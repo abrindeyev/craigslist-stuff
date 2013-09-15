@@ -109,6 +109,9 @@ describe "Apartments detector" do
   it "should detect 'Suburbian Garden'" do
     AddressHarvester.new(s('3991884178.html')).get_feature(:name).should eql 'Suburbian Garden'
   end
+  it "should detect 'Garden Village Apartments'" do
+    AddressHarvester.new(s('4028997623.html')).get_feature(:name).should eql 'Garden Village'
+  end
 end
 
 describe "Score engine" do
