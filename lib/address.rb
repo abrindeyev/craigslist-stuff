@@ -32,6 +32,15 @@ class AddressHarvester
           :wd => false,
         },
       },
+      'Archstone Fremont' => {
+        :street => '39410 Civic Center Dr',
+        :uri => 'http://www.equityapartments.com/abrochure.aspx?PropertyID=4072&s_cid=1001&ILSid=93',
+        :matchers => ['866-217-0031'],
+        :rentsentinel_key => 'Archstone Fremont Center',
+        :features => {
+          :wd => true,
+        },
+      },
       'Watermark Place' => {
         :street => '38680 Waterside Cir',
         :uri => 'http://www.watermarkplace.com',
