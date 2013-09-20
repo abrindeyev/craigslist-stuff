@@ -17,6 +17,17 @@ class AddressHarvester
     ]
   
     @PDB = {
+      'Roberts Lane' => {
+        :street => '41240 Roberts Avenue',
+        :matchers => ['Roberts Lane'],
+        :uri: => 'http://www.RentRobertsLane.com',
+        :features => {
+          :wd => true,
+          :ac => true,
+          :dw => true,
+          :mw => true,
+        },
+      },
       'Paragon Fremont' => {
         :street => '3700 Beacon Ave',
         :matchers => ['Paragon in Fremont CA'],
