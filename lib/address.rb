@@ -20,7 +20,7 @@ class AddressHarvester
       'Roberts Lane' => {
         :street => '41240 Roberts Avenue',
         :matchers => ['Roberts Lane'],
-        :uri: => 'http://www.RentRobertsLane.com',
+        :uri => 'http://www.RentRobertsLane.com',
         :features => {
           :wd => true,
           :ac => true,
