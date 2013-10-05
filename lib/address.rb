@@ -30,7 +30,7 @@ class AddressHarvester
       },
       'Paragon Fremont' => {
         :street => '3700 Beacon Ave',
-        :matchers => ['Paragon in Fremont CA'],
+        :matchers => ['Paragon in Fremont CA', 'www.liveatparagon.com'],
         :features => {
           :wd => true,
           :ac => true,
