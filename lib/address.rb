@@ -78,7 +78,7 @@ class AddressHarvester
       },
       'Heritage Village' => {
         :street => '38050 Fremont Blvd',
-        :matchers => ['888-727-8177', 'Heritage Village Apartment Homes'],
+        :matchers => ['888-727-8177', 'Heritage Village Apartment Homes', 'Heritage Village Apartments'],
         :rentsentinel_key => 'Heritage Village Apartments',
         :features => {
           :wd => true,
