@@ -727,18 +727,16 @@ class AddressHarvester
       case self.get_feature(:rent_price)
       when 0 .. 1499
         self.update_score(-100, "Unrealistic rent price: < $1,499") # too good to be true
-      when 1500 .. 1599
-        self.update_score(-50, "Too low rent price: $1,500..$1,599") # too good to be that low
-      when 1600 .. 1749
-        self.update_score(5, "Neutral rent price: $1,600..$1,749") # almost neutral
-      when 1750 .. 1859
-        self.update_score(30, "Ideal rent price: $1,750..$1,859") # target range
-      when 1860 .. 1909
-        self.update_score(-20, "Above average rent: $1,860..$1,909") # target range
-      when 1910 .. 1999
-        self.update_score(-50, "Expensive rent: $1,910..$1,999")
-      when 2000 .. 10000
-        self.update_score(-150, "Can't afford to rent: >$2,000")
+      when 1500 .. 1799
+        self.update_score(-50, "Too low rent price: $1,500..$1,799") # too good to be that low
+      when 1800 .. 1949
+        self.update_score(5, "Neutral rent price: $1,800..$1,949") # almost neutral
+      when 1950 .. 2109
+        self.update_score(30, "Ideal rent: $1,950..$2,109") # target range
+      when 2110 .. 2399
+        self.update_score(-50, "Expensive rent: $2,110..$2,399")
+      when 2400 .. 10000
+        self.update_score(-150, "Can't afford to rent: >$2,400")
       end
     end
     self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
