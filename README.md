@@ -6,7 +6,7 @@ Currently only Fremont, CA elementary schools supported.
 
 Usage:
 
-    ./check_address.rb '1401 Red Hawk Circle'
+    ./check_address.rb http://sfbay.craigslist.org/eby/apa/4232402908.html
     Checking following address: 1401 Red Hawk Circle, Fremont CA
     Canonical address: 1401 Red Hawk Circle, Fremont, CA 94538, USA
     ---------------
