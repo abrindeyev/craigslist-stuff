@@ -764,6 +764,7 @@ class AddressHarvester
     self.update_score(10, "Have microwave") if self.have_feature?(:mw)
     self.update_score(20, "Condominium") if self.have_feature?(:condo)
     self.update_score(30, "Townhouse") if self.have_feature?(:townhouse)
+    self.update_score(25, "Have double-pane windows") if self.have_feature?(:dpw)
     @score # return final score
   end
 
