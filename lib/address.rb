@@ -467,6 +467,14 @@ class AddressHarvester
           :wd => false,
         },
       },
+      'Royal Pines' => {
+        :street => '1440 Mowry Avenue',
+        :matchers => ['Royal Pines Apts', '510-793-6878'],
+        :features => {
+          :wd => false,
+          :dw => true,
+        }
+      }
     }
   end
 
