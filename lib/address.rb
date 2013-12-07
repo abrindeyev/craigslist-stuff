@@ -647,7 +647,7 @@ class AddressHarvester
     self.set_feature(:condo, true) if @body.match(/\bcondo/i)
     self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)
     self.set_feature(:mw, true) if @body.match(/microwave/i)
-    self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+windows?/i)
+    self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
     self
   end
 

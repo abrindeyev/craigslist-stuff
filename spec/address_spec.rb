@@ -278,7 +278,7 @@ end
 describe "Double-pane windows detector" do
   ["DOUBLE PANE WINDOWS", "Double Pane Windows", "Double Paned Windows", "Double pane windows", "Double-Pane Energy Star Windows", "Dual pane windows", "double pane window", "double pane windows", "double paned windows"].each do |v|
     it "should detect '#{v}'" do
-      AddressHarvester.stub(:get_body).and_return(v)
+      AddressHarvester.any_instance.stub(:get_body) { v }
       AddressHarvester.new(s('empty_posting.html')).have_feature?(:dpw).should be_true
     end
   end
