@@ -6,8 +6,8 @@ require 'rest-client'
 require 'uri'
 require 'json'
 require 'nokogiri'
-require 'lib/address'
-require 'lib/school'
+require './lib/address'
+require './lib/school'
 
 post = AddressHarvester.new(ARGV[0])
 raise "Post has been removed" if post.has_been_removed?
