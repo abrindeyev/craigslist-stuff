@@ -700,19 +700,17 @@ class AddressHarvester
     if self.have_feature?(:sqft)
       case self.get_feature(:sqft)
       when 0 .. 799
-        self.update_score(-50, "Area too small: < 799 sqft")
-      when 800 .. 899
-        self.update_score(5, "Area too small: 800..899 sqft")
-      when 900 .. 999
-        self.update_score(20, "Area is OK: 900..999 sqft")
+        self.update_score(-100, "Living space is too small: < 799 sqft")
+      when 800 .. 999
+        self.update_score(-50, "Living space is too small: 800..999 sqft")
       when 1000 .. 1099
-        self.update_score(30, "Area is ideal: 1,000..1,099 sqft")
+        self.update_score(10, "Living space is acceptable: 1,000..1,099 sqft")
       when 1100 .. 1199
-        self.update_score(50, "Area is best: 1,100..1,199 sqft")
-      when 1200 .. 1299
-        self.update_score(5, "Area is large: 1,200..1,299 sqft")
-      when 1300 .. 5000
-        self.update_score(-100, "Area is too large: > 1,300 sqft")
+        self.update_score(50, "Living space is current: 1,100..1,199 sqft")
+      when 1200 .. 1499
+        self.update_score(100, "Living space is ideal: 1,200..1,499 sqft")
+      when 1500 .. 5000
+        self.update_score(-100, "Living space is too large: > 1,500 sqft")
       end
     end
     if self.have_feature?(:neighborhood)
