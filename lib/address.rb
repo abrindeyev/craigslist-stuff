@@ -485,6 +485,7 @@ class AddressHarvester
     if uri.match(/^http:\/\//)
       @source = open(uri).read
     else
+      uri.gsub!(/^file:\/\//)
       @source = File.read(uri)
     end
     @source = @source.force_encoding("ISO-8859-1").encode("utf-8", 'replace' => nil) if @source.respond_to?('force_encoding') and @source.respond_to?('encoding')
