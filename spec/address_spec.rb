@@ -115,6 +115,9 @@ describe "Apartments detector" do
   it "should detect 'Royal Pines Apartments'" do
     AddressHarvester.new(s('4232230901.html')).get_feature(:name).should eql 'Royal Pines'
   end
+  it "should detect 'Countrywood Apartments'" do
+    AddressHarvester.new(s('4222894211.html')).get_feature(:name).should eql 'Countrywood'
+  end
 end
 
 describe "Score engine" do

@@ -160,7 +160,8 @@ class AddressHarvester
       },
       'Countrywood' => {
         :street => '4555 Thornton Ave',
-        :matchers => ['Countrywood Apartments'],
+        :url => 'www.countrywoodapts.com',
+        :matchers => ['Countrywood Apartments', 'countrywoodapts.com', '888-774-3140'],
         :rentsentinel_key => 'Countrywood Apartment Homes',
         :features => {
           :wd => false,
