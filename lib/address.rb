@@ -560,6 +560,25 @@ class AddressHarvester
         end
       end
     end
+    # 1.1a. Tracking of AptJet.com postings
+    aptjet_links = @body.scan(/http:\/\/aptjet.com\/ContactUs\/\?id=[0-9a-z]{1,15}/i)
+    if aptjet_links.size > 0
+      rsdoc = open(aptjet_links[0]).read
+      redirect_links = rsdoc.scan(/http:\/\/aptjet.com\/activity\/CLContact\.aspx\?[A-Za-z0-9&=]+/i)
+      rsdoc = Nokogiri::HTML(open(redirect_links[0]).read)
+      apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      if apartments_name != ''
+        # trying to find a match in our database
+        @PDB.each_pair do |name, complex|
+          if complex.include?(:rentsentinel_key)
+            matchers = complex[:rentsentinel_key].kind_of?(String) ? [ complex[:rentsentinel_key] ] : complex[:rentsentinel_key]
+            matchers.each do |pattern|
+              self.merge_attributes_from_db(name, complex) if pattern == apartments_name
+            end
+          end
+        end
+      end
+    end
 
     # 1.2. Looking for known patterns in posting's body
     self.match_against_database if @body != '' if @addr_street == ''

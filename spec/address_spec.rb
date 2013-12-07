@@ -118,6 +118,11 @@ describe "Apartments detector" do
   it "should detect 'Countrywood Apartments'" do
     AddressHarvester.new(s('4222894211.html')).get_feature(:name).should eql 'Countrywood'
   end
+  it "should detect 'Mission Peaks II Apartments'" do
+    FakeWeb.register_uri(:get, 'http://AptJet.com/ContactUs/?id=337c5382l277094', :response => s('4220012226_landing.html'))
+    FakeWeb.register_uri(:get, 'http://aptjet.com/activity/CLContact.aspx?C=5382&RT=T&Adid=32242398&psid=0&subID=f&ID=328939', :response => s('4220012226_aptjet.html'))
+    AddressHarvester.new(s('4220012226.html')).get_feature(:name).should eql 'Mission Peaks II'
+  end
 end
 
 describe "Score engine" do
