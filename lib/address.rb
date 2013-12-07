@@ -10,6 +10,15 @@ class AddressHarvester
 
   def init
 
+    @VERSIONS = {
+      '2013-12-07' => {
+        :title_xpath => "//body/article/section[@class='body']/h2[@class='postingtitle']",
+        :body_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
+        :attributes_xpath => "//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']",
+        :cltags_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']",
+      }
+    }
+
     @agents_blacklist = [
       '33584 Alvarado Niles Rd',
       '41111 Mission Blvd.',
@@ -501,6 +510,8 @@ class AddressHarvester
     @addr_city   = ''
     @addr_state  = ''
 
+    @doc = Nokogiri::HTML(@source, nil, 'UTF-8')
+
     if @source.match(/This posting has been flagged for removal|This posting has been deleted by its author/)
       @post_has_been_removed = true
     else
@@ -531,12 +542,11 @@ class AddressHarvester
   end
 
   def parse
-    doc = Nokogiri::HTML(@source, nil, 'UTF-8')
-    @title = doc.at_xpath("//body/article/section[@class='body']/h2[@class='postingtitle']").to_s
-    @body = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']").to_s
-    @attributes = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']").to_s
+    @title = get_title()
+    @body = get_body()
+    @attributes = get_attributes()
     @body += @attributes
-    @cltags = Hash[*doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']").to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+    @cltags = get_cltags()
     @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]
 
     # ----------------------------------------------------------------------------------
@@ -544,7 +554,7 @@ class AddressHarvester
     #
     # 1. Most reliable method -> matching against our own database of patterns
     # 1.1. Tracking of RentSentinel.com postings
-    rentsentinel_links = doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
+    rentsentinel_links = @doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
     if rentsentinel_links.size > 0
       # rentsentinel.com form detected by address
       rsdoc = Nokogiri::HTML(open(rentsentinel_links[0]).read)
@@ -601,7 +611,7 @@ class AddressHarvester
 
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     if @addr_street == ''
-      gps_data = doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
+      gps_data = @doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
       unless gps_data == ''
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
@@ -819,6 +829,32 @@ class AddressHarvester
 
     # All guessings fails. It's probably a scam now
     return true
+  end
+
+  private
+
+  def get_version(html_source)
+    return "2013-12-07" # right now we have only one version.
+  end
+
+  def get_versioned_data(html_source, attribute)
+    @VERSIONS[get_version(html_source)][attribute]
+  end
+
+  def get_title
+    @doc.at_xpath(get_versioned_data(@source, :title_xpath)).to_s
+  end
+
+  def get_body
+    @doc.at_xpath(get_versioned_data(@source, :body_xpath)).to_s
+  end
+
+  def get_attributes
+    @doc.at_xpath(get_versioned_data(@source, :attributes_xpath)).to_s
+  end
+
+  def get_cltags
+    Hash[*@doc.at_xpath(get_versioned_data(@source, :cltags_xpath)).to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
   end
 
 end

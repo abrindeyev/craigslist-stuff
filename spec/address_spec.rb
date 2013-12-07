@@ -274,3 +274,12 @@ describe "Price detector" do
     AddressHarvester.new(s('3986833599.html')).get_feature(:rent_price).should eql 2150
   end
 end
+
+describe "Double-pane windows detector" do
+  ["DOUBLE PANE WINDOWS", "Double Pane Windows", "Double Paned Windows", "Double pane windows", "Double-Pane Energy Star Windows", "Dual pane windows", "double pane window", "double pane windows", "double paned windows"].each do |v|
+    it "should detect '#{v}'" do
+      AddressHarvester.stub(:get_body).and_return(v)
+      AddressHarvester.new(s('empty_posting.html')).have_feature?(:dpw).should be_true
+    end
+  end
+end
