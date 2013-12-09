@@ -10,15 +10,6 @@ class AddressHarvester
 
   def init
 
-    @VERSIONS = {
-      '2013-12-07' => {
-        :title_xpath => "//body/article/section[@class='body']/h2[@class='postingtitle']",
-        :body_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
-        :attributes_xpath => "//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']",
-        :cltags_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']",
-      }
-    }
-
     @agents_blacklist = [
       '33584 Alvarado Niles Rd',
       '41111 Mission Blvd.',
@@ -494,10 +485,10 @@ class AddressHarvester
     if uri.match(/^http:\/\//)
       @source = open(uri).read
     else
-      uri.gsub!(/^file:\/\//)
-      @source = File.read(uri)
+      @source = File.read(uri.gsub(/^file:\/\//, ''))
     end
     @source = @source.force_encoding("ISO-8859-1").encode("utf-8", 'replace' => nil) if @source.respond_to?('force_encoding') and @source.respond_to?('encoding')
+    @attributes = nil
     @features = {
       :posting_uri => uri
     }
@@ -511,6 +502,7 @@ class AddressHarvester
     @addr_state  = ''
 
     @doc = Nokogiri::HTML(@source, nil, 'UTF-8')
+    @vc = VersionedConfiguration.new(@doc)
 
     if @source.match(/This posting has been flagged for removal|This posting has been deleted by its author/)
       @post_has_been_removed = true
@@ -545,7 +537,6 @@ class AddressHarvester
     @title = get_title()
     @body = get_body()
     @attributes = get_attributes()
-    @body += @attributes
     @cltags = get_cltags()
     @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]
 
@@ -557,8 +548,12 @@ class AddressHarvester
     rentsentinel_links = @doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
     if rentsentinel_links.size > 0
       # rentsentinel.com form detected by address
-      rsdoc = Nokogiri::HTML(open(rentsentinel_links[0]).read)
-      apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      begin
+        rsdoc = Nokogiri::HTML(open(rentsentinel_links[0]).read)
+        apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      rescue
+        apartments_name = ''
+      end
       if apartments_name != ''
         # trying to find a match in our database
         @PDB.each_pair do |name, complex|
@@ -574,10 +569,14 @@ class AddressHarvester
     # 1.1a. Tracking of AptJet.com postings
     aptjet_links = @body.scan(/http:\/\/aptjet.com\/ContactUs\/\?id=[0-9a-z]{1,15}/i)
     if aptjet_links.size > 0
-      rsdoc = open(aptjet_links[0]).read
-      redirect_links = rsdoc.scan(/http:\/\/aptjet.com\/activity\/CLContact\.aspx\?[A-Za-z0-9&=]+/i)
-      rsdoc = Nokogiri::HTML(open(redirect_links[0]).read)
-      apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      begin
+        rsdoc = open(aptjet_links[0]).read
+        redirect_links = rsdoc.scan(/http:\/\/aptjet.com\/activity\/CLContact\.aspx\?[A-Za-z0-9&=]+/i)
+        rsdoc = Nokogiri::HTML(open(redirect_links[0]).read)
+        apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
+      rescue
+        apartments_name = ''
+      end
       if apartments_name != ''
         # trying to find a match in our database
         @PDB.each_pair do |name, complex|
@@ -649,6 +648,26 @@ class AddressHarvester
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
     self
+  end
+
+  def has_attribute?(attr_name)
+    @attributes.has_key?(attr_name)
+  end
+
+  def get_attribute(attr_name)
+    self.has_attribute?(attr_name) ? @attributes[attr_name] : nil
+  end
+
+  def get_attributes
+    return @attributes unless @attributes.nil?
+    v = self.version
+    return {} if v.nil?
+    if v < 20130701
+      @attributes = {} # atrributes were introduced by Craigslist somewhere in the middle 2013
+    else
+      @attributes = parse_attributes(@doc.xpath(@vc.get(:attributes_xpath)).to_a)
+    end
+    @attributes
   end
 
   def get_tag(tag_name)
@@ -832,30 +851,100 @@ class AddressHarvester
     return true
   end
 
+  def version
+    @vc.get_version
+  end
+
   private
 
-  def get_version(html_source)
-    return "2013-12-07" # right now we have only one version.
-  end
-
-  def get_versioned_data(html_source, attribute)
-    @VERSIONS[get_version(html_source)][attribute]
-  end
-
   def get_title
-    @doc.at_xpath(get_versioned_data(@source, :title_xpath)).to_s
+    @doc.at_xpath(@vc.get(:title_xpath)).to_s
   end
 
   def get_body
-    @doc.at_xpath(get_versioned_data(@source, :body_xpath)).to_s
-  end
-
-  def get_attributes
-    @doc.at_xpath(get_versioned_data(@source, :attributes_xpath)).to_s
+    @doc.at_xpath(@vc.get(:body_xpath)).to_s
   end
 
   def get_cltags
-    Hash[*@doc.at_xpath(get_versioned_data(@source, :cltags_xpath)).to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+    Hash[*@doc.at_xpath(@vc.get(:cltags_xpath)).to_s.scan(/<!-- CLTAG\s+?([^>]+?)\s+?-->/).flatten.map {|i| a=i.split('='); [a[0], a[1]] }.flatten]
+  end
+
+  def parse_attributes(a)
+    attrs = {}
+
+    b = []
+    a.each do |el|
+      s = el.to_s.gsub(/^\s*/, '').gsub(/[\s\n]+\/?$/, '') 
+      b << s if s != ''
+    end
+
+    # Special case: number of bedrooms
+    if b.size > 1 and b[0].match(/(\d)/) and b[1].match(/^BR/)
+      attrs['BR'] = b[0].to_i
+      b.shift(2)
+    end
+
+    # Special case: number of bathrooms
+    if b.size > 1 and b[0].match(/(\d(\.\d)?)/) and b[1] == 'Ba'
+      attrs['Ba'] = b[0].to_f
+      b.shift(2)
+    end
+
+    # Special case: square footage
+    if b.size > 2 and b[0].match(/(\d+)/) and b[1] == 'ft' and b[2] == '2'
+      attrs['sqft'] = b[0].to_i
+      b.shift(3)
+    end
+
+    # General processing: all other attributes are considered boolean
+    b.each { |attr| attrs[attr] = true }
+
+    attrs
+  end
+
+end
+
+class VersionedConfiguration
+
+  @@source = nil
+  @@VERSIONS = {
+    20130101 => {
+      :title_xpath => "//body/article/section[@class='body']/h2[@class='postingtitle']",
+      :body_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
+      :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/text()",
+      :cltags_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']",
+    },
+    20130903 => {
+      :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/text()",
+    }
+  }
+
+  def initialize(parsed_source)
+    @@source = parsed_source
+  end
+
+  def get_version
+    return @version unless @version.nil?
+    @@source.xpath("//p[@class='postinginfo']").each do |l|
+      if m = l.to_s.gsub(/<[^>]>/, '').match(/Posted: .*(\d{4}-\d{1,2}-\d{1,2}),/)
+        @version = $1.gsub('-', '').to_i
+        return @version
+      end
+    end
+    # All guesses failed - version is nil
+    return nil
+  end
+
+  def get_versions_configuration
+    @@VERSIONS
+  end
+
+  def get(attribute)
+    cv = self.get_version
+    return nil if cv.nil?
+    versions = self.get_versions_configuration
+    conf_candidates_versions = versions.keys.keep_if {|v| v <= cv and versions[v].has_key?(attribute) }.sort.reverse
+    conf_candidates_versions.empty? ? nil : versions[conf_candidates_versions.first][attribute]
   end
 
 end

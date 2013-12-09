@@ -5,6 +5,10 @@ def s(sample_filename)
   File.join(File.dirname(__FILE__), 'samples', sample_filename)
 end
 
+def fake_url(url, response_filename)
+  FakeWeb.register_uri(:get, url, :response => s(response_filename))
+end
+
 describe "#new" do
   context "with nil parameter" do
     it "should return empty object with nil" do
@@ -207,10 +211,6 @@ describe "Washer/dryer/hookups fuzzy detector" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.603313,-122.071328&sensor=false', :response => s('3595693913_revgeocode.json'))
     AddressHarvester.new(s('3595693913.html')).have_feature?(:wd).should be_true
   end
-  it "should detect washer and dryer #5" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false', :response => s('3987654283_revgeocode.json'))
-    AddressHarvester.new(s('3987654283.html')).have_feature?(:wd).should be_true
-  end
   it "should not detect washer and dryer when hookups are detected" do
     AddressHarvester.new(s('3579783466.html')).have_feature?(:wd).should_not be_true
   end
@@ -281,5 +281,92 @@ describe "Double-pane windows detector" do
       AddressHarvester.any_instance.stub(:get_body) { v }
       AddressHarvester.new(s('empty_posting.html')).have_feature?(:dpw).should be_true
     end
+  end
+end
+
+describe VersionedConfiguration do
+  let(:vc) { VersionedConfiguration.new('') }
+  before {
+    vc.stub(:get_versions_configuration) {
+      {
+        20120101 => { :a => 1, :b => 2, :c => 3 },
+        20120201 => { :a => 2 },
+        20120315 => { :b => 1 },
+        20121231 => { :a => 9, :b => 9, :c => 9 },
+      }
+    }    
+  }
+
+  it "should return most recent attribute for a 20120101 version" do
+    vc.stub(:get_version) { 20120101 }
+
+    vc.get(:a).should eql 1
+    vc.get(:b).should eql 2
+    vc.get(:c).should eql 3
+  end
+
+  it "should return most recent attribute for a 20120102 version" do
+    vc.stub(:get_version) { 20120102 }
+
+    vc.get(:a).should eql 1
+    vc.get(:b).should eql 2
+    vc.get(:c).should eql 3
+  end
+
+  it "should return most recent attribute for a 20120201 version" do
+    vc.stub(:get_version) { 20120201 }
+
+    vc.get(:a).should eql 2
+    vc.get(:b).should eql 2
+    vc.get(:c).should eql 3
+  end
+
+  it "should return most recent attribute for a 20120715 version" do
+    vc.stub(:get_version) { 20120715 }
+
+    vc.get(:a).should eql 2
+    vc.get(:b).should eql 1
+    vc.get(:c).should eql 3
+  end
+
+  it "should return nil for unknown attribute" do
+    vc.stub(:get_versions_configuration) { {} }
+    vc.stub(:get_version) { 20120715 }
+
+    vc.get(:z).should be_nil
+  end
+
+end
+
+describe "Version detector" do
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
+  Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
+    if f.match(/^\d+.html$/)
+      it "should obtain some version from #{f}" do
+        AddressHarvester.new(s(f)).version.should_not be_nil
+      end
+    end
+  end
+end
+
+describe "Attributes parser" do
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false','3987654283_revgeocode.json')
+  it "should parse attributes from version mid-2013" do
+    p = AddressHarvester.new(s('3987654283.html'))
+
+    ['BR', 'Ba', 'condo', 'w/d in unit'].each do |a|
+      p.has_attribute?(a).should be_true
+    end
+  end
+  it "should parse attributes from version dec-2013" do
+    p = AddressHarvester.new(s('4232535045.html'))
+
+    ['BR', 'Ba', 'sqft', 'w/d hookups', 'townhouse', 'attached garage'].each do |a|
+      p.has_attribute?(a).should be_true
+    end
+    p.get_attribute('BR').should eql 3
+    p.get_attribute('Ba').should eql 2.5
+    p.get_attribute('sqft').should eql 1600
   end
 end
