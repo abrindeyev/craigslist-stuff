@@ -106,7 +106,7 @@ class AddressHarvester
           :mw => true,
           :dw => true,
           :dpw => true,
-\        },
+        },
       },
       'Amber Court' => {
         :street => '34050 Westchester Terrace',
