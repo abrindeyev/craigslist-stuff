@@ -100,10 +100,13 @@ class AddressHarvester
       },
       'Rexford' => {
         :street => '3400 Country Dr',
+        :uri => 'http://www.therexford-fremont.com/',
         :matchers => ['The Rexford'],
         :features => {
-          :wd => false,
-        },
+          :mw => true,
+          :dw => true,
+          :dpw => true,
+\        },
       },
       'Amber Court' => {
         :street => '34050 Westchester Terrace',
