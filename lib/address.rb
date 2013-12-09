@@ -628,23 +628,50 @@ class AddressHarvester
     self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
 
     # Getting # of bedrooms
-    self.set_feature(:bedrooms, $1.to_i) if @title.match(/ (\d)br /)
+    if self.has_attribute?('BR')
+      self.set_feature(:bedrooms, self.get_attribute('BR'))
+    else
+      self.set_feature(:bedrooms, $1.to_i) if @title.match(/ (\d)br /)
+    end
 
     # Getting sq ft
-    if @title.match(/(\d{3,4})\s*(?:sq)?ft/)
-      self.set_feature(:sqft, $1.to_i)
-    elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
-      self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
-    end
-    if @body.match(/hook ?up/i)
-      self.set_feature(:hookups, true) if not self.have_feature?(:wd)
-    elsif @body.match(/coin(?:-+op(?:erated)*)?\s+(laundry|washer)/i)
-      self.set_feature(:coin_laundry, true)
+    if self.has_attribute?('sqft')
+        self.set_feature(:sqft, self.get_attribute('sqft'))
     else
-      self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer|w\/d in unit/i) if self.get_feature(:wd).nil?
+      if @title.match(/(\d{3,4})\s*(?:sq)?ft/)
+        self.set_feature(:sqft, $1.to_i)
+      elsif @body.match(/([0-9,]{3,6})\s*(?:square foot|sq ?ft|ft)/)
+        self.set_feature(:sqft, $1.gsub(/,/,'').to_i)
+      end
     end
-    self.set_feature(:condo, true) if @body.match(/\bcondo/i)
-    self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)
+
+    if self.has_attribute?('w/d hookups')
+      self.set_feature(:hookups, true)
+    elsif self.has_attribute?('w/d in unit')
+      self.set_feature(:wd, true)
+    elsif self.has_attribute?('laundry on site') or self.has_attribute?('laundry in bldg')
+        self.set_feature(:coin_laundry, true)
+    else
+      if @body.match(/hook ?up/i)
+        self.set_feature(:hookups, true) if not self.have_feature?(:wd)
+      elsif @body.match(/coin(?:-+op(?:erated)*)?\s+(laundry|washer)/i)
+        self.set_feature(:coin_laundry, true)
+      else
+        self.set_feature(:wd, true) if @body.match(/(full\s+size|premium)\s+(washer|dryer)|\bwasher\s*(\/|\&|,|and)\s*dryer|w\/d in unit/i) if self.get_feature(:wd).nil?
+      end
+    end
+    
+    if self.has_attribute?('condo') or self.has_attribute?('duplex')
+      self.set_feature(:condo, true)
+    else
+      self.set_feature(:condo, true) if @body.match(/\bcondo/i)
+    end
+
+    if self.has_attribute?('townhouse')
+      self.set_feature(:townhouse, true)
+    else
+      self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)
+    end
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
     self
@@ -770,20 +797,29 @@ class AddressHarvester
         self.update_score(-150, "Can't afford to rent: >$2,400")
       end
     end
-    self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
-    self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
-    self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
+    self.update_score(-500, "Has no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
+    self.update_score(100, "Has washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
+    self.update_score(50, "Has washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
     self.update_score(-150, "Have coin laundry on-site: no W/D") if self.have_feature?(:coin_laundry)
     self.update_score(+10, "No pets requirement") if @body.match(/no\s+pets/i)
-    self.update_score(+25, "No smoking requirement") if @body.match(/no\s+(smoke|smoking|smokers)/i)
+    self.update_score(+25, "No smoking requirement") if self.has_attribute?('no smoking') or @body.match(/no\s+(smoke|smoking|smokers)/i)
     self.update_score(-300, "Offers month to month lease") if @body.match(/month(?: |-)+to(?: |-)+month/i)
     unless self.get_feature(:school_rating).nil?
       self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
     end
     self.update_score(10, "Have microwave") if self.have_feature?(:mw)
-    self.update_score(20, "Condominium") if self.have_feature?(:condo)
+    self.update_score(20, "Condominium / duplex") if self.have_feature?(:condo)
     self.update_score(30, "Townhouse") if self.have_feature?(:townhouse)
-    self.update_score(25, "Have double-pane windows") if self.have_feature?(:dpw)
+    self.update_score(50, "Separate house") if self.has_attribute?('house')
+    self.update_score(25, "Has double-pane windows") if self.have_feature?(:dpw)
+    self.update_score(-200, "Is furnished") if self.has_attribute?('furnished')
+    self.update_score(-100, "Apartment complex") if self.has_attribute?('apartment')
+
+    # Parking
+    self.update_score(-50, "Parking is on a street") if self.has_attribute?('off-street parking') or self.has_attribute?('street parking')
+    self.update_score(10, "Has detached garage / carport") if self.has_attribute?('carport') or self.has_attribute?('detached garage')
+    self.update_score(50, "Has attached garage") if self.has_attribute?('attached garage')
+
     @score # return final score
   end
 
