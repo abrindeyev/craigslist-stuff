@@ -370,3 +370,9 @@ describe "Attributes parser" do
     p.get_attribute('sqft').should eql 1600
   end
 end
+
+describe "Blacklist" do
+  it "should not detect address while only agency address is in the posting's body" do
+    AddressHarvester.new(s('4236571064.html')).have_full_address?.should_not be_true
+  end
+end

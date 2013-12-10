@@ -14,6 +14,7 @@ class AddressHarvester
       '33584 Alvarado Niles Rd',
       '41111 Mission Blvd.',
       '22693 Hesperian Blvd Ste 100',
+      '43341 Mission Blvd.',
     ]
   
     @PDB = {
