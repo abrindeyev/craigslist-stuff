@@ -31,7 +31,7 @@ class AddressHarvester
       },
       'Paragon Fremont' => {
         :street => '3700 Beacon Ave',
-        :matchers => ['Paragon in Fremont CA', 'www.liveatparagon.com'],
+        :matchers => ['Paragon in Fremont CA', 'liveatparagon.com'],
         :features => {
           :wd => true,
           :ac => true,
@@ -39,7 +39,7 @@ class AddressHarvester
       },
       'Villas Papillon' => {
         :street => '4022 Papillon Terrace',
-        :matchers => ['VILLAS PAPILLON'],
+        :matchers => ['VILLAS PAPILLON', '510-490-7833'],
         :features => {
           :hookups => true,
           :ac => true,
@@ -229,7 +229,7 @@ class AddressHarvester
       },
       'Briarwood' => {
         :street => '4200 Bay St',
-        :matchers => ['Briarwood'],
+        :matchers => ['Briarwood', '510-657-6322'],
         :features => {
           :wd => false,
         },
@@ -817,7 +817,7 @@ class AddressHarvester
     self.update_score(50, "Separate house") if self.has_attribute?('house')
     self.update_score(25, "Has double-pane windows") if self.have_feature?(:dpw)
     self.update_score(-200, "Is furnished") if self.has_attribute?('furnished')
-    self.update_score(-100, "Apartment complex") if self.has_attribute?('apartment')
+    self.update_score(-250, "Apartment complex") if self.has_attribute?('apartment')
 
     # Parking
     self.update_score(-50, "Parking is on a street") if self.has_attribute?('off-street parking') or self.has_attribute?('street parking')

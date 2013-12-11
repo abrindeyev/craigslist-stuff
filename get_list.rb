@@ -91,7 +91,7 @@ else
     File.open("/opt/craigslist_receipts/#{filename}", 'w') do |f|
       f.write(receipt)
     end
-    threshold = -200
+    threshold = 0
     if post.get_score > threshold
       i_tweeted = true
       begin
