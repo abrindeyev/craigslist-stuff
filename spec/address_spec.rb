@@ -369,6 +369,17 @@ describe "Attributes parser" do
     p.get_attribute('Ba').should eql 2.5
     p.get_attribute('sqft').should eql 1600
   end
+  it "should parse attributes from version late-dec-2013" do
+    p = AddressHarvester.new(s('4252237879.html'))
+
+    p.version.should eql 20131220
+    p.get_attribute('BR').should eql 3
+    p.get_attribute('Ba').should eql 2.0
+    p.get_attribute('sqft').should eql 1000
+    p.get_attribute('house').should be_true
+    p.get_attribute('laundry on site').should be_true
+    p.get_attribute('street parking').should be_true
+  end
 end
 
 describe "Blacklist" do

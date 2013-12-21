@@ -966,7 +966,7 @@ class VersionedConfiguration
   def get_version
     return @version unless @version.nil?
     @@source.xpath("//p[@class='postinginfo']").each do |l|
-      if m = l.to_s.gsub(/<[^>]>/, '').match(/Posted: .*(\d{4}-\d{1,2}-\d{1,2}),/)
+      if m = l.to_s.gsub(/<[^>]>/, '').match(/posted: .*(\d{4}-\d{1,2}-\d{1,2}),?/i)
         @version = $1.gsub('-', '').to_i
         return @version
       end
