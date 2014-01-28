@@ -31,7 +31,7 @@ class AddressHarvester
       },
       'Paragon Fremont' => {
         :street => '3700 Beacon Ave',
-        :matchers => ['Paragon in Fremont CA', 'liveatparagon.com'],
+        :matchers => ['Paragon in Fremont CA', 'liveatparagon.com', '(877) 784-0918'],
         :features => {
           :wd => true,
           :ac => true,
@@ -39,7 +39,7 @@ class AddressHarvester
       },
       'Villas Papillon' => {
         :street => '4022 Papillon Terrace',
-        :matchers => ['VILLAS PAPILLON', '510-490-7833'],
+        :matchers => ['VILLAS PAPILLON', '510-490-7833', 'Villas Papillon', '(510) 490-7833'],
         :features => {
           :hookups => true,
           :ac => true,
@@ -286,6 +286,7 @@ class AddressHarvester
       'Mission Peaks I' => {
         :street => '1401 Red Hawk Circle',
         :rentsentinel_key => 'Mission Peaks I',
+        :matchers => ['866-536-6974'],
         :features => {
           :wd => true,
           :mw => true,
@@ -294,6 +295,7 @@ class AddressHarvester
       'Mission Peaks II' => {
         :street => '39451 Gallaudet Drive',
         :rentsentinel_key => 'Mission Peaks II',
+        :matchers => ['866-884-3739'],
         :features => {
           :wd => true,
         },
@@ -312,6 +314,7 @@ class AddressHarvester
         :city => 'Union City',
         :uri => 'http://www.breproperties.com/california/union-city-apartments/verandas/sfo1108#/Community-Overview',
         :rentsentinel_key => 'Verandas',
+        :matchers => ['Verandas Apartment Homes', '866-773-5004'],
         :features => {
           :dw => true,
           :ac => true,
@@ -379,6 +382,7 @@ class AddressHarvester
         :street => '231 Woodcreek Commons',
         :uri => 'http://www.eavesbyavalon.com/california/union-city-apartments/eaves-union-city/',
         :rentsentinel_key => 'eaves Fremont',
+        :matchers => ['866-818-1209'],
         :features => {
           :wd => true,
           :dw => true,
@@ -599,7 +603,7 @@ class AddressHarvester
 
     # 2. Looking for raw mailing addresses in posting's body
     if @addr_street == ''
-      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[0-9A-Za-z ]{3,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
+      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[0-9A-Za-z ]{3,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|rd|road|street|terrace|ter|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
       if addrs.uniq.size > 0
         black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
         addrs.uniq.each do |a|
