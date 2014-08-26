@@ -55,7 +55,7 @@ class AddressHarvester
       'Archstone Fremont' => {
         :street => '39410 Civic Center Dr',
         :uri => 'http://www.equityapartments.com/abrochure.aspx?PropertyID=4072&s_cid=1001&ILSid=93',
-        :matchers => ['866-217-0031'],
+        :matchers => ['866-217-0031', '39410 Civic Center', 'eqrworld.com/california/san-francisco-bay-apartments/fremont/archstone-fremont-center-apartments.aspx'],
         :rentsentinel_key => 'Archstone Fremont Center',
         :features => {
           :wd => true,
