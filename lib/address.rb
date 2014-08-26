@@ -64,7 +64,7 @@ class AddressHarvester
       'Watermark Place' => {
         :street => '38680 Waterside Cir',
         :uri => 'http://www.watermarkplace.com',
-        :matchers => ['Watermark Place Apartments'],
+        :matchers => ['Watermark Place Apartments', 'watermarkplace.com'],
         :rentsentinel_key => 'Watermark Place',
         :features => {
           :wd => true,
