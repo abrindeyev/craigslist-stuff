@@ -100,9 +100,9 @@ else
           puts "duplicate, not tweeting!"
         else
           full_link = "http://#{external_ip}/html/#{filename}"
-          short_link = open("http://clck.ru/--?url="+full_link).read
-          puts short_link
-          tweeted = "#{tweet} #{short_link}"
+          # short_link = open("http://clck.ru/--?url="+full_link).read
+          # puts short_link
+          tweeted = "#{tweet} #{full_link}"
           Twitter.update(tweeted)
           last_tweet = tweet
         end
