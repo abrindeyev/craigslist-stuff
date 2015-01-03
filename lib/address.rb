@@ -682,6 +682,7 @@ class AddressHarvester
     end
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
+    self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?a\/c/i)
     self
   end
 
@@ -793,21 +794,21 @@ class AddressHarvester
       case self.get_feature(:rent_price)
       when 0 .. 1499
         self.update_score(-100, "Unrealistic rent price: < $1,499") # too good to be true
-      when 1500 .. 1799
-        self.update_score(-50, "Too low rent price: $1,500..$1,799") # too good to be that low
-      when 1800 .. 1949
-        self.update_score(5, "Neutral rent price: $1,800..$1,949") # almost neutral
-      when 1950 .. 2109
-        self.update_score(30, "Ideal rent: $1,950..$2,109") # target range
-      when 2110 .. 2399
-        self.update_score(-50, "Expensive rent: $2,110..$2,399")
-      when 2400 .. 10000
-        self.update_score(-150, "Can't afford to rent: >$2,400")
+      when 1500 .. 1899
+        self.update_score(-50, "Too low rent price: $1,500..$1,899") # too good to be that low
+      when 1900 .. 2049
+        self.update_score(5, "Neutral rent price: $1,900..$2,049") # almost neutral
+      when 2050 .. 2209
+        self.update_score(30, "Ideal rent: $2,050..$2,209") # target range
+      when 2210 .. 2499
+        self.update_score(-50, "Expensive rent: $2,210..$2,499")
+      when 2500 .. 10000
+        self.update_score(-150, "Can't afford to rent: >$2,500")
       end
     end
-    self.update_score(-500, "Has no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
-    self.update_score(100, "Has washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
-    self.update_score(50, "Has washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
+    self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
+    self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
+    self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
     self.update_score(-150, "Have coin laundry on-site: no W/D") if self.have_feature?(:coin_laundry)
     self.update_score(+10, "No pets requirement") if @body.match(/no\s+pets/i)
     self.update_score(+25, "No smoking requirement") if self.has_attribute?('no smoking') or @body.match(/no\s+(smoke|smoking|smokers)/i)
@@ -819,14 +820,15 @@ class AddressHarvester
     self.update_score(20, "Condominium / duplex") if self.have_feature?(:condo)
     self.update_score(30, "Townhouse") if self.have_feature?(:townhouse)
     self.update_score(50, "Separate house") if self.has_attribute?('house')
-    self.update_score(25, "Has double-pane windows") if self.have_feature?(:dpw)
+    self.update_score(25, "Have double-pane windows") if self.have_feature?(:dpw)
     self.update_score(-200, "Is furnished") if self.has_attribute?('furnished')
     self.update_score(-250, "Apartment complex") if self.has_attribute?('apartment')
 
     # Parking
     self.update_score(-50, "Parking is on a street") if self.has_attribute?('off-street parking') or self.has_attribute?('street parking')
-    self.update_score(10, "Has detached garage / carport") if self.has_attribute?('carport') or self.has_attribute?('detached garage')
-    self.update_score(50, "Has attached garage") if self.has_attribute?('attached garage')
+    self.update_score(10, "Have detached garage / carport") if self.has_attribute?('carport') or self.has_attribute?('detached garage')
+    self.update_score(50, "Have attached garage") if self.has_attribute?('attached garage')
+    self.update_score(100, "Have A/C") if self.have_feature?(:ac)
 
     @score # return final score
   end
