@@ -682,7 +682,7 @@ class AddressHarvester
     end
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
-    self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?a\/c/i)
+    self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?c/i)
     self
   end
 
