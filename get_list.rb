@@ -13,9 +13,9 @@ require './lib/school'
 
 STDOUT.sync = true
 
-source_url = 'http://sfbay.craigslist.org/search/apa/eby?zoomToPosting=&altView=&query=&srchType=A&minAsk=&maxAsk=3000&bedrooms=2&nh=54'
+source_url = 'http://sfbay.craigslist.org/search/eby/apa?bedrooms=2&maxAsk=3000&nh=54&srchType=A'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
-links = page.xpath("//body/article[@id='pagecontainer']/div[@class='rightpane']/div[@class='content']/p[@class='row']/a[@href]")
+links = page.xpath("//body/article[@id='pagecontainer']/div[@class='middle']/div[@class='rightpane']/div[@class='content']/p[@class='row']/a[@href]")
 o = YAML.load_file('.settings.yaml')
 Twitter.configure do |config|
     config.consumer_key = o['consumer_key']
