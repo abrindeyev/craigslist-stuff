@@ -683,6 +683,7 @@ class AddressHarvester
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
     self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?c/i)
+    self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
     self
   end
 
@@ -829,6 +830,7 @@ class AddressHarvester
     self.update_score(10, "Have detached garage / carport") if self.has_attribute?('carport') or self.has_attribute?('detached garage')
     self.update_score(50, "Have attached garage") if self.has_attribute?('attached garage')
     self.update_score(100, "Have A/C") if self.have_feature?(:ac)
+    self.update_score(100, "Have garage for two cars") if self.have_feature?(:two_car_garage)
 
     @score # return final score
   end
