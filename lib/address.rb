@@ -495,7 +495,7 @@ class AddressHarvester
     else
       @source = File.read(uri.gsub(/^file:\/\//, ''))
     end
-    @source = @source.force_encoding("ISO-8859-1").encode("utf-8", 'replace' => nil) if @source.respond_to?('force_encoding') and @source.respond_to?('encoding')
+    @source = @source.force_encoding("ISO-8859-1").encode("utf-8", :replace => nil) if @source.respond_to?('force_encoding') and @source.respond_to?('encoding')
     @attributes = nil
     @features = {
       :posting_uri => uri
@@ -681,7 +681,7 @@ class AddressHarvester
       self.set_feature(:townhouse, true) if @body.match(/town ?(house|home)/i)
     end
     self.set_feature(:mw, true) if @body.match(/microwave/i)
-    self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+)?windows?/i)
+    self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+|\/?\s*storm\s+)?windows?/i)
     self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?c/i)
     self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
     self
