@@ -285,6 +285,7 @@ end
 describe "Double-pane windows detector" do
   ["DOUBLE PANE WINDOWS", "Double Pane Windows", "Double Paned Windows", "Double pane windows", "Double-Pane Energy Star Windows", "Dual pane windows", "double pane window", "double pane windows", "double paned windows"].each do |v|
     it "should detect '#{v}'" do
+      fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.560500,-121.999900&sensor=false', 'empty_posting_revgeocode.json')
       AddressHarvester.any_instance.stub(:get_body) { v }
       AddressHarvester.new(s('empty_posting.html')).have_feature?(:dpw).should be_true
     end
@@ -348,6 +349,7 @@ end
 describe "Version detector" do
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
     if f.match(/^\d+.html$/)
       it "should obtain some version from #{f}" do
