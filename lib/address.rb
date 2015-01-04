@@ -618,7 +618,7 @@ class AddressHarvester
 
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     if @addr_street == ''
-      gps_data = @doc.at_xpath("//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']").to_s
+      gps_data = @doc.at_xpath(@vc.get(:map_xpath)).to_s
       unless gps_data == ''
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
@@ -626,7 +626,16 @@ class AddressHarvester
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
-          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK' 
+          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
+          if self.version > 20130903
+            address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
+            if address_data.match(/^\d{1,5} /)
+              @addr_street = address_data if address_data.match(/^\d{1,5} /)
+              @addr_city   = @reverse_geocoded_address_components['locality']
+              @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+              self.set_feature(:address_was_reverse_geocoded, false)
+            end
+          end
         end
       end
     end
@@ -735,6 +744,7 @@ class AddressHarvester
     
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
+      # This code is applicable to ~ 2013 versions only
       @addr_street = self.get_tag('xstreet0')
       @addr_city   = self.get_tag('city')
       @addr_state  = self.get_tag('region')
@@ -961,12 +971,15 @@ class VersionedConfiguration
       :body_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/text()",
       :cltags_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']",
+      :map_xpath => "//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']",
     },
     20130903 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/text()",
     },
     20150101 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
+      :mapaddress_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
+      :map_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']",
     }
   }
 
