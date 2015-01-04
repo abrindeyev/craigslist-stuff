@@ -976,10 +976,14 @@ class VersionedConfiguration
     20130903 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/text()",
     },
-    20150101 => {
+    20131105 => {
+        :map_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']",
+    },
+    20131126 => {
+        :mapaddress_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
+    },
+    20140122 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
-      :mapaddress_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
-      :map_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']",
     }
   }
 
