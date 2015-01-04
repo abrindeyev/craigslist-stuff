@@ -630,10 +630,9 @@ class AddressHarvester
           if self.version > 20130903
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
             if address_data.match(/^\d{1,5} /)
-              @addr_street = address_data if address_data.match(/^\d{1,5} /)
+              @addr_street = address_data
               @addr_city   = @reverse_geocoded_address_components['locality']
               @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
-              self.set_feature(:address_was_reverse_geocoded, false)
             end
           end
         end

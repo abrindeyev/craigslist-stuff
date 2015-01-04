@@ -16,6 +16,7 @@ unless post.have_full_address?
   exit -1
 end
 addr = post.get_full_address
+puts "Address was reverse geocoded" if post.have_feature?(:address_was_reverse_geocoded)
 
 geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
 resp = RestClient.get(geocode_url)
