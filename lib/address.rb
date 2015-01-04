@@ -691,7 +691,7 @@ class AddressHarvester
     end
     self.set_feature(:mw, true) if @body.match(/microwave/i)
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+|\/?\s*storm\s+)?windows?/i)
-    self.set_feature(:ac, true) if @body.match(/(central\s+)?a\/?c/i)
+    self.set_feature(:ac, true) if @body.match(/([cC]entral\s+)?(A\/C|[Aa]ir\s+[Cc]ondition)/)
     self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
     self
   end
