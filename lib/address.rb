@@ -833,7 +833,7 @@ class AddressHarvester
     self.update_score(50, "Separate house") if self.has_attribute?('house')
     self.update_score(25, "Have double-pane windows") if self.have_feature?(:dpw)
     self.update_score(-200, "Is furnished") if self.has_attribute?('furnished')
-    self.update_score(-250, "Apartment complex") if self.has_attribute?('apartment')
+    self.update_score(-500, "Apartment complex") if self.has_attribute?('apartment')
 
     # Parking
     self.update_score(-50, "Parking is on a street") if self.has_attribute?('off-street parking') or self.has_attribute?('street parking')
