@@ -386,6 +386,13 @@ describe "Attributes parser" do
     p.get_attribute('laundry on site').should be_true
     p.get_attribute('street parking').should be_true
   end
+  it "should parse bedrooms when bathrooms aren't specified from version 20150103" do
+    p = AddressHarvester.new(s('4831182004.html'))
+
+    p.version.should eql 20150103
+    p.get_attribute('BR').should eql 2
+    p.get_attribute('apartment').should be_true
+  end
 end
 
 describe "Blacklist" do
