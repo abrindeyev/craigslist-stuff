@@ -1,5 +1,6 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 require 'fakeweb'
+FakeWeb.allow_net_connect = false
 
 def s(sample_filename)
   File.join(File.dirname(__FILE__), 'samples', sample_filename)
