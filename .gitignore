@@ -2,3 +2,5 @@ jq
 seen_db.json
 .my_ext_ip_address
 .settings.yaml
+Gemfile.lock
+.idea
