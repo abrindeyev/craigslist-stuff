@@ -790,32 +790,32 @@ class AddressHarvester
         self.update_score(-100, "Living space is too large: > 1,500 sqft")
       end
     end
-    if self.have_feature?(:neighborhood)
-      case self.get_feature(:neighborhood)
-      when 'Mission San Jose', 'Niles', 'Parkmont'
-        self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
-      when 'Irvington'
-        self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
-      when 'Centerville'
-        self.update_score(-40, "Bad neighborhood: #{ self.get_feature(:neighborhood) }")
-      end
-    end
-    if self.have_feature?(:rent_price)
-      case self.get_feature(:rent_price)
-      when 0 .. 1499
-        self.update_score(-100, "Unrealistic rent price: < $1,499") # too good to be true
-      when 1500 .. 1899
-        self.update_score(-50, "Too low rent price: $1,500..$1,899") # too good to be that low
-      when 1900 .. 2049
-        self.update_score(5, "Neutral rent price: $1,900..$2,049") # almost neutral
-      when 2050 .. 2209
-        self.update_score(30, "Ideal rent: $2,050..$2,209") # target range
-      when 2210 .. 2499
-        self.update_score(-50, "Expensive rent: $2,210..$2,499")
-      when 2500 .. 10000
-        self.update_score(-150, "Can't afford to rent: >$2,500")
-      end
-    end
+    #if self.have_feature?(:neighborhood)
+    #  case self.get_feature(:neighborhood)
+    #  when 'Mission San Jose', 'Niles', 'Parkmont'
+    #    self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
+    #  when 'Irvington'
+    #    self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
+    #  when 'Centerville'
+    #    self.update_score(-40, "Bad neighborhood: #{ self.get_feature(:neighborhood) }")
+    #  end
+    #end
+    #if self.have_feature?(:rent_price)
+    #  case self.get_feature(:rent_price)
+    #  when 0 .. 1499
+    #    self.update_score(-100, "Unrealistic rent price: < $1,499") # too good to be true
+    #  when 1500 .. 1899
+    #    self.update_score(-50, "Too low rent price: $1,500..$1,899") # too good to be that low
+    #  when 1900 .. 2049
+    #    self.update_score(5, "Neutral rent price: $1,900..$2,049") # almost neutral
+    #  when 2050 .. 2209
+    #    self.update_score(30, "Ideal rent: $2,050..$2,209") # target range
+    #  when 2210 .. 2499
+    #    self.update_score(-50, "Expensive rent: $2,210..$2,499")
+    #  when 2500 .. 10000
+    #    self.update_score(-150, "Can't afford to rent: >$2,500")
+    #  end
+    #end
     self.update_score(-500, "Have no washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == false
     self.update_score(100, "Have washer/dryer in unit") if self.have_feature?(:wd) and self.get_feature(:wd) == true
     self.update_score(50, "Have washer/dryer hookups") if self.have_feature?(:hookups) and self.get_feature(:hookups) == true
@@ -823,9 +823,9 @@ class AddressHarvester
     self.update_score(+10, "No pets requirement") if @body.match(/no\s+pets/i)
     self.update_score(+25, "No smoking requirement") if self.has_attribute?('no smoking') or @body.match(/no\s+(smoke|smoking|smokers)/i)
     self.update_score(-300, "Offers month to month lease") if @body.match(/month(?: |-)+to(?: |-)+month/i)
-    unless self.get_feature(:school_rating).nil?
-      self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
-    end
+    #unless self.get_feature(:school_rating).nil?
+    #  self.update_score((self.get_feature(:school_rating) - 5) * 20, "School: #{self.get_feature(:school_name)} (#{self.get_feature(:school_rating)})") if self.get_city.match(/fremont/i)
+    #end
     self.update_score(10, "Have microwave") if self.have_feature?(:mw)
     self.update_score(20, "Condominium / duplex") if self.have_feature?(:condo)
     self.update_score(30, "Townhouse") if self.have_feature?(:townhouse)
@@ -837,9 +837,12 @@ class AddressHarvester
     # Parking
     self.update_score(-50, "Parking is on a street") if self.has_attribute?('off-street parking') or self.has_attribute?('street parking')
     self.update_score(10, "Have detached garage / carport") if self.has_attribute?('carport') or self.has_attribute?('detached garage')
-    self.update_score(50, "Have attached garage") if self.has_attribute?('attached garage')
+    if self.have_feature?(:two_car_garage)
+        self.update_score(100, "Have garage for two cars")
+    elsif self.has_attribute?('attached garage')
+        self.update_score(50, "Have attached garage")
+    end
     self.update_score(100, "Have A/C") if self.have_feature?(:ac)
-    self.update_score(100, "Have garage for two cars") if self.have_feature?(:two_car_garage)
 
     @score # return final score
   end
