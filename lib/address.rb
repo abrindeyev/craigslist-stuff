@@ -12,6 +12,7 @@ class AddressHarvester
 
     @agents_blacklist = [
       '33584 Alvarado Niles Rd',
+      '33584 Alvarado Niles Road',
       '41111 Mission Blvd.',
       '22693 Hesperian Blvd Ste 100',
       '43341 Mission Blvd.',
