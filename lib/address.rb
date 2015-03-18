@@ -628,7 +628,7 @@ class AddressHarvester
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
           @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
-          if self.version > 20130903
+          if self.version > 20130903 and geo['status'] == 'OK'
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
             if address_data.match(/^\d{1,5} /)
               @addr_street = address_data
