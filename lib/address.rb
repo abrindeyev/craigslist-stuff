@@ -693,6 +693,7 @@ class AddressHarvester
     self.set_feature(:dpw, true) if @body.match(/(double|dual)[ -]+paned?\s+(energy\s+star\s+|\/?\s*storm\s+)?windows?/i)
     self.set_feature(:ac, true) if @body.match(/([cC]entral\s+)?(A\/C|[Aa]ir\s+[Cc]ondition)/)
     self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
+    self.set_feature(:blacklisted, true) if @body.match(/apm7\.com/i)
     self
   end
 
@@ -775,6 +776,7 @@ class AddressHarvester
     return @score unless @score.nil?
     @score = 0
     self.update_score(-1000, "City is not a Fremont") unless self.get_city == '' or self.get_city == 'Fremont'
+    self.update_score(-10000, "Posting is blacklisted") if self.have_feature?(:blacklisted)
     if self.have_feature?(:sqft)
       case self.get_feature(:sqft)
       when 0 .. 799
