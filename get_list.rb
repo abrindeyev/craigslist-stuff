@@ -62,7 +62,7 @@ else
     now = DateTime.now
     censored = {}
     seen_hash.each_pair do |k,v|
-      censored[k] = v if v != '' and now - DateTime.parse(v) < 14
+      censored[k] = v if v != '' and (now - DateTime.parse(v)) < 30
     end
     File.open(seen_hash_file, 'w') do |f|
       f.write(censored.to_json)
