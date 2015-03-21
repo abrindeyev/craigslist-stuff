@@ -8,6 +8,7 @@ require 'json'
 require 'nokogiri'
 require 'yaml'
 require 'twitter'
+require 'date'
 require './lib/address'
 require './lib/school'
 
@@ -58,9 +59,15 @@ else
 
     # Remember document and save index immediately
     seen_hash[uri] = post.get_posting_update_time
-    File.open(seen_hash_file, 'w') do |f|
-      f.write(seen_hash.to_json)
+    now = DateTime.now
+    censored = {}
+    seen_hash.each_pair do |k,v|
+      censored[k] = v if v != '' and now - DateTime.parse(v) < 14
     end
+    File.open(seen_hash_file, 'w') do |f|
+      f.write(censored.to_json)
+    end
+    seen_hash = censored
     next if failure_detected
 
     # Backup source to dump directory
