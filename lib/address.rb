@@ -548,7 +548,7 @@ class AddressHarvester
     @body = get_body()
     @attributes = get_attributes()
     @cltags = get_cltags()
-    @posting_info = Hash[*@source.scan(/(Posted|Edited):\s+<date>(.+)<\/date>/).flatten]
+    @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):\s+<(?:time|date)(?: datetime="[^"]+")?>(.+)<\/(?:date|time)>/).flatten]
 
     # ----------------------------------------------------------------------------------
     # Getting data for full mailing address (@addr_* variables)
@@ -901,6 +901,8 @@ class AddressHarvester
     return '' if @posting_info.nil?
     if @posting_info.include?('Posted')
       return @posting_info.has_key?('Edited') ? @posting_info['Edited'] : @posting_info['Posted']
+    elsif @posting_info.include?('posted')
+      return @posting_info.has_key?('updated') ? @posting_info['updated'] : @posting_info['posted']
     else
       return ''
     end
