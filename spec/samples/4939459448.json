@@ -1,0 +1,78 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Sat, 21 Mar 2015 06:03:02 GMT
+Expires: Sun, 22 Mar 2015 06:03:02 GMT
+Cache-Control: public, max-age=86400
+Access-Control-Allow-Origin: *
+Server: mafe
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Alternate-Protocol: 80:quic,p=0.5
+Accept-Ranges: none
+Vary: Accept-Language,Accept-Encoding
+Transfer-Encoding: chunked
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Serpa Court",
+               "short_name" : "Serpa Ct",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Serpa Court & Felicio Common, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.5787185,
+               "lng" : -121.9922504
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.5800674802915,
+                  "lng" : -121.9909014197085
+               },
+               "southwest" : {
+                  "lat" : 37.5773695197085,
+                  "lng" : -121.9935993802915
+               }
+            }
+         },
+         "place_id" : "EjRTZXJwYSBDb3VydCAmIEZlbGljaW8gQ29tbW9uLCBGcmVtb250LCBDQSA5NDUzNiwgVVNB",
+         "types" : [ "intersection" ]
+      }
+   ],
+   "status" : "OK"
+}

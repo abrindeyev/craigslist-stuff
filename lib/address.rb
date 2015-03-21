@@ -5,6 +5,7 @@ require 'rest-client'
 require 'json'
 require 'erb'
 require 'htmlentities'
+require 'uri'
 
 class AddressHarvester
 
@@ -620,10 +621,12 @@ class AddressHarvester
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     if @addr_street == ''
       gps_data = @doc.at_xpath(@vc.get(:map_xpath)).to_s
+      map_address = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
       unless gps_data == ''
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
-        if @lat and @lon
+        accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
+        if @lat and @lon and accuracy and accuracy == 0
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
@@ -635,6 +638,16 @@ class AddressHarvester
               @addr_city   = @reverse_geocoded_address_components['locality']
               @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
             end
+          end
+        elsif accuracy and accuracy > 0 and map_address.match(/^(.+) at (.+)$/)
+          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
+          resp = RestClient.get(revgeocode_url)
+          geo = JSON.parse(resp.body)
+          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
+          if self.version > 20130903 and geo['status'] == 'OK'
+            @addr_street = @reverse_geocoded_address_components['route']
+            @addr_city   = @reverse_geocoded_address_components['locality']
+            @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
           end
         end
       end
@@ -793,16 +806,14 @@ class AddressHarvester
         self.update_score(-100, "Living space is too large: > 1,500 sqft")
       end
     end
-    #if self.have_feature?(:neighborhood)
-    #  case self.get_feature(:neighborhood)
-    #  when 'Mission San Jose', 'Niles', 'Parkmont'
-    #    self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
-    #  when 'Irvington'
-    #    self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
-    #  when 'Centerville'
-    #    self.update_score(-40, "Bad neighborhood: #{ self.get_feature(:neighborhood) }")
-    #  end
-    #end
+    if self.have_feature?(:neighborhood)
+      case self.get_feature(:neighborhood)
+      when 'Mission San Jose', 'Niles'
+        self.update_score(100, "Ideal neighborhood: #{ self.get_feature(:neighborhood) }")
+      when 'Irvington'
+        self.update_score(10, "Good neighborhood: #{ self.get_feature(:neighborhood) }")
+      end
+    end
     #if self.have_feature?(:rent_price)
     #  case self.get_feature(:rent_price)
     #  when 0 .. 1499

@@ -154,10 +154,6 @@ describe "Raw address detector" do
     FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
     AddressHarvester.new(s('3591325547.html')).get_full_address.should eql '1001 Beethoven Common, Fremont, CA'
   end
-  it "should return '40571 Chapel Way, Fremont, California'" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.537336,-121.959770&sensor=false', :response => s('3582870190_revgeocode.json'))
-    AddressHarvester.new(s('3582870190.html')).get_full_address.should eql '40571 Chapel Way, Fremont, California'
-  end
   it "shouldn't detect full address from fuzzy reverse geocode requests" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false', :response => s('3584993361_revgeocode.json'))
     AddressHarvester.new(s('3584993361.html')).have_full_address?.should be_false
@@ -200,6 +196,10 @@ describe "Raw address detector" do
   end
   it "should return '34310 NEWTON CT, Fremont, CA'" do
     AddressHarvester.new(s('4298110333.html')).get_full_address.should eql '34310 NEWTON CT, Fremont, CA'
+  end
+  it "should return 'Serpa Court, Fremont, California'" do
+    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false', :response => s('4939459448.json'))
+    AddressHarvester.new(s('4939459448.html')).get_full_address.should eql 'Serpa Court, Fremont, California'
   end
 end
 
