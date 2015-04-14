@@ -16,9 +16,9 @@ STDOUT.sync = true
 
 # neighborhoods: fremont / union city / newark
 # housing type:  condo / duplex / house / townhouse
-# rent maximum:  $3000
+# rent maximum:  $3500
 # ft^2 minimum:  1000
-source_url = 'http://sfbay.craigslist.org/search/eby/apa?srchType=T&nh=54&housing_type=2&housing_type=4&housing_type=6&housing_type=9&maxAsk=3000&bedrooms=2&minSqft=1000'
+source_url = 'http://sfbay.craigslist.org/search/eby/apa?srchType=T&nh=54&housing_type=2&housing_type=4&housing_type=6&housing_type=9&maxAsk=3500&bedrooms=2&minSqft=1000'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
 links = page.xpath("//body/article[@id='pagecontainer']/div[@class='middle']/form[@id='searchform']/div[@class='rightpane']/div[@class='content']/p[@class='row']/a[@href]")
 o = YAML.load_file('.settings.yaml')
