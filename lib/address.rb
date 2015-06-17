@@ -1002,6 +1002,8 @@ class VersionedConfiguration
     },
     20140122 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
+    },
+    20140423 => {
     }
   }
 
@@ -1011,7 +1013,7 @@ class VersionedConfiguration
 
   def get_version
     return @version unless @version.nil?
-    @@source.xpath("//p[@class='postinginfo']").each do |l|
+    @@source.xpath("//p[@class='postinginfo']|//p[@class='postinginfo reveal']").each do |l|
       if m = l.to_s.gsub(/<[^>]>/, '').match(/posted: .*(\d{4}-\d{1,2}-\d{1,2}),?/i)
         @version = $1.gsub('-', '').to_i
         return @version
