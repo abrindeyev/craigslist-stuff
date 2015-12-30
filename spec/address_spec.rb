@@ -285,7 +285,7 @@ end
 describe "Double-pane windows detector" do
   ["DOUBLE PANE WINDOWS", "Double Pane Windows", "Double Paned Windows", "Double pane windows", "Double-Pane Energy Star Windows", "Dual pane windows", "double pane window", "double pane windows", "double paned windows"].each do |v|
     it "should detect '#{v}'" do
-      fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.560500,-121.999900&sensor=false', 'empty_posting_revgeocode.json')
+      fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=Meadowbrook%20Commons%20%20and%20Paseo%20Padre/Thornton&sensor=false', 'empty_posting_revgeocode.json')
       AddressHarvester.any_instance.stub(:get_body) { v }
       AddressHarvester.new(s('empty_posting.html')).have_feature?(:dpw).should be_true
     end
@@ -351,6 +351,7 @@ describe "Version detector" do
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
     if f.match(/^\d+.html$/)
       it "should obtain some version from #{f}" do
@@ -402,5 +403,16 @@ end
 describe "Blacklist" do
   it "should not detect address while only agency address is in the posting's body" do
     AddressHarvester.new(s('4236571064.html')).have_full_address?.should be_true
+  end
+end
+
+describe "Intersection detector" do
+  it "should detect Niles neighborhood" do
+    # fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+    p = AddressHarvester.new(s('5373956774.html'))
+
+    p.have_full_address?.should_not be_true
+    p.have_feature?(:neighborhood).should be_true
+    p.get_feature(:neighborhood).should eql 'Niles'
   end
 end

@@ -1,0 +1,537 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Wed, 30 Dec 2015 06:17:00 GMT
+Expires: Thu, 31 Dec 2015 06:17:00 GMT
+Cache-Control: public, max-age=86400
+Access-Control-Allow-Origin: *
+Server: mafe
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Accept-Ranges: none
+Vary: Accept-Language,Accept-Encoding
+Transfer-Encoding: chunked
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Boulevard",
+               "short_name" : "Niles Blvd",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Blvd & D St, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.57849909999999,
+               "lng" : -121.9858561
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.57984808029149,
+                  "lng" : -121.9845071197085
+               },
+               "southwest" : {
+                  "lat" : 37.5771501197085,
+                  "lng" : -121.9872050802915
+               }
+            }
+         },
+         "place_id" : "EilOaWxlcyBCbHZkICYgRCBTdCwgRnJlbW9udCwgQ0EgOTQ1MzYsIFVTQQ",
+         "types" : [ "intersection" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Avenue",
+               "short_name" : "Niles Ave",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Saint Joseph",
+               "short_name" : "St Joseph",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Berrien County",
+               "short_name" : "Berrien County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "Michigan",
+               "short_name" : "MI",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "49085",
+               "short_name" : "49085",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Ave, St Joseph, MI 49085, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.1032686,
+                  "lng" : -86.443208
+               },
+               "southwest" : {
+                  "lat" : 42.045011,
+                  "lng" : -86.48631159999999
+               }
+            },
+            "location" : {
+               "lat" : 42.0685398,
+               "lng" : -86.47151579999999
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.1032686,
+                  "lng" : -86.443208
+               },
+               "southwest" : {
+                  "lat" : 42.045011,
+                  "lng" : -86.48631159999999
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJn0nyuBDEEIgRGqBxLwwZL7I",
+         "types" : [ "route" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Blvd:F St",
+               "short_name" : "Niles Blvd:F St",
+               "types" : [ "point_of_interest", "establishment" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Blvd:F St, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.57773,
+               "lng" : -121.982753
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.5790789802915,
+                  "lng" : -121.9814040197085
+               },
+               "southwest" : {
+                  "lat" : 37.5763810197085,
+                  "lng" : -121.9841019802915
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJYxIWYHLAj4ARs4eyA94kNAs",
+         "types" : [
+            "bus_station",
+            "transit_station",
+            "point_of_interest",
+            "establishment"
+         ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Blvd:J St",
+               "short_name" : "Niles Blvd:J St",
+               "types" : [ "point_of_interest", "establishment" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Blvd:J St, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.576308,
+               "lng" : -121.976585
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.57765698029149,
+                  "lng" : -121.9752360197085
+               },
+               "southwest" : {
+                  "lat" : 37.5749590197085,
+                  "lng" : -121.9779339802915
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJrziEuW7Aj4ARz3sti7xJPCw",
+         "types" : [
+            "bus_station",
+            "transit_station",
+            "point_of_interest",
+            "establishment"
+         ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Blvd:H St",
+               "short_name" : "Niles Blvd:H St",
+               "types" : [ "point_of_interest", "establishment" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Blvd:H St, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.577175,
+               "lng" : -121.979607
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.57852398029149,
+                  "lng" : -121.9782580197085
+               },
+               "southwest" : {
+                  "lat" : 37.5758260197085,
+                  "lng" : -121.9809559802915
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJq9SNwW3Aj4ARDTnglW-IwUA",
+         "types" : [
+            "bus_station",
+            "transit_station",
+            "point_of_interest",
+            "establishment"
+         ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Blvd:E St",
+               "short_name" : "Niles Blvd:E St",
+               "types" : [ "point_of_interest", "establishment" ]
+            },
+            {
+               "long_name" : "Niles",
+               "short_name" : "Niles",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Fremont",
+               "short_name" : "Fremont",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94536",
+               "short_name" : "94536",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles Blvd:E St, Fremont, CA 94536, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.578048,
+               "lng" : -121.984157
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.57939698029149,
+                  "lng" : -121.9828080197085
+               },
+               "southwest" : {
+                  "lat" : 37.57669901970849,
+                  "lng" : -121.9855059802915
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJT36T4nLAj4AR4g2bvdwkO8c",
+         "types" : [
+            "bus_station",
+            "transit_station",
+            "point_of_interest",
+            "establishment"
+         ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "South Niles Road",
+               "short_name" : "S Niles Rd",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Saint Joseph",
+               "short_name" : "St Joseph",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Berrien County",
+               "short_name" : "Berrien County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "Michigan",
+               "short_name" : "MI",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "49085",
+               "short_name" : "49085",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "S Niles Rd, St Joseph, MI 49085, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.0430153,
+                  "lng" : -86.40425049999999
+               },
+               "southwest" : {
+                  "lat" : 42.00323880000001,
+                  "lng" : -86.4387716
+               }
+            },
+            "location" : {
+               "lat" : 42.0224202,
+               "lng" : -86.42028740000001
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.0430153,
+                  "lng" : -86.40425049999999
+               },
+               "southwest" : {
+                  "lat" : 42.00323880000001,
+                  "lng" : -86.4387716
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJ4UKWAgbQEIgRrrY6XOoc6mY",
+         "types" : [ "route" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Niles Street",
+               "short_name" : "Niles St",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Baker Street",
+               "short_name" : "Baker Street",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "Bakersfield",
+               "short_name" : "Bakersfield",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Kern County",
+               "short_name" : "Kern County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "93305",
+               "short_name" : "93305",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Niles St, Bakersfield, CA 93305, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 35.3843952,
+                  "lng" : -118.9970608
+               },
+               "southwest" : {
+                  "lat" : 35.3836768,
+                  "lng" : -119.0017622
+               }
+            },
+            "location" : {
+               "lat" : 35.3839816,
+               "lng" : -118.9991039
+            },
+            "location_type" : "GEOMETRIC_CENTER",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 35.3853849802915,
+                  "lng" : -118.9970608
+               },
+               "southwest" : {
+                  "lat" : 35.3826870197085,
+                  "lng" : -119.0017622
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJ0_TEsftr6oARqs43cZiRY3w",
+         "types" : [ "route" ]
+      }
+   ],
+   "status" : "OK"
+}

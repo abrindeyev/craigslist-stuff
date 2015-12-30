@@ -13,10 +13,7 @@ post = AddressHarvester.new(ARGV[0])
 raise "Post has been removed" if post.has_been_removed?
 puts "Post updated: #{post.get_posting_update_time}"
 puts "Post version: #{post.version}"
-unless post.have_full_address? 
-  puts "Can't get full address for that posting, giving up!"
-  exit -1
-end
+
 addr = post.get_full_address
 puts "Address was reverse geocoded" if post.have_feature?(:address_was_reverse_geocoded)
 

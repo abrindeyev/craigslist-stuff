@@ -626,7 +626,19 @@ class AddressHarvester
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
         accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
-        if @lat and @lon and accuracy and accuracy == 0
+        if map_address.match(/^(.+) at (.+)$/)
+          self.set_feature(:address_was_reverse_geocoded, true)
+          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
+          resp = RestClient.get(revgeocode_url)
+          geo = JSON.parse(resp.body)
+          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
+          if self.version > 20130903 and geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
+            self.set_feature(:neighborhood, @reverse_geocoded_address_components['neighborhood'])
+            @addr_street = @reverse_geocoded_address_components['route']
+            @addr_city   = @reverse_geocoded_address_components['locality']
+            @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+          end
+        elsif @lat and @lon and accuracy and accuracy == 0
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
@@ -638,16 +650,6 @@ class AddressHarvester
               @addr_city   = @reverse_geocoded_address_components['locality']
               @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
             end
-          end
-        elsif accuracy and accuracy > 0 and map_address.match(/^(.+) at (.+)$/)
-          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
-          resp = RestClient.get(revgeocode_url)
-          geo = JSON.parse(resp.body)
-          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
-          if self.version > 20130903 and geo['status'] == 'OK'
-            @addr_street = @reverse_geocoded_address_components['route']
-            @addr_city   = @reverse_geocoded_address_components['locality']
-            @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
           end
         end
       end
@@ -749,6 +751,7 @@ class AddressHarvester
   end
 
   def have_full_address?
+    return false if self.have_feature?(:address_was_reverse_geocoded)
     self.get_full_address == '' ? false : true
   end
 
