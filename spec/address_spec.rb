@@ -201,6 +201,9 @@ describe "Raw address detector" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false', :response => s('4939459448.json'))
     AddressHarvester.new(s('4939459448.html')).get_full_address.should eql 'Serpa Court, Fremont, California'
   end
+  it "should return '38662 Country Terr, Fremont, CA'" do 
+    AddressHarvester.new(s('5379302252.html')).get_full_address.should eql '38662 Country Terr, Fremont, CA'
+  end
 end
 
 describe "Washer/dryer/hookups fuzzy detector" do
