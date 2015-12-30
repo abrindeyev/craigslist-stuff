@@ -419,3 +419,9 @@ describe "Intersection detector" do
     p.get_feature(:neighborhood).should eql 'Niles'
   end
 end
+
+describe "Reverse geocode detector" do
+  it "should not try to detect center of Fremont as an address where no other means are available" do
+    AddressHarvester.new(s('5379384554.html')).get_full_address.should eql ''
+  end
+end
