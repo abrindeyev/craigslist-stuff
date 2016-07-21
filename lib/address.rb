@@ -638,7 +638,11 @@ class AddressHarvester
             @addr_city   = @reverse_geocoded_address_components['locality']
             @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
           end
-        elsif @lat and @lon and accuracy and accuracy == 0 and (not (@lat == '37.560500' and @lon == '-121.999900'))
+        elsif self.version < 20160715 and (
+            @lat and @lon and accuracy and accuracy == 0 and (not (@lat == '37.560500' and @lon == '-121.999900'))
+          ) or (
+            @lat and @lon and (not (@lat == '37.560500' and @lon == '-121.999900'))
+          )
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)

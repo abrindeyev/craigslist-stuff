@@ -209,6 +209,13 @@ describe "Raw address detector" do
   end
 end
 
+describe "Mapbox address detector" do
+  it "should return '4845 Mendota St, Union City, CA 94587, USA'" do
+    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.571051,-122.066008&sensor=false', :response => s('5693112857_revgeocode.json'))
+    AddressHarvester.new(s('5693112857.html')).get_full_address.should eql '4845 Mendota Street, Union City, California'
+  end
+end
+
 describe "Washer/dryer/hookups fuzzy detector" do
   it "should detect washer and dryer #1" do
     AddressHarvester.new(s('3564576923.html')).have_feature?(:wd).should be_true

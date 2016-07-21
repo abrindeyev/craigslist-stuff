@@ -1,0 +1,499 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Date: Thu, 21 Jul 2016 03:55:51 GMT
+Expires: Fri, 22 Jul 2016 03:55:51 GMT
+Cache-Control: public, max-age=86400
+Access-Control-Allow-Origin: *
+Server: mafe
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Accept-Ranges: none
+Vary: Accept-Language,Accept-Encoding
+Transfer-Encoding: chunked
+
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "4827",
+               "short_name" : "4827",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Kenwood Street",
+               "short_name" : "Kenwood St",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Union City",
+               "short_name" : "Union City",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94587",
+               "short_name" : "94587",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "5551",
+               "short_name" : "5551",
+               "types" : [ "postal_code_suffix" ]
+            }
+         ],
+         "formatted_address" : "4827 Kenwood St, Union City, CA 94587, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.5711101,
+                  "lng" : -122.0658386
+               },
+               "southwest" : {
+                  "lat" : 37.5709218,
+                  "lng" : -122.0660901
+               }
+            },
+            "location" : {
+               "lat" : 37.571016,
+               "lng" : -122.0659643
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.5723649302915,
+                  "lng" : -122.0646153697085
+               },
+               "southwest" : {
+                  "lat" : 37.5696669697085,
+                  "lng" : -122.0673133302915
+               }
+            }
+         },
+         "place_id" : "ChIJW3ebkB6-j4ARJJdIitYqZB4",
+         "types" : [ "premise" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "4810",
+               "short_name" : "4810",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Tipton Court",
+               "short_name" : "Tipton Ct",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Union City",
+               "short_name" : "Union City",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94587",
+               "short_name" : "94587",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "5559",
+               "short_name" : "5559",
+               "types" : [ "postal_code_suffix" ]
+            }
+         ],
+         "formatted_address" : "4810 Tipton Ct, Union City, CA 94587, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.571238,
+               "lng" : -122.06615
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.5725869802915,
+                  "lng" : -122.0648010197085
+               },
+               "southwest" : {
+                  "lat" : 37.5698890197085,
+                  "lng" : -122.0674989802915
+               }
+            }
+         },
+         "place_id" : "ChIJFSIfhR6-j4AR3KDsUdNoChU",
+         "types" : [ "street_address" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Union City",
+               "short_name" : "Union City",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Union City, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.636032,
+                  "lng" : -121.94127
+               },
+               "southwest" : {
+                  "lat" : 37.563135,
+                  "lng" : -122.0963741
+               }
+            },
+            "location" : {
+               "lat" : 37.5933918,
+               "lng" : -122.0438298
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.636032,
+                  "lng" : -121.94127
+               },
+               "southwest" : {
+                  "lat" : 37.563135,
+                  "lng" : -122.0963741
+               }
+            }
+         },
+         "place_id" : "ChIJk-qHUbyRj4AR7opkvGzerFs",
+         "types" : [ "locality", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "94587",
+               "short_name" : "94587",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Union City",
+               "short_name" : "Union City",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Union City, CA 94587, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.6316209,
+                  "lng" : -121.9926449
+               },
+               "southwest" : {
+                  "lat" : 37.561402,
+                  "lng" : -122.096567
+               }
+            },
+            "location" : {
+               "lat" : 37.5952304,
+               "lng" : -122.043969
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.6316209,
+                  "lng" : -121.9926449
+               },
+               "southwest" : {
+                  "lat" : 37.561402,
+                  "lng" : -122.096567
+               }
+            }
+         },
+         "place_id" : "ChIJAUo3KWKVj4ARRtdpH5dVod0",
+         "types" : [ "postal_code" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Alameda County",
+               "short_name" : "Alameda County",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Alameda County, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.9056681,
+                  "lng" : -121.469214
+               },
+               "southwest" : {
+                  "lat" : 37.4545389,
+                  "lng" : -122.3426649
+               }
+            },
+            "location" : {
+               "lat" : 37.6016892,
+               "lng" : -121.7195459
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.9056681,
+                  "lng" : -121.469214
+               },
+               "southwest" : {
+                  "lat" : 37.4545389,
+                  "lng" : -122.3426649
+               }
+            }
+         },
+         "place_id" : "ChIJWRd5NDfyj4ARc30TGxHHxmg",
+         "types" : [ "administrative_area_level_2", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco-Oakland-Fremont, CA",
+               "short_name" : "San Francisco-Oakland-Fremont, CA",
+               "types" : [ "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco-Oakland-Fremont, CA, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 38.320945,
+                  "lng" : -121.4692749
+               },
+               "southwest" : {
+                  "lat" : 37.1073458,
+                  "lng" : -123.024066
+               }
+            },
+            "location" : {
+               "lat" : 37.8043507,
+               "lng" : -121.8107079
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 38.320945,
+                  "lng" : -121.4692749
+               },
+               "southwest" : {
+                  "lat" : 37.1073458,
+                  "lng" : -123.024066
+               }
+            }
+         },
+         "place_id" : "ChIJGUN8-q6Ij4ARZ1tA_OojshE",
+         "types" : [ "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco Metropolitan Area",
+               "short_name" : "San Francisco Metropolitan Area",
+               "types" : [ "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco Metropolitan Area, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 38.320945,
+                  "lng" : -121.4692139
+               },
+               "southwest" : {
+                  "lat" : 37.0538579,
+                  "lng" : -123.173825
+               }
+            },
+            "location" : {
+               "lat" : 37.7749274,
+               "lng" : -122.4194254
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 38.320945,
+                  "lng" : -121.4692139
+               },
+               "southwest" : {
+                  "lat" : 37.0538579,
+                  "lng" : -123.173825
+               }
+            }
+         },
+         "place_id" : "ChIJE156BviCj4ARKrqKa5lkEu4",
+         "types" : [ "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "California, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.0095169,
+                  "lng" : -114.1313927
+               },
+               "southwest" : {
+                  "lat" : 32.5342643,
+                  "lng" : -124.4151055
+               }
+            },
+            "location" : {
+               "lat" : 36.778261,
+               "lng" : -119.4179324
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.0095169,
+                  "lng" : -114.1313927
+               },
+               "southwest" : {
+                  "lat" : 32.5342643,
+                  "lng" : -124.4151055
+               }
+            }
+         },
+         "place_id" : "ChIJPV4oX_65j4ARVW8IJ6IJUYs",
+         "types" : [ "administrative_area_level_1", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "United States",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 71.3867745,
+                  "lng" : -66.9502861
+               },
+               "southwest" : {
+                  "lat" : 18.9106771,
+                  "lng" : 172.4458954
+               }
+            },
+            "location" : {
+               "lat" : 37.09024,
+               "lng" : -95.712891
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 49.38,
+                  "lng" : -66.94
+               },
+               "southwest" : {
+                  "lat" : 25.82,
+                  "lng" : -124.39
+               }
+            }
+         },
+         "place_id" : "ChIJCzYy5IS16lQRQrfeQ5K5Oxw",
+         "types" : [ "country", "political" ]
+      }
+   ],
+   "status" : "OK"
+}
