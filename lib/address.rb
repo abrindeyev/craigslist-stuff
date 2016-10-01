@@ -6,10 +6,14 @@ require 'json'
 require 'erb'
 require 'htmlentities'
 require 'uri'
+require 'mongo'
+require './lib/url-cache'
 
 class AddressHarvester
 
-  def init
+  def init(mc)
+
+    Mongo::Logger.logger.level = ::Logger::FATAL
 
     @agents_blacklist = [
       '33584 Alvarado Niles Rd',
@@ -487,11 +491,18 @@ class AddressHarvester
         }
       }
     }
+
+    @mongo_client = mc
+    @db = @mongo_client.database
   end
 
-  def initialize(uri)
+  def debug(msg)
+    puts "[DEBUG] #{msg}" if ENV['DEBUG']
+  end
+
+  def initialize(uri, mc)
     return nil if uri.nil? or uri == ''
-    self.init
+    self.init(mc)
     if uri.match(/^http:\/\//)
       @source = open(uri).read
     else
@@ -511,6 +522,7 @@ class AddressHarvester
     @addr_city   = ''
     @addr_state  = ''
 
+    @uc = URLCacher.new(@mongo_client)
     @doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @vc = VersionedConfiguration.new(@doc)
 
@@ -521,6 +533,10 @@ class AddressHarvester
       self.parse
     end
     self
+  end
+
+  def complex_matched? 
+    @merged_complex == '' ? false : true
   end
 
   def has_been_removed?
@@ -549,6 +565,7 @@ class AddressHarvester
     @attributes = get_attributes()
     @cltags = get_cltags()
     @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+<(?:time|date)[^>]*>(.+)<\/(?:date|time)>/).flatten]
+    @id = Array[@source.scan(/(?:post id: |postingID=|var pID = "|buttonPostingID = ")([0-9]+)/).flatten][0][0]
 
     # ----------------------------------------------------------------------------------
     # Getting data for full mailing address (@addr_* variables)
@@ -605,7 +622,7 @@ class AddressHarvester
 
     # 2. Looking for raw mailing addresses in posting's body
     if @addr_street == ''
-      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[0-9A-Za-z ]{3,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
+      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[1-9]?[A-Za-z ]{2,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
       if addrs.uniq.size > 0
         black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
         addrs.uniq.each do |a|
@@ -615,6 +632,8 @@ class AddressHarvester
             @addr_state  = 'CA'
           end
         end
+      else
+        debug("Raw address detector hasn't detected anything (addrs.uniq.size=#{addrs.uniq.size})")
       end
     end
 
@@ -629,8 +648,8 @@ class AddressHarvester
         if map_address.match(/^(.+) at (.+)$/)
           self.set_feature(:address_was_reverse_geocoded, true)
           revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
-          resp = RestClient.get(revgeocode_url)
-          geo = JSON.parse(resp.body)
+
+          geo = @uc.get_cached_json(revgeocode_url)
           @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
           if self.version > 20130903 and geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
             self.set_feature(:neighborhood, @reverse_geocoded_address_components['neighborhood'])
@@ -644,8 +663,7 @@ class AddressHarvester
             @lat and @lon and (not (@lat == '37.560500' and @lon == '-121.999900'))
           )
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
-          resp = RestClient.get(revgeocode_url)
-          geo = JSON.parse(resp.body)
+          geo = @uc.get_cached_json(revgeocode_url)
           @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
           if self.version > 20130903 and geo['status'] == 'OK'
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
@@ -714,6 +732,10 @@ class AddressHarvester
     self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
     self.set_feature(:blacklisted, true) if @body.match(/apm7\.com/i)
     self
+  end
+
+  def get_id
+    @id
   end
 
   def has_attribute?(attr_name)
