@@ -1,14 +1,11 @@
 require 'open-uri'
 require 'rest-client'
 require 'json'
+require './lib/debugger'
 
-class URLCacher
+class URLCacher < Debugger
 
   @@db = nil
-
-  def debug(msg)
-    puts "[DEBUG] #{msg}" if ENV['DEBUG']
-  end
 
   def initialize(db)
     unless @@db

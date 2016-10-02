@@ -6,10 +6,12 @@ require 'json'
 require 'erb'
 require 'htmlentities'
 require 'uri'
+require 'date'
 require 'mongo'
+require './lib/debugger'
 require './lib/url-cache'
 
-class AddressHarvester
+class AddressHarvester < Debugger
 
   def init(mc)
 
@@ -496,10 +498,6 @@ class AddressHarvester
     @db = @mongo_client.database
   end
 
-  def debug(msg)
-    puts "[DEBUG] #{msg}" if ENV['DEBUG']
-  end
-
   def initialize(uri, mc)
     return nil if uri.nil? or uri == ''
     self.init(mc)
@@ -522,6 +520,9 @@ class AddressHarvester
     @addr_city   = ''
     @addr_state  = ''
 
+    # Cached copy of Google Maps API response
+    @geo = nil
+
     @uc = URLCacher.new(@mongo_client)
     @doc = Nokogiri::HTML(@source, nil, 'UTF-8')
     @vc = VersionedConfiguration.new(@doc)
@@ -533,6 +534,35 @@ class AddressHarvester
       self.parse
     end
     self
+  end
+
+  def serialize
+    j = {
+      :body => @body,
+      :features => self.get_features,
+      :score => self.get_score,
+      :scoring_log => self.get_scoring_log,
+      :created_at => DateTime.parse(self.get_posting_create_time),
+      :updated_at => DateTime.parse(self.get_posting_update_time),
+    }
+    j[:features].delete(:posting_uri) if j[:features].include?(:posting_uri)
+    j[:matched_as] = @merged_complex if self.complex_matched?
+    if @addr_street != '' and self.have_full_address?
+      j[:address] = {} unless j.include?(:address)
+      j[:address][:street] = @addr_street
+    end
+    if @addr_city != ''
+      j[:address] = {} unless j.include?(:address)
+      j[:address][:city] = @addr_city
+    end
+    if @addr_state != ''
+      j[:address] = {} unless j.include?(:address)
+      j[:address][:state] = @addr_state
+    end
+    if self.have_full_address?
+      j[:address][:formatted_address] = self.get_full_address
+    end
+    return j
   end
 
   def complex_matched? 
@@ -624,6 +654,7 @@ class AddressHarvester
     if @addr_street == ''
       addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[1-9]?[A-Za-z ]{2,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
       if addrs.uniq.size > 0
+        # TODO: Convert address to canonical form using Google Maps API
         black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
         addrs.uniq.each do |a|
           if not black_list.include?(a[0])
@@ -649,9 +680,9 @@ class AddressHarvester
           self.set_feature(:address_was_reverse_geocoded, true)
           revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
 
-          geo = @uc.get_cached_json(revgeocode_url)
-          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
-          if self.version > 20130903 and geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
+          @geo = @uc.get_cached_json(revgeocode_url)
+          @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
+          if self.version > 20130903 and @geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
             self.set_feature(:neighborhood, @reverse_geocoded_address_components['neighborhood'])
             @addr_street = @reverse_geocoded_address_components['route']
             @addr_city   = @reverse_geocoded_address_components['locality']
@@ -663,9 +694,9 @@ class AddressHarvester
             @lat and @lon and (not (@lat == '37.560500' and @lon == '-121.999900'))
           )
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
-          geo = @uc.get_cached_json(revgeocode_url)
-          @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
-          if self.version > 20130903 and geo['status'] == 'OK'
+          @geo = @uc.get_cached_json(revgeocode_url)
+          @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
+          if self.version > 20130903 and @geo['status'] == 'OK'
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
             if address_data.match(/^\d{1,5} /)
               @addr_street = address_data
@@ -926,15 +957,21 @@ class AddressHarvester
     @merged_complex = name
   end
 
+  def get_posting_create_time
+    return '' if @posting_info.nil?
+    ['Posted','posted'].each do |i|
+      return @posting_info[i] if @posting_info.include?(i)
+    end
+    return ''
+  end
+
   def get_posting_update_time
     return '' if @posting_info.nil?
-    if @posting_info.include?('Posted')
-      return @posting_info.has_key?('Edited') ? @posting_info['Edited'] : @posting_info['Posted']
-    elsif @posting_info.include?('posted')
-      return @posting_info.has_key?('updated') ? @posting_info['updated'] : @posting_info['posted']
-    else
-      return ''
+    debug("posting_info: #{@posting_info.inspect}")
+    ['Updated', 'updated', 'Edited', 'edited', 'Posted', 'posted'].each do |i|
+      return @posting_info[i] if @posting_info.has_key?(i)
     end
+    return ''
   end
 
   def is_scam?
