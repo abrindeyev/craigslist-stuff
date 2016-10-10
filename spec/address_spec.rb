@@ -143,11 +143,11 @@ describe "Score engine" do
 end
 
 describe "Raw address detector" do
-  it "should return '40711 Robin Street, Fremont, CA'" do
-    AddressHarvester.new(s('3599138803.html'),mc).get_full_address.should eql '40711 Robin Street, Fremont, CA'
+  it "should return '40711 Robin Street, Fremont, California'" do
+    AddressHarvester.new(s('3599138803.html'),mc).get_full_address.should eql '40711 Robin Street, Fremont, California'
   end
-  it "should return '23 Raintree Court, Hayward, CA'" do
-    AddressHarvester.new(s('3601613904.html'),mc).get_full_address.should eql '23 Raintree Court, Hayward, CA'
+  it "should return '23 Raintree Court, Hayward, California'" do
+    AddressHarvester.new(s('3601613904.html'),mc).get_full_address.should eql '23 Raintree Court, Hayward, California'
   end
   it "should return '38700 Tyson Ln, Fremont, California'" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.562137,-121.974786&sensor=false', :response => s('3585854056_revgeocode.json'))
@@ -161,57 +161,57 @@ describe "Raw address detector" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false', :response => s('3584993361_revgeocode.json'))
     AddressHarvester.new(s('3584993361.html'),mc).have_full_address?.should be false
   end
-  it "should return '39800 Fremont Blvd., Fremont, CA'" do
-    AddressHarvester.new(s('3587519103.html'),mc).get_full_address.should eql '39800 Fremont Blvd., Fremont, CA'
+  it "should return '39800 Fremont Boulevard, Fremont, California'" do
+    AddressHarvester.new(s('3587519103.html'),mc).get_full_address.should eql '39800 Fremont Boulevard, Fremont, California'
   end
-  it "should return '5647 Robertson Ave, Newark, CA'" do
-    AddressHarvester.new(s('3584363870.html'),mc).get_full_address.should eql '5647 Robertson Ave, Newark, CA'
+  it "should return '5647 Robertson Avenue, Newark, California'" do
+    AddressHarvester.new(s('3584363870.html'),mc).get_full_address.should eql '5647 Robertson Avenue, Newark, California'
   end
   it "should return '40640 High St., Fremont, CA'" do
     AddressHarvester.new(s('3587462071.html'),mc).get_full_address.should eql '40640 High St., Fremont, CA'
   end
-  it "should return '43314 Jerome Ave, Fremont, CA'" do
-    AddressHarvester.new(s('3587303805.html'),mc).get_full_address.should eql '43314 Jerome Ave, Fremont, CA'
+  it "should return '43314 Jerome Avenue, Fremont, California'" do
+    AddressHarvester.new(s('3587303805.html'),mc).get_full_address.should eql '43314 Jerome Avenue, Fremont, California'
   end
-  it "should return '4193 Rainbow Ter, Fremont, CA'" do
-    AddressHarvester.new(s('3587286246.html'),mc).get_full_address.should eql '4193 Rainbow Ter, Fremont, CA'
+  it "should return '4193 Rainbow Terrace, Fremont, California'" do
+    AddressHarvester.new(s('3587286246.html'),mc).get_full_address.should eql '4193 Rainbow Terrace, Fremont, California'
   end
-  it "should return '31770 Alvarado Blvd, Union City, CA'" do
-    AddressHarvester.new(s('3591502030.html'),mc).get_full_address.should eql '31770 Alvarado Blvd, Union City, CA'
+  it "should return '31770 Alvarado Boulevard, Union City, California'" do
+    AddressHarvester.new(s('3591502030.html'),mc).get_full_address.should eql '31770 Alvarado Boulevard, Union City, California'
   end
   it "should return '4022 Papillon Terrace, Fremont, CA'" do
     AddressHarvester.new(s('3573633080.html'),mc).get_full_address.should eql '4022 Papillon Terrace, Fremont, CA'
   end
-  it "should return '4181 Asimuth Cir., Union City, CA'" do
-    AddressHarvester.new(s('3619322293.html'),mc).get_full_address.should eql '4181 Asimuth Cir., Union City, CA'
+  it "should return '4181 Asimuth Circle, Union City, California'" do
+    AddressHarvester.new(s('3619322293.html'),mc).get_full_address.should eql '4181 Asimuth Circle, Union City, California'
   end
-  it "should return '38593 Royal Ann Cmn, Fremont, CA'" do
-    AddressHarvester.new(s('3626121593.html'),mc).get_full_address.should eql '38593 Royal Ann Cmn, Fremont, CA'
+  it "should return '38593 Royal Ann Common, Fremont, California'" do
+    AddressHarvester.new(s('3626121593.html'),mc).get_full_address.should eql '38593 Royal Ann Common, Fremont, California'
   end
-  it "should return '37120 Spruce St, Newark, CA'" do
-    AddressHarvester.new(s('3633731850.html'),mc).get_full_address.should eql '37120 Spruce St, Newark, CA'
+  it "should return '37120 Spruce Street, Newark, California'" do
+    AddressHarvester.new(s('3633731850.html'),mc).get_full_address.should eql '37120 Spruce Street, Newark, California'
   end
-  it "should return '37155 Aspenwood Commons, Fremont CA'" do
-    AddressHarvester.new(s('4232384330.html'),mc).get_full_address.should eql '37155 Aspenwood Commons, Fremont, CA'
+  it "should return '37155 Aspenwood Common, Fremont, California'" do
+    AddressHarvester.new(s('4232384330.html'),mc).get_full_address.should eql '37155 Aspenwood Common, Fremont, California'
   end
-  it "should return '42643 Charleston Way, Fremont, CA'" do
-    AddressHarvester.new(s('4298442714.html'),mc).get_full_address.should eql '42643 Charleston Way, Fremont, CA'
+  it "should return '42643 Charleston Way, Fremont, California'" do
+    AddressHarvester.new(s('4298442714.html'),mc).get_full_address.should eql '42643 Charleston Way, Fremont, California'
   end
-  it "should return '34310 NEWTON CT, Fremont, CA'" do
-    AddressHarvester.new(s('4298110333.html'),mc).get_full_address.should eql '34310 NEWTON CT, Fremont, CA'
+  it "should return '34310 Newton Court, Fremont, California'" do
+    AddressHarvester.new(s('4298110333.html'),mc).get_full_address.should eql '34310 Newton Court, Fremont, California'
   end
   it "should return 'Serpa Court, Fremont, California'" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false', :response => s('4939459448.json'))
     AddressHarvester.new(s('4939459448.html'),mc).get_full_address.should eql 'Serpa Court, Fremont, California'
   end
-  it "should return '38662 Country Terr, Fremont, CA'" do 
-    AddressHarvester.new(s('5379302252.html'),mc).get_full_address.should eql '38662 Country Terr, Fremont, CA'
+  it "should return '38662 Country Terrace, Fremont, California'" do 
+    AddressHarvester.new(s('5379302252.html'),mc).get_full_address.should eql '38662 Country Terrace, Fremont, California'
   end
-  it "should return '34132 Cavendish Pl, Fremont, CA'" do 
-    AddressHarvester.new(s('5381678364.html'),mc).get_full_address.should eql '34132 Cavendish Pl, Fremont, CA'
+  it "should return '34132 Cavendish Place, Fremont, California'" do 
+    AddressHarvester.new(s('5381678364.html'),mc).get_full_address.should eql '34132 Cavendish Place, Fremont, California'
   end
-  it "should return '37879 3rd Street, Fremont, CA'" do 
-    AddressHarvester.new(s('4234294131.html'),mc).get_full_address.should eql '37879 3rd Street, Fremont, CA'
+  it "should return '37879 3rd Street, Fremont, California'" do 
+    AddressHarvester.new(s('4234294131.html'),mc).get_full_address.should eql '37879 3rd Street, Fremont, California'
   end
 end
 

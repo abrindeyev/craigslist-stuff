@@ -18,11 +18,10 @@ class AddressHarvester < Debugger
     Mongo::Logger.logger.level = ::Logger::FATAL
 
     @agents_blacklist = [
-      '33584 Alvarado Niles Rd',
-      '33584 Alvarado Niles Road',
-      '41111 Mission Blvd.',
+      '41111 Mission Blvd, Fremont, CA 94539, USA',
+      '43341 Mission Blvd, Fremont, CA 94539, USA',
+      '33584 Alvarado-Niles Rd, Union City, CA 94587, USA',
       '22693 Hesperian Blvd Ste 100',
-      '43341 Mission Blvd.',
     ]
   
     @PDB = {
@@ -590,12 +589,15 @@ class AddressHarvester < Debugger
   end
 
   def parse
+    debug("Starting parsing")
     @title = get_title()
     @body = get_body()
     @attributes = get_attributes()
     @cltags = get_cltags()
     @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+<(?:time|date)[^>]*>(.+)<\/(?:date|time)>/).flatten]
+    debug("Posting info: #{@posting_info.inspect}")
     @id = Array[@source.scan(/(?:post id: |postingID=|var pID = "|buttonPostingID = ")([0-9]+)/).flatten][0][0]
+    debug("Document ID: #{@id}")
 
     # ----------------------------------------------------------------------------------
     # Getting data for full mailing address (@addr_* variables)
@@ -622,6 +624,8 @@ class AddressHarvester < Debugger
           end
         end
       end
+    else
+      debug("rentsentinel links not detected")
     end
     # 1.1a. Tracking of AptJet.com postings
     aptjet_links = @body.scan(/http:\/\/aptjet.com\/ContactUs\/\?id=[0-9a-z]{1,15}/i)
@@ -645,6 +649,8 @@ class AddressHarvester < Debugger
           end
         end
       end
+    else
+      debug("aptjet links not detected")
     end
 
     # 1.2. Looking for known patterns in posting's body
@@ -652,20 +658,53 @@ class AddressHarvester < Debugger
 
     # 2. Looking for raw mailing addresses in posting's body
     if @addr_street == ''
+      debug("Entering Raw address detector")
       addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[1-9]?[A-Za-z ]{2,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
+      result = {}
       if addrs.uniq.size > 0
-        # TODO: Convert address to canonical form using Google Maps API
         black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
         addrs.uniq.each do |a|
-          if not black_list.include?(a[0])
-            @addr_street = a[0]
-            @addr_city   = a[1]
-            @addr_state  = 'CA'
+          debug("processing raw address #{a}")
+          if a.class == Array and a.size == 2
+            g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ a[0] }, #{ a[1] } CA&sensor=false")
+
+            g = @uc.get_cached_json(g_url)
+            if  g['status'] == 'OK' and
+                g['results'].class == Array and
+                g['results'].size == 1 and
+                g['results'].first.include?('formatted_address')
+              fmt_addr = g['results'].first['formatted_address']
+              address_components = Hash[*g['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+              if not black_list.include?(fmt_addr)
+                result[fmt_addr] = {
+                  :street => "#{ address_components['street_number'] } #{ address_components['route'] }",
+                  :city   => address_components['locality'],
+                  :state  => address_components['administrative_area_level_1']
+                }
+              else
+                debug("Address #{ g['results'][0]['formatted_address'] } is blacklisted")
+              end
+            else
+              debug("Can't convert #{a} into canonical form using Google Maps API. API result: #{ g['status'] }")
+            end
+          else
+            debug("Broken address: #{a.inspect}")
           end
+        end
+        if result.keys.size == 1
+          @addr_street = result.values.first[:street]
+          @addr_city   = result.values.first[:city]
+          @addr_state  = result.values.first[:state]
+          @addr_formatted = result.keys.first
+          debug("Formatted address: #{ @addr_formatted }")
+        else
+          debug("Ambiguous results in raw file detector: #{ result.inspect }")
         end
       else
         debug("Raw address detector hasn't detected anything (addrs.uniq.size=#{addrs.uniq.size})")
       end
+    else
+      debug("Raw address detector skipped: @addr_street=='#{@addr_street}'")
     end
 
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
@@ -708,6 +747,7 @@ class AddressHarvester < Debugger
       end
     end
     # ----------------------------------------------------------------------------------
+    debug("setting features")
 
     # Getting rent price
     self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
@@ -763,6 +803,7 @@ class AddressHarvester < Debugger
     self.set_feature(:two_car_garage, true) if @body.match(/(two|2)\s+car\s+garage/i)
     self.set_feature(:blacklisted, true) if @body.match(/apm7\.com/i)
     self
+    debug("Parsing finished")
   end
 
   def get_id
