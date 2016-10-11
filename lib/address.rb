@@ -515,6 +515,7 @@ class AddressHarvester < Debugger
     @scoring_log = []
 
     # Verified address of object in posting
+    @addr_neighborhood = nil
     @addr_street = ''
     @addr_city   = ''
     @addr_state  = ''
@@ -558,6 +559,7 @@ class AddressHarvester < Debugger
       j[:address] = {} unless j.include?(:address)
       j[:address][:state] = @addr_state
     end
+    j[:address][:neighborhood] = @addr_neighborhood if @addr_neighborhood
     if self.have_full_address?
       j[:address][:formatted_address] = self.get_full_address
     end
@@ -589,7 +591,7 @@ class AddressHarvester < Debugger
   end
 
   def parse
-    debug("Starting parsing")
+    debug("Starting parsing, version is #{self.version}")
     @title = get_title()
     @body = get_body()
     @attributes = get_attributes()
@@ -681,6 +683,7 @@ class AddressHarvester < Debugger
                   :city   => address_components['locality'],
                   :state  => address_components['administrative_area_level_1']
                 }
+                result[fmt_addr][:neighborhood] = address_components['neighborhood'] if address_components.include?('neighborhood')
               else
                 debug("Address #{ g['results'][0]['formatted_address'] } is blacklisted")
               end
@@ -692,9 +695,11 @@ class AddressHarvester < Debugger
           end
         end
         if result.keys.size == 1
-          @addr_street = result.values.first[:street]
-          @addr_city   = result.values.first[:city]
-          @addr_state  = result.values.first[:state]
+          r = result.values.first
+          @addr_neighborhood = r.include?(:neighborhood) ? r[:neighborhood] : nil
+          @addr_street = r[:street]
+          @addr_city   = r[:city]
+          @addr_state  = r[:state]
           @addr_formatted = result.keys.first
           debug("Formatted address: #{ @addr_formatted }")
         else
@@ -709,41 +714,83 @@ class AddressHarvester < Debugger
 
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
     if @addr_street == ''
+      debug("Entering GPS geocoding, @addr_street is empty")
       gps_data = @doc.at_xpath(@vc.get(:map_xpath)).to_s
       map_address = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
       unless gps_data == ''
+        debug("GPS data non empty")
         @lat = $1 if gps_data.match(/data-latitude="([-0-9.]+?)"/)
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
         accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
         if map_address.match(/^(.+) at (.+)$/)
+          debug("Address is approximate: [#{$1} at #{$2}]")
           self.set_feature(:address_was_reverse_geocoded, true)
           revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
 
           @geo = @uc.get_cached_json(revgeocode_url)
           @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
           if self.version > 20130903 and @geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
-            self.set_feature(:neighborhood, @reverse_geocoded_address_components['neighborhood'])
+            @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
             @addr_street = @reverse_geocoded_address_components['route']
             @addr_city   = @reverse_geocoded_address_components['locality']
             @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+            self.set_feature(:neighborhood, @addr_neighborhood)
           end
         elsif self.version < 20160715 and (
             @lat and @lon and accuracy and accuracy == 0 and (not (@lat == '37.560500' and @lon == '-121.999900'))
           ) or (
             @lat and @lon and (not (@lat == '37.560500' and @lon == '-121.999900'))
           )
+
+          debug("Getting approximate address using reverse geocoding from #{@lat},#{@lon}")
           revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           @geo = @uc.get_cached_json(revgeocode_url)
-          @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
+          if @geo['status'] == 'OK'
+            @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+            self.set_feature(:address_was_reverse_geocoded, true)
+          else
+            debug("Reverse geocoding failed, status from Google Maps API: #{@geo['status']}")
+          end
+
           if self.version > 20130903 and @geo['status'] == 'OK'
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
             if address_data.match(/^\d{1,5} /)
-              @addr_street = address_data
-              @addr_city   = @reverse_geocoded_address_components['locality']
-              @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+              debug("We have specific house number and probably street: #{address_data}")
+              canonical_geo = @uc.get_cached_json(URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ address_data }, #{ @reverse_geocoded_address_components['locality'] } #{ @reverse_geocoded_address_components['administrative_area_level_1'] }&sensor=false"))
+              # TODO move to Google Maps API class
+              raise "Over quota" if canonical_geo['status'] == 'OVER_LIMIT'
+              if canonical_geo['status'] == 'OK'
+                if canonical_geo['results'].class == Array and
+                   canonical_geo['results'].size == 1 and
+                   canonical_geo['results'].first.include?('formatted_address')
+                  self.set_feature(:address_was_reverse_geocoded, false)
+                  @addr_formatted = canonical_geo['results'].first['formatted_address']
+                  @geo = canonical_geo
+                  @reverse_geocoded_address_components = Hash[*canonical_geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+                  @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
+                  @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
+                  @addr_city   = @reverse_geocoded_address_components['locality']
+                  @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+                  debug("Successfully got full address: #{@addr_formatted}")
+                else
+                  debug("Got mixed results. Failing back to reverse-geocoded address")
+                end
+              else
+                debug("Getting canonical address failed, Google Maps API status is #{ canonical_geo['status'] }, failing back to existing approximate geo")
+                @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
+                @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
+                @addr_city   = @reverse_geocoded_address_components['locality']
+                @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+              end
+            else
+              debug("address doesn't start with house number")
             end
           end
+        else
+          debug("No country for the old man!")
         end
+      else
+        debug("gps_data is empty")
       end
     end
     # ----------------------------------------------------------------------------------
@@ -849,7 +896,7 @@ class AddressHarvester < Debugger
   end
 
   def have_full_address?
-    return false if self.have_feature?(:address_was_reverse_geocoded)
+    return false if self.have_feature?(:address_was_reverse_geocoded) and self.get_feature(:address_was_reverse_geocoded) == true
     self.get_full_address == '' ? false : true
   end
 
