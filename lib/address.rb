@@ -562,6 +562,12 @@ class AddressHarvester < Debugger
     j[:address][:neighborhood] = @addr_neighborhood if @addr_neighborhood
     if self.have_full_address?
       j[:address][:formatted_address] = self.get_full_address
+      if @geo
+        j[:address][:lat] = @geo['results'][0]['geometry']['location']['lat']
+        j[:address][:lon] = @geo['results'][0]['geometry']['location']['lng']
+      else
+        raise "Bro?"
+      end
     end
     return j
   end
@@ -681,7 +687,8 @@ class AddressHarvester < Debugger
                 result[fmt_addr] = {
                   :street => "#{ address_components['street_number'] } #{ address_components['route'] }",
                   :city   => address_components['locality'],
-                  :state  => address_components['administrative_area_level_1']
+                  :state  => address_components['administrative_area_level_1'],
+                  :geo    => g
                 }
                 result[fmt_addr][:neighborhood] = address_components['neighborhood'] if address_components.include?('neighborhood')
               else
@@ -701,6 +708,7 @@ class AddressHarvester < Debugger
           @addr_city   = r[:city]
           @addr_state  = r[:state]
           @addr_formatted = result.keys.first
+          @geo = r[:geo]
           debug("Formatted address: #{ @addr_formatted }")
         else
           debug("Ambiguous results in raw file detector: #{ result.inspect }")
@@ -709,7 +717,7 @@ class AddressHarvester < Debugger
         debug("Raw address detector hasn't detected anything (addrs.uniq.size=#{addrs.uniq.size})")
       end
     else
-      debug("Raw address detector skipped: @addr_street=='#{@addr_street}'")
+      debug("Raw address detector #2 skipped: @addr_street=='#{@addr_street}'")
     end
 
     # 3. Trying to get GPS coordinates and reverse-geocode them through Google Maps API
@@ -764,14 +772,20 @@ class AddressHarvester < Debugger
                    canonical_geo['results'].size == 1 and
                    canonical_geo['results'].first.include?('formatted_address')
                   self.set_feature(:address_was_reverse_geocoded, false)
-                  @addr_formatted = canonical_geo['results'].first['formatted_address']
-                  @geo = canonical_geo
-                  @reverse_geocoded_address_components = Hash[*canonical_geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
-                  @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
-                  @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
-                  @addr_city   = @reverse_geocoded_address_components['locality']
-                  @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
-                  debug("Successfully got full address: #{@addr_formatted}")
+                  reverse_geocoded_address_components = Hash[*canonical_geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+                  if reverse_geocoded_address_components.include?('street_number')
+                    debug("address have street_number component, looks like we have a full address")
+                    @addr_formatted = canonical_geo['results'].first['formatted_address']
+                    @geo = canonical_geo
+                    @reverse_geocoded_address_components = reverse_geocoded_address_components
+                    @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
+                    @addr_street = "#{ @reverse_geocoded_address_components['street_number'].gsub(/-.*$/,'') } #{ @reverse_geocoded_address_components['route'] }"
+                    @addr_city   = @reverse_geocoded_address_components['locality']
+                    @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+                    debug("Successfully got full address: #{@addr_formatted}")
+                  else
+                    debug("address doesn't include street_number component, failing back to reverse-geocoded address")
+                  end
                 else
                   debug("Got mixed results. Failing back to reverse-geocoded address")
                 end
@@ -792,6 +806,8 @@ class AddressHarvester < Debugger
       else
         debug("gps_data is empty")
       end
+    else
+      debug("skipping address detection #3: @addr_street not empty")
     end
     # ----------------------------------------------------------------------------------
     debug("setting features")
@@ -907,9 +923,25 @@ class AddressHarvester < Debugger
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
       # This code is applicable to ~ 2013 versions only
-      @addr_street = self.get_tag('xstreet0')
-      @addr_city   = self.get_tag('city')
-      @addr_state  = self.get_tag('region')
+      g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ self.get_tag('xstreet0') }, #{ self.get_tag('city') } #{ self.get_tag('region') }&sensor=false")
+
+      g = @uc.get_cached_json(g_url)
+      if  g['status'] == 'OK' and
+          g['results'].class == Array and
+          g['results'].size == 1 and
+          g['results'].first.include?('formatted_address')
+        fmt_addr = g['results'].first['formatted_address']
+        address_components = Hash[*g['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+        @addr_street = "#{ address_components['street_number'].gsub(/-.*$/,'') } #{ address_components['route'] }"
+        @addr_city   = address_components['locality']
+        @addr_state  = address_components['administrative_area_level_1']
+        @geo = g
+      else
+        @addr_street = ''
+        @addr_city   = ''
+        @addr_state  = ''
+        @geo = nil
+      end
     elsif not @reverse_geocoded_address_components.nil? and @reverse_geocoded_address_components.include?('street_number') and not @reverse_geocoded_address_components['street_number'].nil?
       # 2. posting have no address specified in tags but have a map with GPS coordinates
       #    Let's use reverse geocoded data which is provided by Google Maps API
@@ -1036,9 +1068,23 @@ class AddressHarvester < Debugger
   def merge_attributes_from_db(name, complex)
     return if @merged_complex == name
     raise "merge_attributes_from_db() already merged while merging [#{name}] after [#{@merged_complex}]" if @merged_complex != ''
-    @addr_street = complex[:street]
-    @addr_city   = complex.include?(:city) ? complex[:city] : 'Fremont'
-    @addr_state  = 'CA'
+    g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ complex[:street] }, #{ complex.include?(:city) ? complex[:city] : 'Fremont' } CA&sensor=false")
+
+    g = @uc.get_cached_json(g_url)
+    if  g['status'] == 'OK' and
+        g['results'].class == Array and
+        g['results'].size == 1 and
+        g['results'].first.include?('formatted_address')
+      fmt_addr = g['results'].first['formatted_address']
+      address_components = Hash[*g['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
+      @geo = g
+      @addr_neighborhood = address_components.include?('neighborhood') ? address_components['neighborhood'] : nil
+      @addr_street = address_components['route']
+      @addr_city   = address_components['locality']
+      @addr_state  = address_components['administrative_area_level_1']
+    else
+      raise "Failed to geocode complex #{complex.inspect}"
+    end
     self.set_feature(:name, name)
     self.set_feature(:uri, complex[:uri]) if complex.include?(:uri)
     complex[:features].each_pair {|k,v| self.set_feature(k,v)}
