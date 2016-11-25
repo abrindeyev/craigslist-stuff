@@ -25,8 +25,18 @@ class URLCacher < Debugger
       debug("Returning cached document for #{url}")
       return cached[:body]
     end
+
+    debug("Checking rate-limiter")
+    r = nil
+    begin
+      r = @@db[:rate_limiter].update_one({ _id: Time.now.to_i}, {'$inc':{c:1}}, { :upsert => true })
+      sleep 0.05 if r and r.upserted_id.nil?
+    rescue Mongo::Error::OperationFailure => e
+      raise e if e.message !~ /E11000/
+    end while r.upserted_id.nil?
+
     debug("Requesting #{url}")
-    resp = RestClient.get(url)
+    resp = RestClient::Request.execute(:method => :get, :url => url, :timeout => 5, :open_timeout => 5)
     body = JSON.parse(resp.body)
     cached = {
       :_id => url,
