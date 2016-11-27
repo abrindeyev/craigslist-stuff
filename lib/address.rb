@@ -6,6 +6,7 @@ require 'json'
 require 'erb'
 require 'htmlentities'
 require 'uri'
+require 'date'
 
 class AddressHarvester
 
@@ -548,7 +549,8 @@ class AddressHarvester
     @body = get_body()
     @attributes = get_attributes()
     @cltags = get_cltags()
-    @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+<(?:time|date)[^>]*>(.+)<\/(?:date|time)>/).flatten]
+    @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+(?:<time[^>]*datetime="(.+)">[^<]*<\/time>|<date[^>]*>(.+)<\/date>)/).flatten.reject { |c| c.nil? }]
+    @id = Array[@source.scan(/(?:post id: |postingID=|var pID = "|buttonPostingID = ")([0-9]+)/).flatten][0][0]
 
     # ----------------------------------------------------------------------------------
     # Getting data for full mailing address (@addr_* variables)
@@ -716,6 +718,10 @@ class AddressHarvester
     self
   end
 
+  def get_id
+    @id
+  end
+
   def has_attribute?(attr_name)
     @attributes.has_key?(attr_name)
   end
@@ -755,7 +761,7 @@ class AddressHarvester
   end
 
   def have_full_address?
-    return false if self.have_feature?(:address_was_reverse_geocoded)
+    return false if self.have_feature?(:address_was_reverse_geocoded) and self.get_feature(:address_was_reverse_geocoded) == true
     self.get_full_address == '' ? false : true
   end
 
@@ -882,7 +888,7 @@ class AddressHarvester
   end
 
   def get_filename
-    return self.have_feature?(:posting_uri) ? self.get_feature(:posting_uri).match(/\d+\.html/).to_s : nil
+    return self.get_id + "_" + self.get_posting_update_time + ".html"
   end
 
   def backup_source_to(dir)
@@ -904,15 +910,20 @@ class AddressHarvester
     @merged_complex = name
   end
 
+  def get_posting_create_time
+    return '' if @posting_info.nil?
+    ['Posted','posted'].each do |i|
+      return @posting_info[i] if @posting_info.include?(i)
+    end
+    return ''
+  end
+
   def get_posting_update_time
     return '' if @posting_info.nil?
-    if @posting_info.include?('Posted')
-      return @posting_info.has_key?('Edited') ? @posting_info['Edited'] : @posting_info['Posted']
-    elsif @posting_info.include?('posted')
-      return @posting_info.has_key?('updated') ? @posting_info['updated'] : @posting_info['posted']
-    else
-      return ''
+    ['Updated', 'updated', 'Edited', 'edited', 'Posted', 'posted'].each do |i|
+      return DateTime.parse(@posting_info[i]).strftime("%Y-%m-%dT%H%M%S%z") if @posting_info.has_key?(i)
     end
+    return ''
   end
 
   def is_scam?
