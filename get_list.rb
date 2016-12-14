@@ -20,7 +20,8 @@ STDOUT.sync = true
 # ft^2 minimum:  1000
 source_url = 'http://sfbay.craigslist.org/search/eby/apa?srchType=T&nh=54&housing_type=2&housing_type=4&housing_type=6&housing_type=9&maxAsk=3500&bedrooms=2&minSqft=1000'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
-links = page.xpath("//body/section[@id='pagecontainer']/form[@id='searchform']/div[@class='content']/ul[@class='rows']/li[@class='result-row']/a[@href]")
+#links = page.xpath("//body/section[@id='pagecontainer']/form[@id='searchform']/div[@class='content']/ul[@class='rows']/li[@class='result-row']/a[@href]")
+links = page.xpath("//*[@id='sortable-results']/ul/li/a[@href]")
 o = YAML.load_file('.settings.yaml')
 Twitter.configure do |config|
     config.consumer_key = o['consumer_key']
