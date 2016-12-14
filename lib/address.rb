@@ -1028,6 +1028,11 @@ class VersionedConfiguration
       :map_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']",
       :mapaddress_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
     },
+    20161208 => {
+      :title_xpath => "//*[@id='titletextonly']",
+      :body_xpath => "//*[@id='postingbody']",
+      :attributes_xpath => "//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
+    },
   }
 
   def initialize(parsed_source)
