@@ -663,7 +663,11 @@ class AddressHarvester
     # ----------------------------------------------------------------------------------
 
     # Getting rent price
-    self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
+    if self.version < 20150207
+      self.set_feature(:rent_price, $1.to_i) if @title.gsub(/\n/, "").match(/(?:\$|&#x0024;)(\d{3,4})/)
+    else
+      self.set_feature(:rent_price, get_price())
+    end
 
     # Getting # of bedrooms
     if self.has_attribute?('BR')
@@ -955,6 +959,15 @@ class AddressHarvester
     @doc.at_xpath(@vc.get(:title_xpath)).to_s
   end
 
+  def get_price
+    ps = @doc.at_xpath(@vc.get(:price_xpath)).to_s
+    if ps.match(/^(?:\$|&#x0024;)(\d{3,4})$/)
+      return $1.to_i
+    else
+      return nil
+    end
+  end
+
   def get_body
     @doc.at_xpath(@vc.get(:body_xpath)).to_s
   end
@@ -1021,6 +1034,9 @@ class VersionedConfiguration
     20140122 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
     },
+    20150207 => {
+      :price_xpath => "//span[@class='price']/text()"
+    },
     20150827 => {
       :title_xpath => "//body/section[@id='pagecontainer']/section[@class='body']/h2[@class='postingtitle']",
       :body_xpath => "//body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
@@ -1029,7 +1045,7 @@ class VersionedConfiguration
       :mapaddress_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
     },
     20161208 => {
-      :title_xpath => "//*[@id='titletextonly']",
+      :title_xpath => "//*[@id='titletextonly']/text()",
       :body_xpath => "//*[@id='postingbody']",
       :attributes_xpath => "//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
     },

@@ -366,9 +366,25 @@ describe "Version detector" do
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
-    if f.match(/^\d+.html$/)
+    if f.match(/^[-0-9_T]+.html$/)
       it "should obtain some version from #{f}" do
         AddressHarvester.new(s(f)).version.should_not be_nil
+      end
+    end
+  end
+end
+
+describe "Price detector" do
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+  Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
+    next if f == '5693112857.html'
+    if f.match(/^[-0-9_T]+\.html$/)
+      it "should obtain rentail price from #{f}" do
+        AddressHarvester.new(s(f)).get_feature(:rent_price).should > 0
       end
     end
   end
