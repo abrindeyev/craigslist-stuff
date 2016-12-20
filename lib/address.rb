@@ -1048,6 +1048,8 @@ class VersionedConfiguration
       :title_xpath => "//*[@id='titletextonly']/text()",
       :body_xpath => "//*[@id='postingbody']",
       :attributes_xpath => "//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
+      :map_xpath => "//div[@class='mapAndAttrs']/div[@class='mapbox']",
+      :mapaddress_xpath => "//div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
     },
   }
 
