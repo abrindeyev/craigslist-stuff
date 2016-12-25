@@ -3,7 +3,7 @@ require 'fakeweb'
 require 'mongo'
 FakeWeb.allow_net_connect = false
 Mongo::Logger.logger.level = ::Logger::FATAL
-mc = Mongo::Client.new('mongodb://127.0.0.1:27017/cg')
+mc = Mongo::Client.new('mongodb://127.0.0.1:2456/cg')
 
 def s(sample_filename)
   File.join(File.dirname(__FILE__), 'samples', sample_filename)
@@ -61,11 +61,11 @@ end
 
 describe "Posting info parser" do
   it "should return posted date when post wasn't updated yet" do
-    AddressHarvester.new(s('3574419831.html'),mc).get_posting_update_time.should eql '2013-01-26,  9:04PM PST'
+    AddressHarvester.new(s('3574419831.html'),mc).get_posting_update_time.should eql '2013-01-26T210400-0800'
   end
   it "should return updated date when post was updated" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false', :response => s('3602181818_revgeocode.json'))
-    AddressHarvester.new(s('3602181818.html'),mc).get_posting_update_time.should eql '2013-02-07, 11:29PM PST'
+    AddressHarvester.new(s('3602181818.html'),mc).get_posting_update_time.should eql '2013-02-07T232900-0800'
   end
   it "should return empty string when post was removed" do
     AddressHarvester.new(s('removed.html'),mc).get_posting_update_time.should eql ''
@@ -149,13 +149,13 @@ describe "Raw address detector" do
   it "should return '23 Raintree Court, Hayward, California'" do
     AddressHarvester.new(s('3601613904.html'),mc).get_full_address.should eql '23 Raintree Court, Hayward, California'
   end
-  it "should return '38700 Tyson Ln, Fremont, California'" do
+  it "should return '38700 Tyson Lane, Fremont, California'" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.562137,-121.974786&sensor=false', :response => s('3585854056_revgeocode.json'))
-    AddressHarvester.new(s('3585854056.html'),mc).get_full_address.should eql '38700 Tyson Ln, Fremont, California'
+    AddressHarvester.new(s('3585854056.html'),mc).get_full_address.should eql '38700 Tyson Lane, Fremont, California'
   end
-  it "should return '1001 Beethoven Common, Fremont, CA'" do
+  it "should return '1001 Beethoven Common, Fremont, California'" do
     FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
-    AddressHarvester.new(s('3591325547.html'),mc).get_full_address.should eql '1001 Beethoven Common, Fremont, CA'
+    AddressHarvester.new(s('3591325547.html'),mc).get_full_address.should eql '1001 Beethoven Common, Fremont, California'
   end
   it "shouldn't detect full address from fuzzy reverse geocode requests" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false', :response => s('3584993361_revgeocode.json'))
@@ -167,8 +167,8 @@ describe "Raw address detector" do
   it "should return '5647 Robertson Avenue, Newark, California'" do
     AddressHarvester.new(s('3584363870.html'),mc).get_full_address.should eql '5647 Robertson Avenue, Newark, California'
   end
-  it "should return '40640 High St., Fremont, CA'" do
-    AddressHarvester.new(s('3587462071.html'),mc).get_full_address.should eql '40640 High St., Fremont, CA'
+  it "should return '40640 High Street, Fremont, California'" do
+    AddressHarvester.new(s('3587462071.html'),mc).get_full_address.should eql '40640 High Street, Fremont, California'
   end
   it "should return '43314 Jerome Avenue, Fremont, California'" do
     AddressHarvester.new(s('3587303805.html'),mc).get_full_address.should eql '43314 Jerome Avenue, Fremont, California'
@@ -179,8 +179,8 @@ describe "Raw address detector" do
   it "should return '31770 Alvarado Boulevard, Union City, California'" do
     AddressHarvester.new(s('3591502030.html'),mc).get_full_address.should eql '31770 Alvarado Boulevard, Union City, California'
   end
-  it "should return '4022 Papillon Terrace, Fremont, CA'" do
-    AddressHarvester.new(s('3573633080.html'),mc).get_full_address.should eql '4022 Papillon Terrace, Fremont, CA'
+  it "should return '4022 Papillon Terrace, Fremont, California'" do
+    AddressHarvester.new(s('3573633080.html'),mc).get_full_address.should eql '4022 Papillon Terrace, Fremont, California'
   end
   it "should return '4181 Asimuth Circle, Union City, California'" do
     AddressHarvester.new(s('3619322293.html'),mc).get_full_address.should eql '4181 Asimuth Circle, Union City, California'
@@ -209,6 +209,10 @@ describe "Raw address detector" do
   end
   it "should return '34132 Cavendish Place, Fremont, California'" do 
     AddressHarvester.new(s('5381678364.html'),mc).get_full_address.should eql '34132 Cavendish Place, Fremont, California'
+  end
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.567389,-121.975086&sensor=false', '5922274850_address.json')
+  it "should return '615 Balsam Terrace, Fremont, California'" do 
+    AddressHarvester.new(s('5922274850.html'),mc).get_full_address.should eql '615 Balsam Terrace, Fremont, California'
   end
   it "should return '37879 3rd Street, Fremont, California'" do 
     AddressHarvester.new(s('4234294131.html'),mc).get_full_address.should eql '37879 3rd Street, Fremont, California'
@@ -372,9 +376,25 @@ describe "Version detector" do
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
-    if f.match(/^\d+.html$/)
+    if f.match(/^[-0-9_T]+.html$/)
       it "should obtain some version from #{f}" do
         AddressHarvester.new(s(f),mc).version.should_not be_nil
+      end
+    end
+  end
+end
+
+describe "Price detector" do
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
+  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
+  fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+  Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
+    next if f == '5693112857.html'
+    if f.match(/^[-0-9_T]+\.html$/)
+      it "should obtain rentail price from #{f}" do
+        AddressHarvester.new(s(f),mc).get_feature(:rent_price).should > 0
       end
     end
   end

@@ -15,7 +15,7 @@ Mongo::Logger.logger.level = ::Logger::FATAL
 
 ENV['DEBUG'] = 'true'
 
-mc = Mongo::Client.new('mongodb://127.0.0.1:27017/cg')
+mc = Mongo::Client.new('mongodb://127.0.0.1:2456/cg')
 uc = URLCacher.new(mc)
 
 post = AddressHarvester.new(ARGV[0],mc)

@@ -602,7 +602,7 @@ class AddressHarvester < Debugger
     @body = get_body()
     @attributes = get_attributes()
     @cltags = get_cltags()
-    @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+<(?:time|date)[^>]*>(.+)<\/(?:date|time)>/).flatten]
+    @posting_info = Hash[*@source.scan(/([Pp]osted|[Ee]dited|[Uu]pdated):?\s+(?:<time[^>]*datetime="(.+)">[^<]*<\/time>|<date[^>]*>(.+)<\/date>)/).flatten.reject { |c| c.nil? }]
     debug("Posting info: #{@posting_info.inspect}")
     @id = Array[@source.scan(/(?:post id: |postingID=|var pID = "|buttonPostingID = ")([0-9]+)/).flatten][0][0]
     debug("Document ID: #{@id}")
@@ -813,7 +813,11 @@ class AddressHarvester < Debugger
     debug("setting features")
 
     # Getting rent price
-    self.set_feature(:rent_price, $1.to_i) if @title.match(/\$(\d{3,4})/)
+    if self.version < 20150207
+      self.set_feature(:rent_price, $1.to_i) if @title.gsub(/\n/, "").match(/(?:\$|&#x0024;)(\d{3,4})/)
+    else
+      self.set_feature(:rent_price, get_price())
+    end
 
     # Getting # of bedrooms
     if self.has_attribute?('BR')
@@ -1055,7 +1059,7 @@ class AddressHarvester < Debugger
   end
 
   def get_filename
-    return self.have_feature?(:posting_uri) ? self.get_feature(:posting_uri).match(/\d+\.html/).to_s : nil
+    return self.get_id + "_" + self.get_posting_update_time + ".html"
   end
 
   def backup_source_to(dir)
@@ -1079,7 +1083,7 @@ class AddressHarvester < Debugger
       address_components = Hash[*g['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
       @geo = g
       @addr_neighborhood = address_components.include?('neighborhood') ? address_components['neighborhood'] : nil
-      @addr_street = address_components['route']
+      @addr_street = (address_components.include?('street_number') ? "#{address_components['street_number']} " : '') + address_components['route']
       @addr_city   = address_components['locality']
       @addr_state  = address_components['administrative_area_level_1']
     else
@@ -1103,7 +1107,7 @@ class AddressHarvester < Debugger
     return '' if @posting_info.nil?
     debug("posting_info: #{@posting_info.inspect}")
     ['Updated', 'updated', 'Edited', 'edited', 'Posted', 'posted'].each do |i|
-      return @posting_info[i] if @posting_info.has_key?(i)
+      return DateTime.parse(@posting_info[i]).strftime("%Y-%m-%dT%H%M%S%z") if @posting_info.has_key?(i)
     end
     return ''
   end
@@ -1135,6 +1139,15 @@ class AddressHarvester < Debugger
 
   def get_title
     @doc.at_xpath(@vc.get(:title_xpath)).to_s
+  end
+
+  def get_price
+    ps = @doc.at_xpath(@vc.get(:price_xpath)).to_s
+    if ps.match(/^(?:\$|&#x0024;)(\d{3,4})$/)
+      return $1.to_i
+    else
+      return nil
+    end
   end
 
   def get_body
@@ -1203,12 +1216,22 @@ class VersionedConfiguration
     20140122 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
     },
+    20150207 => {
+      :price_xpath => "//span[@class='price']/text()"
+    },
     20150827 => {
       :title_xpath => "//body/section[@id='pagecontainer']/section[@class='body']/h2[@class='postingtitle']",
       :body_xpath => "//body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/section[@id='postingbody']",
       :attributes_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
       :map_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']",
       :mapaddress_xpath => "/html/body/section[@id='pagecontainer']/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
+    },
+    20161208 => {
+      :title_xpath => "//*[@id='titletextonly']/text()",
+      :body_xpath => "//*[@id='postingbody']",
+      :attributes_xpath => "//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/*/text()|//div[@class='mapAndAttrs']/p[@class='attrgroup']/span/text()",
+      :map_xpath => "//div[@class='mapAndAttrs']/div[@class='mapbox']",
+      :mapaddress_xpath => "//div[@class='mapAndAttrs']/div[@class='mapbox']/div[@class='mapaddress']/text()",
     },
   }
 
