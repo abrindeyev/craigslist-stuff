@@ -208,6 +208,9 @@ describe "Raw address detector" do
     AddressHarvester.new(s('5381678364.html')).get_full_address.should eql '34132 Cavendish Pl, Fremont, CA'
   end
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.567389,-121.975086&sensor=false', '5922274850_address.json')
+  it "should return '34529 Mahogany Lane, Union City, CA'" do 
+    AddressHarvester.new(s('5953880532.html')).get_full_address.should eql '34529 Mahogany Lane, Union City, CA'
+  end
   it "should return '615 Balsam Ter, Fremont, California'" do 
     AddressHarvester.new(s('5922274850.html')).get_full_address.should eql '615 Balsam Ter, Fremont, California'
   end
