@@ -2,6 +2,7 @@ require 'open-uri'
 require 'rest-client'
 require 'json'
 require './lib/debugger'
+require './lib/mongodb'
 
 class URLCacher < Debugger
 
@@ -9,7 +10,7 @@ class URLCacher < Debugger
 
   def initialize(db)
     unless @@db
-      @@db = db
+      @@db = MDB.new.database
     end
     self
   end

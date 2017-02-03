@@ -7,15 +7,13 @@ require 'erb'
 require 'htmlentities'
 require 'uri'
 require 'date'
-require 'mongo'
 require './lib/debugger'
+require './lib/mongodb'
 require './lib/url-cache'
 
 class AddressHarvester < Debugger
 
   def init(mc)
-
-    Mongo::Logger.logger.level = ::Logger::FATAL
 
     @agents_blacklist = [
       '41111 Mission Blvd, Fremont, CA 94539, USA',
@@ -493,7 +491,7 @@ class AddressHarvester < Debugger
       }
     }
 
-    @mongo_client = mc
+    @mongo_client = MDB.new()
     @db = @mongo_client.database
   end
 
