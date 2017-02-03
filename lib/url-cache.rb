@@ -37,7 +37,22 @@ class URLCacher < Debugger
     end while r.upserted_id.nil?
 
     debug("Requesting #{url}")
-    resp = RestClient::Request.execute(:method => :get, :url => url, :timeout => 5, :open_timeout => 5)
+    begin
+      req = RestClient::Request.new(
+        :method => :get,
+        :url => url,
+        :timeout => 5,
+        :open_timeout => 3,
+        :headers => {
+          "User-Agent" => "curl/7.51.0"
+        }
+      )
+      resp = req.execute
+    rescue RestClient::ExceptionWithResponse => e
+      debug("Failed to query Google Maps API, error: #{e.response}")
+      debug("Request headers: #{req.processed_headers.inspect}")
+      raise e
+    end
     body = JSON.parse(resp.body)
     cached = {
       :_id => url,
