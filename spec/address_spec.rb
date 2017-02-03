@@ -1,9 +1,7 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 require 'fakeweb'
-require 'mongo'
 FakeWeb.allow_net_connect = false
-Mongo::Logger.logger.level = ::Logger::FATAL
-mc = Mongo::Client.new('mongodb://127.0.0.1:2456/cg')
+mc = nil
 
 def s(sample_filename)
   File.join(File.dirname(__FILE__), 'samples', sample_filename)
@@ -216,6 +214,9 @@ describe "Raw address detector" do
   end
   it "should return '37879 3rd Street, Fremont, California'" do 
     AddressHarvester.new(s('4234294131.html'),mc).get_full_address.should eql '37879 3rd Street, Fremont, California'
+  end
+  it "should return '34529 Mahogany Lane, Union City, California'" do 
+    AddressHarvester.new(s('5953880532.html'),mc).get_full_address.should eql '34529 Mahogany Lane, Union City, California'
   end
 end
 

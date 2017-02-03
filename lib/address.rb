@@ -665,7 +665,7 @@ class AddressHarvester < Debugger
     # 2. Looking for raw mailing addresses in posting's body
     if @addr_street == ''
       debug("Entering Raw address detector")
-      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[1-9]?[A-Za-z ]{2,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
+      addrs = @body.gsub('<br>',' ').gsub("\n",' ').scan(/(\d{1,5}\s+[1-9]?[A-Za-z ]{2,30}\s+(?:st|str|ave|av|avenue|pkwy|parkway|blvd|boulevard|center|circle|cir|commons?|cmn|court|ct|drv|dr|drive|junction|lake|lane|ln|place|plaza|pl|rd|road|street|terrace|terr?|way)\.?)\s*(?:(?:apt\.?|unit|#)\s*[A-Za-z0-9]{1,6}?)?,?\s+(fremont|union\s+city|newark|hayward)\s*,?\s*?(?:CA|California)?(?:\s+\d{5})?/i)
       result = {}
       if addrs.uniq.size > 0
         black_list = Hash[*@agents_blacklist.map {|i|  [i, 1] }.flatten]
