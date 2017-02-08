@@ -15,7 +15,7 @@ ENV['DEBUG'] = 'true'
 
 uc = URLCacher.new(nil)
 
-post = AddressHarvester.new(ARGV[0],mc)
+post = AddressHarvester.new(ARGV[0],nil)
 raise "Post has been removed" if post.has_been_removed?
 
 #raise "Full address not detected" unless post.have_full_address?

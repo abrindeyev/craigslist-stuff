@@ -10,20 +10,15 @@ require 'mongo'
 require './lib/address'
 require './lib/school'
 require './lib/url-cache'
-
-Mongo::Logger.logger.level = ::Logger::FATAL
+require './lib/mongodb'
 
 puts '-------------------------------------------------------'
 
-mc = Mongo::Client.new('mongodb://127.0.0.1:27017/cg')
+mc = MDB.new.client
 
 Dir.entries(ARGV[0]).each do |filename|
   next if filename == '.' or filename == '..'
-  post_id=filename.scan(/([0-9]+).html$/).flatten
-  puts post_id.inspect
   begin
-    #next if mc[:not_worth].find({_id: post_id[0]}).count == 1
-
     uc = URLCacher.new(mc)
 
     post = AddressHarvester.new("#{ARGV[0]}/#{filename}",mc)
@@ -32,13 +27,14 @@ Dir.entries(ARGV[0]).each do |filename|
 
     post_data = post.serialize
     post_data[:_id] = {posting_id: post.get_id, updated_at: post.get_posting_update_time}
+    next if mc[:seen_db].find({post_id: post.get_id, updated: post.get_posting_update_time}).count == 1
     mc[:postings].replace_one({_id: {posting_id: post.get_id, updated_at: post.get_posting_update_time}},post_data,{:upsert => true})
 
     if post.have_full_address?
       canonical_address = post_data[:address][:formatted_address]
 
       begin
-        mc[:addresses].update_one({_id: canonical_address, postings: {'$ne':post.get_id}},{"$addToSet":{"postings":post.get_id},'$inc':{count:1}},{:upsert => true})
+        mc[:addresses].update_one({_id: canonical_address, postings: {'$ne':post.get_id}},{"$addToSet":{"postings":{posting_id: post.get_id, updated_at: post.get_posting_update_time}},'$inc':{count:1}},{:upsert => true})
       rescue Mongo::Error::OperationFailure => e
         raise e if e.message !~ /E11000/
       end
@@ -73,18 +69,20 @@ Dir.entries(ARGV[0]).each do |filename|
         #end
         #puts "Walking to Fremont BART: #{geo2['routes'][0]['legs'][0]['duration']['text']}"
       end
-      puts "Matched as #{post.get_feature(:name)}" if post.have_feature?(:name)
       puts "Posting score: " + post.get_score.to_s
-      puts "Scoring log:"
-      post.get_scoring_log.each do |l|
-        puts (l[:delta] > 0 ? "+#{l[:delta]}" : l[:delta].to_s) + " " + l[:reason]
-      end
+      #puts "Matched as #{post.get_feature(:name)}" if post.have_feature?(:name)
+      #puts "Scoring log:"
+      #post.get_scoring_log.each do |l|
+      #  puts (l[:delta] > 0 ? "+#{l[:delta]}" : l[:delta].to_s) + " " + l[:reason]
+      #end
     else
       puts "Post doesn't have a full address"
     end
   rescue SystemExit, Interrupt
+    puts "Import cancelled"
     exit 1
   rescue Exception => e 
     mc[:parse_failures].insert_one({_id: Time.now, filename: filename, reason: e.to_s})
   end
 end
+puts "Import complete"

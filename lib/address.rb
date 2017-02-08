@@ -729,9 +729,16 @@ class AddressHarvester < Debugger
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
         accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
         if map_address.match(/^(.+) at (.+)$/)
-          debug("Address is approximate: [#{$1} at #{$2}]")
+          debug("Raw map_address: #{map_address}")
+          c_a = $1
+          c_b = $2
+          c_a.gsub!(/[^0-9A-Za-z \/]/,'')
+          c_b.gsub!(/[^0-9A-Za-z \/]/,'')
+          c_a.strip!
+          c_b.strip!
+          debug("Address is approximate: [#{c_a} at #{c_b}]")
           self.set_feature(:address_was_reverse_geocoded, true)
-          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
+          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{c_a} and #{c_b}&sensor=false")
 
           @geo = @uc.get_cached_json(revgeocode_url)
           @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
@@ -1191,7 +1198,7 @@ class AddressHarvester < Debugger
 
 end
 
-class VersionedConfiguration
+class VersionedConfiguration < Debugger
 
   @@source = nil
   @@VERSIONS = {
@@ -1239,12 +1246,14 @@ class VersionedConfiguration
 
   def get_version
     return @version unless @version.nil?
+    debug("getting the version")
     @@source.xpath("//p[@class='postinginfo']|//p[@class='postinginfo reveal']").each do |l|
       if m = l.to_s.gsub(/<[^>]>/, '').match(/posted: .*(\d{4}-\d{1,2}-\d{1,2}),?/i)
         @version = $1.gsub('-', '').to_i
         return @version
       end
     end
+    debug("Can't get version!")
     # All guesses failed - version is nil
     return nil
   end
@@ -1255,9 +1264,15 @@ class VersionedConfiguration
 
   def get(attribute)
     cv = self.get_version
-    return nil if cv.nil?
+    if cv.nil?
+      debug("getting versioned XPath for the #{attribute} attribute FAILED: document's version is nil, returning nothing")
+      return nil
+    else
+      debug("getting versioned XPath for the #{attribute} attribute, document's version is #{cv}")
+    end
     versions = self.get_versions_configuration
     conf_candidates_versions = versions.keys.keep_if {|v| v <= cv and versions[v].has_key?(attribute) }.sort.reverse
+    debug("  got following version candidates: [#{ conf_candidates_versions.join(", ") }], will use #{conf_candidates_versions.first}")
     conf_candidates_versions.empty? ? nil : versions[conf_candidates_versions.first][attribute]
   end
 

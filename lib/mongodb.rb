@@ -5,10 +5,10 @@ require './lib/debugger'
 
 class MDB < Debugger
 
-  @@db = nil
+  @@mc = nil
 
   def initialize()
-    if @@db
+    if @@mc
       debug("Returning cached MongoDB connection")
     else
       debug("Setting up new MongoDB connection")
@@ -47,12 +47,16 @@ class MDB < Debugger
         db_settings.delete(:password) if db_settings.has_key?(:password)
       end
       debug("Connecting to the #{ db_settings[:replica_set] } replica set: #{db_settings.inspect}")
-      @@db = Mongo::Client.new(replica_set_hosts, db_settings)
+      @@mc = Mongo::Client.new(replica_set_hosts, db_settings)
     end
     self
   end
 
+  def client()
+    @@mc if @@mc
+  end
+
   def database()
-    @@db.database
+    @@mc.database if @@mc
   end
 end
