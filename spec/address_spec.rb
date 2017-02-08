@@ -59,11 +59,11 @@ end
 
 describe "Posting info parser" do
   it "should return posted date when post wasn't updated yet" do
-    AddressHarvester.new(s('3574419831.html'),mc).get_posting_update_time.should eql '2013-01-26T210400-0800'
+    AddressHarvester.new(s('3574419831.html'),mc).get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z").should eql '2013-01-26T210400-0800'
   end
   it "should return updated date when post was updated" do
     FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false', :response => s('3602181818_revgeocode.json'))
-    AddressHarvester.new(s('3602181818.html'),mc).get_posting_update_time.should eql '2013-02-07T232900-0800'
+    AddressHarvester.new(s('3602181818.html'),mc).get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z").should eql '2013-02-07T232900-0800'
   end
   it "should return empty string when post was removed" do
     AddressHarvester.new(s('removed.html'),mc).get_posting_update_time.should eql ''

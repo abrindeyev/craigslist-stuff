@@ -540,8 +540,8 @@ class AddressHarvester < Debugger
       :features => self.get_features,
       :score => self.get_score,
       :scoring_log => self.get_scoring_log,
-      :created_at => DateTime.parse(self.get_posting_create_time),
-      :updated_at => DateTime.parse(self.get_posting_update_time),
+      :created_at => self.get_posting_create_time,
+      :updated_at => self.get_posting_update_time,
     }
     j[:features].delete(:posting_uri) if j[:features].include?(:posting_uri)
     j[:matched_as] = @merged_complex if self.complex_matched?
@@ -1064,7 +1064,7 @@ class AddressHarvester < Debugger
   end
 
   def get_filename
-    return self.get_id + "_" + self.get_posting_update_time + ".html"
+    return self.get_id + "_" + self.get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z") + ".html"
   end
 
   def backup_source_to(dir)
@@ -1103,18 +1103,20 @@ class AddressHarvester < Debugger
   def get_posting_create_time
     return '' if @posting_info.nil?
     ['Posted','posted'].each do |i|
-      return @posting_info[i] if @posting_info.include?(i)
+      return DateTime.parse(@posting_info[i]) if @posting_info.include?(i)
     end
-    return ''
+    return nil
   end
 
   def get_posting_update_time
     return '' if @posting_info.nil?
     debug("posting_info: #{@posting_info.inspect}")
     ['Updated', 'updated', 'Edited', 'edited', 'Posted', 'posted'].each do |i|
-      return DateTime.parse(@posting_info[i]).strftime("%Y-%m-%dT%H%M%S%z") if @posting_info.has_key?(i)
+      if @posting_info.has_key?(i)
+        return DateTime.parse(@posting_info[i])
+      end
     end
-    return ''
+    return nil
   end
 
   def is_scam?

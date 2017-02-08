@@ -54,12 +54,12 @@ else
     end
     next if post.nil?
     next if post.has_been_removed?
-    next if seen_hash.include?(uri) and seen_hash[uri] == post.get_posting_update_time
+    next if seen_hash.include?(uri) and seen_hash[uri] == post.get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z")
     printf("%d. %s ", i, uri)
     posting_update_detected = seen_hash.include?(uri) ? true : false
 
     # Remember document and save index immediately
-    seen_hash[uri] = post.get_posting_update_time
+    seen_hash[uri] = post.get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z")
     now = DateTime.now
     censored = {}
     seen_hash.each_pair do |k,v|
