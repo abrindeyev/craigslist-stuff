@@ -34,7 +34,8 @@ Dir.entries(ARGV[0]).each do |filename|
       canonical_address = post_data[:address][:formatted_address]
 
       begin
-        mc[:addresses].update_one({_id: canonical_address, postings: {'$ne':post.get_id}},{"$addToSet":{"postings":{posting_id: post.get_id, updated_at: post.get_posting_update_time}},'$inc':{count:1}},{:upsert => true})
+        res = mc[:addresses].update_one({_id: canonical_address, postings: {'$ne':post.get_id}},{"$addToSet":{"postings":{posting_id: post.get_id, updated_at: post.get_posting_update_time}}},{:upsert => true})
+        mc[:addresses].update_one({_id: canonical_address},{'$inc':{count:1}}) if not res.upserted_id.nil? or res.modified_count == 1
       rescue Mongo::Error::OperationFailure => e
         raise e if e.message !~ /E11000/
       end
