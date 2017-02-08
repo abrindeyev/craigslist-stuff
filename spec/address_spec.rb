@@ -401,6 +401,18 @@ describe "Price detector" do
   end
 end
 
+describe "SQFT parser" do
+  sqft_excludes = ['3574423811.html', '3597290743.html', '3598149448.html', '3627509426.html', '3628519763.html', '3628785789.html', '3633731850.html', '3987654283.html', '3991884178.html', '4222894211.html', '4831182004.html']
+  Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
+    next if sqft_excludes.include?(f)
+    if f.match(/^[-0-9_T]+\.html$/)
+      it "should obtain sqft from #{f}" do
+        AddressHarvester.new(s(f),mc).get_feature(:sqft).should > 0
+      end
+    end
+  end
+end
+
 describe "Attributes parser" do
   fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false','3987654283_revgeocode.json')
   it "should parse attributes from version mid-2013" do

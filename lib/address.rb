@@ -1165,34 +1165,51 @@ class AddressHarvester < Debugger
 
   def parse_attributes(a)
     attrs = {}
-
+    debug("Parsing attributes")
     b = []
     a.each do |el|
       s = el.to_s.gsub(/^\s*/, '').gsub(/[\s\n]+\/?$/, '') 
       b << s if s != ''
     end
+    debug(" raw attributes: #{ b.inspect }")
 
     # Special case: number of bedrooms
     if b.size > 1 and b[0].match(/(\d)/) and b[1].match(/^BR/)
+      debug(" setting up number of bedrooms to #{ b[0].to_i }")
       attrs['BR'] = b[0].to_i
       b.shift(2)
+    elsif b.size > 1 and b[0].match(/(\d)BR/)
+      debug(" setting up number of bedrooms to #{ $1.to_i }")
+      attrs['BR'] = $1.to_i
+      b.shift(1)
     end
+
+    b.shift(1) if b.size > 0 and b[0] == '/'
 
     # Special case: number of bathrooms
     if b.size > 1 and b[0].match(/(\d(\.\d)?)/) and b[1] == 'Ba'
+      debug(" setting up number of bathrooms to #{ b[0].to_f }")
       attrs['Ba'] = b[0].to_f
       b.shift(2)
+    elsif b.size > 1 and b[0].match(/^(\d(?:\.\d)?)Ba$/)
+      debug(" setting up number of bathrooms to #{ $1.to_f }")
+      attrs['Ba'] = $1.to_f
+      b.shift(1)
     end
 
     # Special case: square footage
     if b.size > 2 and b[0].match(/(\d+)/) and b[1] == 'ft' and b[2] == '2'
+      debug(" setting up sqft to #{ b[0].to_i }")
       attrs['sqft'] = b[0].to_i
       b.shift(3)
     end
 
     # General processing: all other attributes are considered boolean
-    b.each { |attr| attrs[attr] = true }
-
+    b.each do |attr|
+      debug(" setting #{attr} = true")
+      attrs[attr] = true
+    end
+    debug("attributes were parsed successfully")
     attrs
   end
 
