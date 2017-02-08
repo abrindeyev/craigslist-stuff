@@ -1265,6 +1265,12 @@ class VersionedConfiguration < Debugger
     return @version unless @version.nil?
     debug("getting the version")
     @@source.xpath("//p[@class='postinginfo']|//p[@class='postinginfo reveal']").each do |l|
+      if m = l.to_s.gsub(/<[^>]>/, '').match(/updated: .*(\d{4}-\d{1,2}-\d{1,2}),?/i)
+        @version = $1.gsub('-', '').to_i
+        return @version
+      end
+    end
+    @@source.xpath("//p[@class='postinginfo']|//p[@class='postinginfo reveal']").each do |l|
       if m = l.to_s.gsub(/<[^>]>/, '').match(/posted: .*(\d{4}-\d{1,2}-\d{1,2}),?/i)
         @version = $1.gsub('-', '').to_i
         return @version
