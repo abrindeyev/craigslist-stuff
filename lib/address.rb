@@ -498,7 +498,7 @@ class AddressHarvester < Debugger
   def initialize(uri, mc)
     return nil if uri.nil? or uri == ''
     self.init(mc)
-    if uri.match(/^http:\/\//)
+    if uri.match(/^https?:\/\//)
       @source = open(uri).read
     else
       @source = File.read(uri.gsub(/^file:\/\//, ''))
