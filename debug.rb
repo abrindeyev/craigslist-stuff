@@ -13,8 +13,6 @@ require './lib/url-cache'
 
 ENV['DEBUG'] = 'true'
 
-uc = URLCacher.new(nil)
-
 post = AddressHarvester.new(ARGV[0],nil)
 raise "Post has been removed" if post.has_been_removed?
 
