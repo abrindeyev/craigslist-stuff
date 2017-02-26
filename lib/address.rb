@@ -6,6 +6,7 @@ require 'json'
 require 'erb'
 require 'htmlentities'
 require 'uri'
+require 'addressable'
 require 'date'
 require './lib/debugger'
 require './lib/mongodb'
@@ -729,25 +730,42 @@ class AddressHarvester < Debugger
         @lon = $1 if gps_data.match(/data-longitude="([-0-9.]+?)"/)
         accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
         if map_address.match(/^(.+) at (.+)$/)
-          debug("Raw map_address: #{map_address}")
           c_a = $1
           c_b = $2
           c_a.gsub!(/[^0-9A-Za-z \/]/,'')
           c_b.gsub!(/[^0-9A-Za-z \/]/,'')
           c_a.strip!
           c_b.strip!
-          debug("Address is approximate: [#{c_a} at #{c_b}]")
-          self.set_feature(:address_was_reverse_geocoded, true)
-          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{c_a} and #{c_b}&sensor=false")
+          google_maps_href = @doc.at_xpath(@vc.get(:google_maps_link)).to_s
+          if google_maps_href.match(/^https:\/\/maps.google.com/)
+            gm = Addressable::URI.parse(google_maps_href)
+            if gm.query_values.include?('q') and gm.query_values['q'].match(/^loc:\s*(.+)$/)
+              address_to_query = $1
+              debug("Google Maps query: #{ address_to_query }")
+            else
+              debug("Broken Google Maps query: '#{gm.query_values.inspect}'")
+            end
+          else
+            debug("Google Maps link isn't look good: #{ google_maps_href }")
+            debug("Address is approximate: [#{c_a} at #{c_b}]")
+            address_to_query="#{c_a} and #{c_b}"
+          end
 
+          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ address_to_query }&sensor=false")
           @geo = @uc.get_cached_json(revgeocode_url)
-          @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
-          if self.version > 20130903 and @geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
-            @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
-            @addr_street = @reverse_geocoded_address_components['route']
-            @addr_city   = @reverse_geocoded_address_components['locality']
-            @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
-            self.set_feature(:neighborhood, @addr_neighborhood)
+          if @geo['status'] == 'OK' and @geo['results'] and @geo['results'].size == 1
+            self.set_feature(:address_was_reverse_geocoded, true)
+            @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
+            if self.version > 20130903 and @geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
+              @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
+              @addr_street = @reverse_geocoded_address_components['route']
+              @addr_city   = @reverse_geocoded_address_components['locality']
+              @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
+              self.set_feature(:neighborhood, @addr_neighborhood)
+            end
+          else
+            debug("Google Maps query failed: status=#{ @geo['status'] }") if @geo['status'] != 'OK'
+            debug("Google Maps returned multiple results: "+@geo['results'].map {|a| a['formatted_address']}.join('; ')) if @geo['results'] and @geo['results'].size != 1
           end
         elsif self.version < 20160715 and (
             @lat and @lon and accuracy and accuracy == 0 and (not (@lat == '37.560500' and @lon == '-121.999900'))
@@ -1227,6 +1245,7 @@ class VersionedConfiguration < Debugger
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@class='basics']/p/text()",
       :cltags_xpath => "//body/article/section[@class='body']/section[@class='userbody']/section[@class='cltags']",
       :map_xpath => "//body/article/section[@class='body']/section[@class='userbody']/div[@id='attributes']/div[@id='leaflet']",
+      :google_maps_link => "//a[text()='google map']/@href"
     },
     20130903 => {
       :attributes_xpath => "/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/*/text()|/html/body/article/section[@class='body']/section[@class='userbody']/div[@class='mapAndAttrs']/div[@class='attributes']/p[@class='attrgroup']/span[@class='attrbubble']/text()",
