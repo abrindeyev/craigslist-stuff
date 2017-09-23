@@ -44,7 +44,7 @@ else
   links.each do |a|
     failure_detected = false
     uri = a['href']
-    uri = "https://sfbay.craigslist.org#{uri}"
+    #uri = "https://sfbay.craigslist.org#{uri}"
     i = i + 1
     begin
       post = AddressHarvester.new(uri)
