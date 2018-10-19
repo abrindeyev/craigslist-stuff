@@ -17,7 +17,10 @@ puts "Post version: #{post.version}"
 addr = post.get_full_address
 puts "Address was reverse geocoded" if post.have_feature?(:address_was_reverse_geocoded)
 
-geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
+google_maps_api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:readline)
+
+geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false&key=#{ google_maps_api_key }"
+puts geocode_url
 resp = RestClient.get(geocode_url)
 geo = JSON.parse(resp.body)
 unless geo['status'] == 'OK'
@@ -34,7 +37,7 @@ if post.get_city.match(/fremont/i)
   post.set_feature(:school_name, s.get_school_name)
   post.set_feature(:school_rating, s.get_rating)
   post.set_feature(:school_addr, s.get_school_address)
-  directions_url = "http://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=#{ URI.escape(s.get_school_address) }&sensor=false&mode=driving"
+  directions_url = "https://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=#{ URI.escape(s.get_school_address) }&sensor=false&mode=driving&key=#{google_maps_api_key}"
   resp = RestClient.get(directions_url)
   geo2 = JSON.parse(resp.body)
   unless geo2['status'] == 'OK'
@@ -49,7 +52,7 @@ if post.get_city.match(/fremont/i)
   #puts "Neighborhood: #{n}"
   post.set_feature(:neighborhood, n)
 
-  directions_url = "http://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=Fremont+BART+station&sensor=false&mode=walking"
+  directions_url = "https://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=Fremont+BART+station&sensor=false&mode=walking&key=#{google_maps_api_key}"
   resp = RestClient.get(directions_url)
   geo2 = JSON.parse(resp.body)
   unless geo2['status'] == 'OK'

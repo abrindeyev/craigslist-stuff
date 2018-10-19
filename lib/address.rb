@@ -10,6 +10,8 @@ require 'date'
 
 class AddressHarvester
 
+  @@google_maps_api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:readline)
+
   def init
 
     @agents_blacklist = [
@@ -630,7 +632,7 @@ class AddressHarvester
         accuracy = $1.to_i if gps_data.match(/data-accuracy="([0-9]+)"/)
         if map_address.match(/^(.+) at (.+)$/)
           self.set_feature(:address_was_reverse_geocoded, true)
-          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false")
+          revgeocode_url = URI.escape("https://maps.googleapis.com/maps/api/geocode/json?address=#{$1} and #{$2}&sensor=false&key=#{@@google_maps_api_key}")
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
           @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'
@@ -645,7 +647,7 @@ class AddressHarvester
           ) or (
             @lat and @lon and (not (@lat == '37.560500' and @lon == '-121.999900'))
           )
-          revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+          revgeocode_url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false&key=#{@@google_maps_api_key}"
           resp = RestClient.get(revgeocode_url)
           geo = JSON.parse(resp.body)
           @reverse_geocoded_address_components = Hash[*geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if geo['status'] == 'OK'

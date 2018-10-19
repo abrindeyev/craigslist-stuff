@@ -14,6 +14,8 @@ require './lib/school'
 
 STDOUT.sync = true
 
+google_maps_api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:readline)
+
 # neighborhoods: fremont / union city / newark
 # housing type:  condo / duplex / house / townhouse
 # rent maximum:  $3500
@@ -76,7 +78,7 @@ else
     if post.have_full_address? 
       addr = post.get_full_address
 
-      geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
+      geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false&key=#{google_maps_api_key}"
       resp = RestClient.get(geocode_url)
       geo = JSON.parse(resp.body)
       unless geo['status'] == 'OK'
