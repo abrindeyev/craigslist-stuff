@@ -18,9 +18,9 @@ google_maps_api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:rea
 
 # neighborhoods: fremont / union city / newark
 # housing type:  condo / duplex / house / townhouse
-# rent maximum:  $3500
+# rent maximum:  $4000
 # ft^2 minimum:  1000
-source_url = 'https://sfbay.craigslist.org/search/eby/apa?srchType=T&nh=54&housing_type=2&housing_type=4&housing_type=6&housing_type=9&maxAsk=3500&bedrooms=2&minSqft=1000'
+source_url = 'https://sfbay.craigslist.org/search/eby/apa?srchType=T&nh=54&housing_type=2&housing_type=4&housing_type=6&housing_type=9&maxAsk=4000&bedrooms=2&minSqft=1000'
 page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
 #links = page.xpath("//body/section[@id='pagecontainer']/form[@id='searchform']/div[@class='content']/ul[@class='rows']/li[@class='result-row']/a[@href]")
 links = page.xpath("//*[@id='sortable-results']/ul/li/a[@href]")
