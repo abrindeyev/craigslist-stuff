@@ -25,10 +25,10 @@ page = Nokogiri::HTML(open(source_url).read, nil, 'UTF-8')
 #links = page.xpath("//body/section[@id='pagecontainer']/form[@id='searchform']/div[@class='content']/ul[@class='rows']/li[@class='result-row']/a[@href]")
 links = page.xpath("//*[@id='sortable-results']/ul/li/a[@href]")
 o = YAML.load_file('.settings.yaml')
-Twitter.configure do |config|
-    config.consumer_key = o['consumer_key']
-    config.consumer_secret = o['consumer_secret']
-    config.oauth_token = o['oauth_token']
+twi = Twitter::REST::Client.new do |config|
+    config.consumer_key       = o['consumer_key']
+    config.consumer_secret    = o['consumer_secret']
+    config.oauth_token        = o['oauth_token']
     config.oauth_token_secret = o['oauth_token_secret']
 end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read.chomp
@@ -117,7 +117,7 @@ else
           # short_link = open("http://clck.ru/--?url="+full_link).read
           # puts short_link
           tweeted = "#{tweet} #{full_link}"
-          Twitter.update(tweeted)
+          twi.update(tweeted)
           last_tweet = tweet
         end
       rescue Twitter::Error::Forbidden
