@@ -28,8 +28,8 @@ o = YAML.load_file('.settings.yaml')
 twi = Twitter::REST::Client.new do |config|
     config.consumer_key       = o['consumer_key']
     config.consumer_secret    = o['consumer_secret']
-    config.oauth_token        = o['oauth_token']
-    config.oauth_token_secret = o['oauth_token_secret']
+    config.access_token        = o['oauth_token']
+    config.access_token_secret = o['oauth_token_secret']
 end
 external_ip = open(File.join(File.dirname(__FILE__), '.my_ext_ip_address')).read.chomp
 
