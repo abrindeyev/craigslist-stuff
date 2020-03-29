@@ -6,11 +6,11 @@ require 'rest-client'
 require 'uri'
 require 'json'
 require 'nokogiri'
-require 'mongo'
+require 'thread'
 require './lib/address'
 require './lib/school'
 require './lib/url-cache'
-require './lib/mongodb'
+require './lib/mt-mongo'
 
 class Parser < Nokogiri::XML::SAX::Document
   @object = nil
@@ -96,7 +96,12 @@ class Parser < Nokogiri::XML::SAX::Document
 
   def process_users()
     @@OSM_USERS.each do |id,name|
-      @mc['osm_users'].update_one({ _id: id.to_i}, { "$set": {'_id' => id.to_i, 'name' => name} }, {:upsert => true})
+      collect_write('osm_users', {
+        :update_one => {
+          :filter => { _id: id.to_i},
+          :update => { "$set": {'_id' => id.to_i, 'name' => name} },
+          :upsert => true}
+      })
     end
   end
 
@@ -134,7 +139,11 @@ class Parser < Nokogiri::XML::SAX::Document
         #@object.delete('nd')
 
         # Inserting back-references to nodes
-        @mc['osm_nodes'].update_many({_id: {'$in': @object['nd']}}, '$addToSet' => {'w' => @object['_id']})
+        collect_write('osm_nodes', {
+          :update_many => {
+            :filter => { _id: {'$in': @object['nd']}},
+            :update => { '$addToSet' => {'w' => @object['_id']}}
+          }})
       end
     when 'relation'
       no_op = false
@@ -147,30 +156,97 @@ class Parser < Nokogiri::XML::SAX::Document
     updates = { "$set": @object }
     unless no_op
       if delete_requested
-        @mc[c].delete_one(selection)
+        collect_write(c, {
+          :delete_one => {
+            :filter => selection,
+          }})
       else
-        @mc[c].update_one(selection, updates, {:upsert => true})
+        collect_write(c, {
+          :update_one => {
+            :filter => selection,
+            :update => updates, 
+            :upsert => true
+          }})
       end
     end
     @object = nil
   end
 end
 
+def log(msg)
+  puts "#{ Time.now.strftime('%Y.%m.%d %H:%M:%S.%6N') } #{msg}"
+end
+
+def collect_write(coll, obj)
+  $queues[coll] << obj
+end
+
 puts '-------------------------------------------------------'
 
 mc = MDB.new.client
+
 mc['osm_nodes'].drop()
 mc['osm_ways'].drop()
 mc['osm_relations'].drop()
-p = Parser.new(mc)
-Nokogiri::XML::SAX::Parser.new(p).parse(File.open(ARGV[0]))
-#puts "Processing users:"
-# p.process_users
+mc['osm_users'].drop()
 
-puts "Creating indices:"
-mc['osm_nodes'].indexes.create_one({l: '2dsphere'})
-mc['osm_ways'].indexes.create_one({l: '2dsphere'})
+$queues = {
+  'osm_nodes'     => Queue.new,
+  'osm_ways'      => Queue.new,
+  'osm_relations' => Queue.new,
+  'osm_users'     => Queue.new
+}
+
+producer = Thread.new do
+  p = Parser.new(mc)
+  log("Starting parsing...")
+  Nokogiri::XML::SAX::Parser.new(p).parse(File.open(ARGV[0]))
+  log("Processing users...")
+  p.process_users
+  $queues.each do |coll,queue|
+    log("Closing queue for the #{coll} collection")
+    queue.close
+  end
+  log("All queues were closed")
+end
+
+consumers = []
+$queues.keys.each do |collection|
+  2.times do
+    consumers << Thread.new(collection) do |coll|
+      puts "Starting consumer thread for the #{coll} collection"
+      mc = MDB.new.client
+      q = $queues[coll]
+      writes = []
+      docs_count = 10240
+
+      while not q.closed?
+        w = q.pop # consumer thread will block here
+        writes << w unless w.nil?
+        log("The #{coll} queue was closed") if w.nil?
+        if writes.size > docs_count or w.nil?
+          begin
+            log("Sending the batch of #{writes.size} documents to the #{coll} collection, queue size: #{q.size}")
+            r = mc[coll].bulk_write(writes, :ordered => false)
+          rescue Mongo::Error::OperationsFailure => e
+            raise e if e.message !~ /E11000/
+          end
+          writes = []
+        end
+      end    
+    end
+  end
+end
+
+producer.join
+consumers.each do |th|
+  th.join
+end
+
+#puts "Creating indices:"
+#mc['osm_nodes'].indexes.create_one({l: '2dsphere'})
+#mc['osm_ways'].indexes.create_one({l: '2dsphere'})
 
 # Get rid of no-use nodes (once you use them for osm_ways)
 # mc['osm_nodes'].delete_many({tags:{'$exists': false}})
-puts "Done!"
+log("Done!")
