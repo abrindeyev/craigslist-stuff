@@ -294,11 +294,11 @@ end
 
 describe "Price detector" do
   it "should detect $1750 in v.20130301 template" do
-    AddressHarvester.new(s('3612351233.html'),mc).get_feature(:rent_price).should eql 1750
+    AddressHarvester.new(s('3612351233.html'),mc).get_feature(:rent_amount).should eql 1750
   end
   it "should detect $2150 in v.20130807 template" do
     FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.573500,-122.046900&sensor=false&key=#{ google_maps_api_key }", :response => s('3986833599_revgeocode.json'))
-    AddressHarvester.new(s('3986833599.html'),mc).get_feature(:rent_price).should eql 2150
+    AddressHarvester.new(s('3986833599.html'),mc).get_feature(:rent_amount).should eql 2150
   end
 end
 
@@ -390,8 +390,8 @@ describe "Price detector" do
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
     next if f == '5693112857.html'
     if f.match(/^[-0-9_T]+\.html$/)
-      it "should obtain rentail price from #{f}" do
-        AddressHarvester.new(s(f),mc).get_feature(:rent_price).should > 0
+      it "should obtain rental amount from #{f}" do
+        AddressHarvester.new(s(f),mc).get_feature(:rent_amount).should > 0
       end
     end
   end
