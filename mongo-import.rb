@@ -15,6 +15,7 @@ require './lib/mongodb'
 puts '-------------------------------------------------------'
 
 mc = MDB.new.client
+err_num = 0
 
 Dir.entries(ARGV[0]).each do |filename|
   next if filename == '.' or filename == '..'
@@ -27,7 +28,7 @@ Dir.entries(ARGV[0]).each do |filename|
 
     post_data = post.serialize
     post_data[:_id] = {posting_id: post.get_id, updated_at: post.get_posting_update_time}
-    next if mc[:seen_db].find({post_id: post.get_id, updated: post.get_posting_update_time}).count == 1
+    next if mc[:import_tracking_ids].find({post_id: post.get_id, updated: post.get_posting_update_time}).count == 1
     mc[:postings].replace_one({_id: {posting_id: post.get_id, updated_at: post.get_posting_update_time}},post_data,{:upsert => true})
 
     if post.have_full_address?
@@ -40,35 +41,22 @@ Dir.entries(ARGV[0]).each do |filename|
         raise e if e.message !~ /E11000/
       end
 
-      mc[:seen_db].update_one({_id: {post_id: post.get_id, updated: post.get_posting_update_time}},{processed_on: DateTime.now},{:upsert => true})
+      mc[:import_tracking_ids].update_one({_id: {post_id: post.get_id, updated: post.get_posting_update_time}},{processed_on: DateTime.now},{:upsert => true})
 
       puts "Report for address: #{canonical_address}"
-      a_lat = post_data[:address][:lat]
-      a_lng = post_data[:address][:lon]
+      a_lat = post_data[:address][:point][:coordinates][1]
+      a_lng = post_data[:address][:point][:coordinates][0]
 
       if post.get_city.match(/fremont/i)
         s = SchoolMatcher.new(a_lat, a_lng)
         post.set_feature(:school_name, s.get_school_name)
         post.set_feature(:school_rating, s.get_rating)
         post.set_feature(:school_addr, s.get_school_address)
-        #directions_url = "http://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=#{ URI.escape(s.get_school_address) }&sensor=false&mode=driving"
-        #geo2 = uc.get_cached_json(directions_url)
-        #unless geo2['status'] == 'OK'
-        #  puts "Directions failed: #{geo['status']}"
-        #  exit 1
-        #end
-        #puts "Driving to school by car is #{geo2['routes'][0]['legs'][0]['duration']['text']}"
+
+        updated_post = post.serialize
+        mc[:postings].update_one({_id: {posting_id: post.get_id, updated_at: post.get_posting_update_time}},{'$set': {features: updated_post[:features]}},{:upsert => false})
 
         n = ''
-        #puts geo.inspect
-
-        #directions_url = "http://maps.googleapis.com/maps/api/directions/json?origin=#{ URI.escape(addr) }&destination=Fremont+BART+station&sensor=false&mode=walking"
-        #geo2 = uc.get_cached_json(directions_url)
-        #unless geo2['status'] == 'OK'
-        #  puts "Directions failed: #{geo2['status']}"
-        #  exit -1
-        #end
-        #puts "Walking to Fremont BART: #{geo2['routes'][0]['legs'][0]['duration']['text']}"
       end
       puts "Posting score: " + post.get_score.to_s
       #puts "Matched as #{post.get_feature(:name)}" if post.have_feature?(:name)
@@ -83,7 +71,11 @@ Dir.entries(ARGV[0]).each do |filename|
     puts "Import cancelled"
     exit 1
   rescue Exception => e 
-    mc[:parse_failures].insert_one({_id: Time.now, filename: filename, reason: e.to_s})
+    err = "#{e.backtrace.first}: #{e.message} (#{e.class})", e.backtrace.drop(1).map{|s| "\t#{s}"}
+    mc[:parse_failures].insert_one({_id: Time.now, filename: filename, err: err})
+    puts "********** ERROR"
+    err_num = err_num + 1
   end
 end
-puts "Import complete"
+mc[:import_tracking_ids].drop()
+puts "Import complete, there were #{err_num} parse errors reported"

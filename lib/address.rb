@@ -537,7 +537,10 @@ class AddressHarvester < Debugger
 
   def serialize
     j = {
-      :body => @body,
+      :text => {
+        :title => @title,
+        :body => @body,
+      },
       :features => self.get_features,
       :score => self.get_score,
       :scoring_log => self.get_scoring_log,
@@ -562,8 +565,10 @@ class AddressHarvester < Debugger
     if self.have_full_address?
       j[:address][:formatted_address] = self.get_full_address
       if @geo
-        j[:address][:lat] = @geo['results'][0]['geometry']['location']['lat']
-        j[:address][:lon] = @geo['results'][0]['geometry']['location']['lng']
+        j[:address][:point] = {
+          :type => 'Point',
+          :coordinates => [ @geo['results'][0]['geometry']['location']['lng'], @geo['results'][0]['geometry']['location']['lat'] ]
+        }
       else
         raise "Bro?"
       end
@@ -837,9 +842,9 @@ class AddressHarvester < Debugger
 
     # Getting rent price
     if self.version < 20150207
-      self.set_feature(:rent_price, $1.to_i) if @title.gsub(/\n/, "").match(/(?:\$|&#x0024;)(\d{3,4})/)
+      self.set_feature(:rent_amount, $1.to_i) if @title.gsub(/\n/, "").match(/(?:\$|&#x0024;)(\d{3,4})/)
     else
-      self.set_feature(:rent_price, get_price())
+      self.set_feature(:rent_amount, get_price())
     end
 
     # Getting # of bedrooms
