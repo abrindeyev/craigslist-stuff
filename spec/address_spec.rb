@@ -124,7 +124,7 @@ describe "Score engine" do
     AddressHarvester.new(s('3598149448.html'),mc).get_score.should_not be_nil
   end
   it "should return digital score for postings without any address" do
-    AddressHarvester.new(s('3598149448.html'),mc).get_score.should be_a(Fixnum)
+    AddressHarvester.new(s('3598149448.html'),mc).get_score.should be_a(Integer)
   end
 end
 
