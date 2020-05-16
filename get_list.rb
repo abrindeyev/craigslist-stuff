@@ -76,7 +76,7 @@ else
     if post.have_full_address? 
       addr = post.get_full_address
 
-      geocode_url = "http://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.escape(addr) }&sensor=false"
+      geocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component(addr) }&sensor=false"
       resp = RestClient.get(geocode_url)
       geo = JSON.parse(resp.body)
       unless geo['status'] == 'OK'

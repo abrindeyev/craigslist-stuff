@@ -1,6 +1,7 @@
 require File.join(File.dirname(__FILE__), '..', 'lib', 'address')
 require 'fakeweb'
 FakeWeb.allow_net_connect = false
+google_maps_api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:readline)
 mc = nil
 
 def s(sample_filename)
@@ -19,7 +20,7 @@ describe "#new" do
   end
   context "with local filename" do
     it "should return object reference" do
-      FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.399619,-122.086022&sensor=false', :response => s('3574423811_reverse_geocode.json'))
+      FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.399619,-122.086022&sensor=false&key=#{ google_maps_api_key }", :response => s('3574423811_reverse_geocode.json'))
       post = AddressHarvester.new(s('3574423811.html'),mc)
       post.should_not be_nil
     end
@@ -39,7 +40,7 @@ describe "#new" do
       AddressHarvester.new(s('removed.html'),mc).has_been_removed?.should eql true
     end
     it "should get xstreet0 tag value" do 
-      FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.399619,-122.086022&sensor=false', :response => s('3574423811_revgeocode.json'))
+      FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.399619,-122.086022&sensor=false&key=#{ google_maps_api_key }", :response => s('3574423811_revgeocode.json'))
       AddressHarvester.new(s('3574423811.html'),mc).get_tag('xstreet0').should eql '120 Granada'
     end
     it "should return city from 'city' tag" do
@@ -62,7 +63,7 @@ describe "Posting info parser" do
     AddressHarvester.new(s('3574419831.html'),mc).get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z").should eql '2013-01-26T210400-0800'
   end
   it "should return updated date when post was updated" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false', :response => s('3602181818_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false&key=#{ google_maps_api_key }", :response => s('3602181818_revgeocode.json'))
     AddressHarvester.new(s('3602181818.html'),mc).get_posting_update_time.strftime("%Y-%m-%dT%H%M%S%z").should eql '2013-02-07T232900-0800'
   end
   it "should return empty string when post was removed" do
@@ -148,7 +149,7 @@ describe "Raw address detector" do
     AddressHarvester.new(s('3601613904.html'),mc).get_full_address.should eql '23 Raintree Court, Hayward, California'
   end
   it "should return '38700 Tyson Lane, Fremont, California'" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.562137,-121.974786&sensor=false', :response => s('3585854056_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.562137,-121.974786&sensor=false&key=#{ google_maps_api_key }", :response => s('3585854056_revgeocode.json'))
     AddressHarvester.new(s('3585854056.html'),mc).get_full_address.should eql '38700 Tyson Lane, Fremont, California'
   end
   it "should return '1001 Beethoven Common, Fremont, California'" do
@@ -156,7 +157,7 @@ describe "Raw address detector" do
     AddressHarvester.new(s('3591325547.html'),mc).get_full_address.should eql '1001 Beethoven Common, Fremont, California'
   end
   it "shouldn't detect full address from fuzzy reverse geocode requests" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false', :response => s('3584993361_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false&key=#{ google_maps_api_key }", :response => s('3584993361_revgeocode.json'))
     AddressHarvester.new(s('3584993361.html'),mc).have_full_address?.should be false
   end
   it "should return '39800 Fremont Boulevard, Fremont, California'" do
@@ -199,7 +200,7 @@ describe "Raw address detector" do
     AddressHarvester.new(s('4298110333.html'),mc).get_full_address.should eql '34310 Newton Court, Fremont, California'
   end
   it "should return 'Serpa Court, Fremont, California'" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false', :response => s('4939459448.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false&key=#{ google_maps_api_key }", :response => s('4939459448.json'))
     AddressHarvester.new(s('4939459448.html'),mc).get_full_address.should eql 'Serpa Court, Fremont, California'
   end
   it "should return '38662 Country Terrace, Fremont, California'" do 
@@ -208,7 +209,7 @@ describe "Raw address detector" do
   it "should return '34132 Cavendish Place, Fremont, California'" do 
     AddressHarvester.new(s('5381678364.html'),mc).get_full_address.should eql '34132 Cavendish Place, Fremont, California'
   end
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.567389,-121.975086&sensor=false', '5922274850_address.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.567389,-121.975086&sensor=false&key=#{ google_maps_api_key }", '5922274850_address.json')
   it "should return '615 Balsam Terrace, Fremont, California'" do 
     AddressHarvester.new(s('5922274850.html'),mc).get_full_address.should eql '615 Balsam Terrace, Fremont, California'
   end
@@ -222,7 +223,7 @@ end
 
 describe "Mapbox address detector" do
   it "should return '4845 Mendota St, Union City, CA 94587, USA'" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.571051,-122.066008&sensor=false', :response => s('5693112857_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.571051,-122.066008&sensor=false&key=#{ google_maps_api_key }", :response => s('5693112857_revgeocode.json'))
     AddressHarvester.new(s('5693112857.html'),mc).get_full_address.should eql '4845 Mendota Street, Union City, California'
   end
 end
@@ -232,14 +233,14 @@ describe "Washer/dryer/hookups fuzzy detector" do
     AddressHarvester.new(s('3564576923.html'),mc).have_feature?(:wd).should be true
   end
   it "should detect washer and dryer #2" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false', :response => s('3602181818_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.602334,-122.056373&sensor=false&key=#{ google_maps_api_key }", :response => s('3602181818_revgeocode.json'))
     AddressHarvester.new(s('3602181818.html'),mc).have_feature?(:wd).should be true
   end
   it "should detect washer and dryer #3" do
     AddressHarvester.new(s('3612351233.html'),mc).have_feature?(:wd).should be true
   end
   it "should detect washer and dryer #4" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.603313,-122.071328&sensor=false', :response => s('3595693913_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.603313,-122.071328&sensor=false&key=#{ google_maps_api_key }", :response => s('3595693913_revgeocode.json'))
     AddressHarvester.new(s('3595693913.html'),mc).have_feature?(:wd).should be true
   end
   it "should not detect washer and dryer when hookups are detected" do
@@ -276,7 +277,7 @@ describe "Scam postings detector" do
     AddressHarvester.new(s('3629310553.html'),mc).is_scam?.should_not be true
   end
   it "should not detect scam here #2" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.565935,-122.024472&sensor=false', :response => s('3629352252_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.565935,-122.024472&sensor=false&key=#{ google_maps_api_key }", :response => s('3629352252_revgeocode.json'))
     AddressHarvester.new(s('3629352252.html'),mc).is_scam?.should_not be true
   end
   it "should not detect scam here #3" do
@@ -301,7 +302,7 @@ describe "Price detector" do
     AddressHarvester.new(s('3612351233.html'),mc).get_feature(:rent_price).should eql 1750
   end
   it "should detect $2150 in v.20130807 template" do
-    FakeWeb.register_uri(:get, 'http://maps.googleapis.com/maps/api/geocode/json?latlng=37.573500,-122.046900&sensor=false', :response => s('3986833599_revgeocode.json'))
+    FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.573500,-122.046900&sensor=false&key=#{ google_maps_api_key }", :response => s('3986833599_revgeocode.json'))
     AddressHarvester.new(s('3986833599.html'),mc).get_feature(:rent_price).should eql 2150
   end
 end
@@ -309,7 +310,7 @@ end
 describe "Double-pane windows detector" do
   ["DOUBLE PANE WINDOWS", "Double Pane Windows", "Double Paned Windows", "Double pane windows", "Double-Pane Energy Star Windows", "Dual pane windows", "double pane window", "double pane windows", "double paned windows"].each do |v|
     it "should detect '#{v}'" do
-      fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=Meadowbrook%20Commons%20%20and%20Paseo%20Padre/Thornton&sensor=false', 'empty_posting_revgeocode.json')
+      fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=Meadowbrook%20Commons%20%20and%20Paseo%20Padre/Thornton&sensor=false&key=#{ google_maps_api_key }", 'empty_posting_revgeocode.json')
       AddressHarvester.any_instance.stub(:get_body) { v }
       AddressHarvester.new(s('empty_posting.html'),mc).have_feature?(:dpw).should be true
     end
@@ -373,9 +374,9 @@ end
 describe "Version detector" do
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false&key=#{ google_maps_api_key }", '4252237879_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false&key=#{ google_maps_api_key }", '5068629023_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false&key=#{ google_maps_api_key }",'5373956774_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
     if f.match(/^[-0-9_T]+.html$/)
       it "should obtain some version from #{f}" do
@@ -388,9 +389,9 @@ end
 describe "Price detector" do
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
   fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false', '4252237879_revgeocode.json')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false', '5068629023_revgeocode.json')
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false&key=#{ google_maps_api_key }", '4252237879_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false&key=#{ google_maps_api_key }", '5068629023_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false&key=#{ google_maps_api_key }",'5373956774_revgeocode.json')
   Dir.foreach(File.join(File.dirname(__FILE__), 'samples')) do |f|
     next if f == '5693112857.html'
     if f.match(/^[-0-9_T]+\.html$/)
@@ -414,7 +415,7 @@ describe "SQFT parser" do
 end
 
 describe "Attributes parser" do
-  fake_url('http://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false','3987654283_revgeocode.json')
+  fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.517600,-121.928700&sensor=false&key=#{ google_maps_api_key }",'3987654283_revgeocode.json')
   it "should parse attributes from version mid-2013" do
     p = AddressHarvester.new(s('3987654283.html'),mc)
 
@@ -460,7 +461,7 @@ end
 
 describe "Intersection detector" do
   it "should detect Niles neighborhood" do
-    # fake_url('http://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false','5373956774_revgeocode.json')
+    # fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false&key=#{ google_maps_api_key }",'5373956774_revgeocode.json')
     p = AddressHarvester.new(s('5373956774.html'),mc)
 
     p.have_full_address?.should_not be true

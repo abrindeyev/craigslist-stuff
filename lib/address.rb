@@ -673,7 +673,7 @@ class AddressHarvester < Debugger
         addrs.uniq.each do |a|
           debug("processing raw address #{a}")
           if a.class == Array and a.size == 2
-            g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ a[0] }, #{ a[1] } CA&sensor=false")
+            g_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component("#{ a[0] }, #{ a[1] } CA") }&sensor=false"
 
             g = @uc.get_cached_json(g_url)
             if  g['status'] == 'OK' and
@@ -751,7 +751,7 @@ class AddressHarvester < Debugger
             address_to_query="#{c_a} and #{c_b}"
           end
 
-          revgeocode_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ address_to_query }&sensor=false")
+          revgeocode_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component(address_to_query) }&sensor=false"
           @geo = @uc.get_cached_json(revgeocode_url)
           if @geo['status'] == 'OK' and @geo['results'] and @geo['results'].size == 1
             self.set_feature(:address_was_reverse_geocoded, true)
@@ -774,7 +774,7 @@ class AddressHarvester < Debugger
           )
 
           debug("Getting approximate address using reverse geocoding from #{@lat},#{@lon}")
-          revgeocode_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
+          revgeocode_url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=#{@lat},#{@lon}&sensor=false"
           @geo = @uc.get_cached_json(revgeocode_url)
           if @geo['status'] == 'OK'
             @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten]
@@ -787,7 +787,7 @@ class AddressHarvester < Debugger
             address_data = @doc.at_xpath(@vc.get(:mapaddress_xpath)).to_s
             if address_data.match(/^\d{1,5} /)
               debug("We have specific house number and probably street: #{address_data}")
-              canonical_geo = @uc.get_cached_json(URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ address_data }, #{ @reverse_geocoded_address_components['locality'] } #{ @reverse_geocoded_address_components['administrative_area_level_1'] }&sensor=false"))
+              canonical_geo = @uc.get_cached_json("https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component("#{ address_data }, #{ @reverse_geocoded_address_components['locality'] } #{ @reverse_geocoded_address_components['administrative_area_level_1'] }") }&sensor=false")
               # TODO move to Google Maps API class
               raise "Over quota" if canonical_geo['status'] == 'OVER_LIMIT'
               if canonical_geo['status'] == 'OK'
@@ -950,7 +950,7 @@ class AddressHarvester < Debugger
     if (self.get_tag('xstreet0').match(/^\d{3,5} [A-Z0-9]/) and self.get_tag('city') != '' and self.get_tag('region') != '')
       # 1. we have full address in Craigslist tags. Let's use it!
       # This code is applicable to ~ 2013 versions only
-      g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ self.get_tag('xstreet0') }, #{ self.get_tag('city') } #{ self.get_tag('region') }&sensor=false")
+      g_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component("#{ self.get_tag('xstreet0') }, #{ self.get_tag('city') } #{ self.get_tag('region') }") }&sensor=false"
 
       g = @uc.get_cached_json(g_url)
       if  g['status'] == 'OK' and
@@ -1095,7 +1095,7 @@ class AddressHarvester < Debugger
   def merge_attributes_from_db(name, complex)
     return if @merged_complex == name
     raise "merge_attributes_from_db() already merged while merging [#{name}] after [#{@merged_complex}]" if @merged_complex != ''
-    g_url = URI.escape("http://maps.googleapis.com/maps/api/geocode/json?address=#{ complex[:street] }, #{ complex.include?(:city) ? complex[:city] : 'Fremont' } CA&sensor=false")
+    g_url = "https://maps.googleapis.com/maps/api/geocode/json?address=#{ URI.encode_www_form_component("#{ complex[:street] }, #{ complex.include?(:city) ? complex[:city] : 'Fremont' } CA") }&sensor=false"
 
     g = @uc.get_cached_json(g_url)
     if  g['status'] == 'OK' and

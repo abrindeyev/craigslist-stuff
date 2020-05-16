@@ -7,6 +7,7 @@ require './lib/mongodb'
 class URLCacher < Debugger
 
   @@db = nil
+  @@api_key = File.open("#{ENV['HOME']}/.google_maps_api_key.txt", &:readline)
 
   def initialize(db)
     unless @@db
@@ -36,11 +37,12 @@ class URLCacher < Debugger
       raise e if e.message !~ /E11000/
     end while r.upserted_id.nil?
 
-    debug("Requesting #{url}")
+    full_url = "#{url}&key=#{@@api_key}"
+    debug("Requesting #{full_url}")
     begin
       req = RestClient::Request.new(
         :method => :get,
-        :url => url,
+        :url => full_url,
         :timeout => 5,
         :open_timeout => 3,
         :headers => {
