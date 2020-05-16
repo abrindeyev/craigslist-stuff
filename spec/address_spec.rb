@@ -182,9 +182,9 @@ describe "Raw address detector" do
   it "should return '34310 Newton Court, Fremont, California'" do
     AddressHarvester.new(s('4298110333.html'),mc).get_full_address.should eql '34310 Newton Court, Fremont, California'
   end
-  it "should return 'Serpa Court, Fremont, California'" do
     FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?address=Felicio%20Common%20and%20Serpa%20Court&sensor=false&key=#{ google_maps_api_key }", :response => s('4939459448.json'))
-    AddressHarvester.new(s('4939459448.html'),mc).get_full_address.should eql 'Serpa Court, Fremont, California'
+  it "should return 'Serpa Court & Felicio Common, Fremont, California'" do
+    AddressHarvester.new(s('4939459448.html'),mc).get_full_address.should eql 'Serpa Court & Felicio Common, Fremont, California'
   end
   it "should return '38662 Country Terrace, Fremont, California'" do 
     AddressHarvester.new(s('5379302252.html'),mc).get_full_address.should eql '38662 Country Terrace, Fremont, California'

@@ -699,7 +699,7 @@ class AddressHarvester < Debugger
             @reverse_geocoded_address_components = Hash[*@geo['results'][0]['address_components'].map {|el| [el['types'][0], el['long_name']] }.flatten] if @geo['status'] == 'OK'
             if self.version > 20130903 and @geo['status'] == 'OK' and @reverse_geocoded_address_components.include?('administrative_area_level_1') and @reverse_geocoded_address_components['administrative_area_level_2'] == 'Alameda County'
               @addr_neighborhood = @reverse_geocoded_address_components.include?('neighborhood') ? @reverse_geocoded_address_components['neighborhood'] : nil
-              @addr_street = @reverse_geocoded_address_components['route']
+              @addr_street = @reverse_geocoded_address_components['route'] ? @reverse_geocoded_address_components['route'] : @reverse_geocoded_address_components['intersection']
               @addr_city   = @reverse_geocoded_address_components['locality']
               @addr_state  = @reverse_geocoded_address_components['administrative_area_level_1']
               self.set_feature(:neighborhood, @addr_neighborhood)
