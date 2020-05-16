@@ -1091,7 +1091,7 @@ class AddressHarvester < Debugger
   end
 
   def backup_source_to(dir)
-    return false unless File.exists?(dir)
+    return false unless File.exist?(dir)
     File.open(File.join(dir, self.get_filename), 'w') do |f|
       f.write(@source)
     end

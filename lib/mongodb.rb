@@ -18,7 +18,7 @@ class MDB < Debugger
         Mongo::Logger.logger.level = ::Logger::FATAL
       end
       db_settings_fn = ENV['CG_DB'] ? ENV['CG_DB'] : "#{ENV['HOME']}/.cg_db.yml"
-      if File.exists?(db_settings_fn)
+      if File.exist?(db_settings_fn)
         debug("Using the following database settings file: #{ db_settings_fn }")
       else
         raise "Database settings file #{ db_settings_fn } not found"
@@ -32,7 +32,7 @@ class MDB < Debugger
         db_settings.delete(:auth) # to make Mongo Ruby driver happy
         raise "Please specify MongoDB authentication mechanism via :auth_mech" unless db_settings.has_key?(:auth_mech)
         if db_settings[:auth_mech] == :mongodb_x509
-          raise "Please specify client certificate in :ssl_cert" unless db_settings.has_key?(:ssl_cert) and File.exists?(db_settings[:ssl_cert])
+          raise "Please specify client certificate in :ssl_cert" unless db_settings.has_key?(:ssl_cert) and File.exist?(db_settings[:ssl_cert])
           db_settings[:user] = OpenSSL::X509::Certificate.new(File.read(db_settings[:ssl_cert])).subject.to_s(OpenSSL::X509::Name::RFC2253)
           db_settings.delete(:password) if db_settings.has_key?(:password)
         elsif db_settings[:auth_mech] == :scram
