@@ -81,14 +81,6 @@ describe "Apartments detector" do
   it "should detect 'Creekside Village'" do
     AddressHarvester.new(s('3605593473.html'),mc).get_feature(:name).should eql 'Creekside Village'
   end
-  it "should detect 'Skylark'" do
-    FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2332&RT=T&Adid=20634371&psid=0&subID=f&ID=13150', :response => s('3590057703_rentsentinel.html'))
-    AddressHarvester.new(s('3590057703.html'),mc).get_feature(:name).should eql 'Skylark'
-  end
-  it "should detect 'Alborada'" do
-    FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
-    AddressHarvester.new(s('3591325547.html'),mc).get_feature(:name).should eql 'Alborada'
-  end
   it "should detect 'Rancho Luna' #1" do
     AddressHarvester.new(s('3987415202.html'),mc).get_feature(:name).should eql 'Rancho Luna'
   end
@@ -146,10 +138,6 @@ describe "Raw address detector" do
   it "should return '38700 Tyson Lane, Fremont, California'" do
     FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.562137,-121.974786&sensor=false&key=#{ google_maps_api_key }", :response => s('3585854056_revgeocode.json'))
     AddressHarvester.new(s('3585854056.html'),mc).get_full_address.should eql '38700 Tyson Lane, Fremont, California'
-  end
-  it "should return '1001 Beethoven Common, Fremont, California'" do
-    FakeWeb.register_uri(:get, 'http://ads.rentsentinel.com/activity/CLContact.aspx?C=2044&RT=T&Adid=20692909&psid=0&subID=f&ID=11978', :response => s('3591325547_rentsentinel.html'))
-    AddressHarvester.new(s('3591325547.html'),mc).get_full_address.should eql '1001 Beethoven Common, Fremont, California'
   end
   it "shouldn't detect full address from fuzzy reverse geocode requests" do
     FakeWeb.register_uri(:get, "https://maps.googleapis.com/maps/api/geocode/json?latlng=37.609532,-122.024371&sensor=false&key=#{ google_maps_api_key }", :response => s('3584993361_revgeocode.json'))
@@ -367,8 +355,6 @@ describe VersionedConfiguration do
 end
 
 describe "Version detector" do
-  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
-  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false&key=#{ google_maps_api_key }", '4252237879_revgeocode.json')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false&key=#{ google_maps_api_key }", '5068629023_revgeocode.json')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false&key=#{ google_maps_api_key }",'5373956774_revgeocode.json')
@@ -382,8 +368,6 @@ describe "Version detector" do
 end
 
 describe "Price detector" do
-  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=5381&RT=T&Adid=20265896&psid=0&subID=f&ID=154903', '3568728033_rentsentinel.html')
-  fake_url('http://ads.rentsentinel.com/activity/CLContact.aspx?C=2584&RT=T&Adid=20630892&psid=0&subID=f&ID=306463', '3588909370_rentsentinel.html')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.580618,-121.963498&sensor=false&key=#{ google_maps_api_key }", '4252237879_revgeocode.json')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?latlng=37.545666,-121.976084&sensor=false&key=#{ google_maps_api_key }", '5068629023_revgeocode.json')
   fake_url("https://maps.googleapis.com/maps/api/geocode/json?address=D%20Street%20and%20Niles%20Blvd&sensor=false&key=#{ google_maps_api_key }",'5373956774_revgeocode.json')

@@ -62,7 +62,6 @@ class AddressHarvester < Debugger
         :street => '39410 Civic Center Dr',
         :uri => 'http://www.equityapartments.com/abrochure.aspx?PropertyID=4072&s_cid=1001&ILSid=93',
         :matchers => ['866-217-0031', '39410 Civic Center', 'eqrworld.com/california/san-francisco-bay-apartments/fremont/archstone-fremont-center-apartments.aspx'],
-        :rentsentinel_key => 'Archstone Fremont Center',
         :features => {
           :wd => true,
         },
@@ -71,7 +70,6 @@ class AddressHarvester < Debugger
         :street => '38680 Waterside Cir',
         :uri => 'http://www.watermarkplace.com',
         :matchers => ['Watermark Place Apartments', 'watermarkplace.com'],
-        :rentsentinel_key => 'Watermark Place',
         :features => {
           :wd => true,
         },
@@ -86,7 +84,6 @@ class AddressHarvester < Debugger
       'Heritage Village' => {
         :street => '38050 Fremont Blvd',
         :matchers => ['888-727-8177', 'Heritage Village', '866-886-8034'],
-        :rentsentinel_key => 'Heritage Village Apartments',
         :features => {
           :wd => true,
         },
@@ -133,7 +130,6 @@ class AddressHarvester < Debugger
       'Colonial Gardens' => {
         :street => '41777 Grimmer Boulevard',
         :uri => 'http://www.woodmontrentals.com/colonial-gardens-apartments/',
-        :rentsentinel_key => 'Colonial Gardens Apartments',
         :matchers => ['41777 Grimmer'],
         :features => {
           :wd => false,
@@ -172,7 +168,6 @@ class AddressHarvester < Debugger
         :street => '4555 Thornton Ave',
         :url => 'www.countrywoodapts.com',
         :matchers => ['Countrywood Apartments', 'countrywoodapts.com', '888-774-3140'],
-        :rentsentinel_key => 'Countrywood Apartment Homes',
         :features => {
           :wd => false,
         },
@@ -194,7 +189,6 @@ class AddressHarvester < Debugger
       'Alborada' => {
         :street => '1001 Beethoven Common',
         :matchers => ['Alborada Apartments', '/ca_alboradaapartments/floorplans/', '1001 Beethoven Common'],
-        :rentsentinel_key => ['Alborada', 'Alborada Apartments'],
         :features => {
           :wd => true,
         },
@@ -219,7 +213,6 @@ class AddressHarvester < Debugger
         :street => '24 Union Square',
         :city => 'Union City',
         :uri => 'http://www.avaloncommunities.com/california/union-city-apartments/avalon-union-city/',
-        :rentsentinel_key => 'Avalon Union City',
         :features => {
           :wd => true,
           :dw => true,
@@ -262,7 +255,6 @@ class AddressHarvester < Debugger
         :street => '34655 Skylark Dr',
         :city => 'Union City',
         :matchers => ['Skylark Apartments'],
-        :rentsentinel_key => 'Skylark',
         :features => {},
       },
       'Pebble Creek' => {
@@ -291,7 +283,6 @@ class AddressHarvester < Debugger
       },
       'Mission Peaks I' => {
         :street => '1401 Red Hawk Circle',
-        :rentsentinel_key => 'Mission Peaks I',
         :matchers => ['866-536-6974'],
         :features => {
           :wd => true,
@@ -300,7 +291,6 @@ class AddressHarvester < Debugger
       },
       'Mission Peaks II' => {
         :street => '39451 Gallaudet Drive',
-        :rentsentinel_key => 'Mission Peaks II',
         :matchers => ['866-884-3739'],
         :features => {
           :wd => true,
@@ -309,7 +299,6 @@ class AddressHarvester < Debugger
       'Parkside' => {
         :street => '1501 Decoto Road',
         :city => 'Union City',
-        :rentsentinel_key => 'Parkside',
         :features => {
           :dw => true,
           :ac => true,
@@ -319,7 +308,6 @@ class AddressHarvester < Debugger
         :street => '33 Union Square',
         :city => 'Union City',
         :uri => 'http://www.breproperties.com/california/union-city-apartments/verandas/sfo1108#/Community-Overview',
-        :rentsentinel_key => 'Verandas',
         :matchers => ['Verandas Apartment Homes', '866-773-5004'],
         :features => {
           :dw => true,
@@ -387,7 +375,6 @@ class AddressHarvester < Debugger
       'Eaves Fremont' => {
         :street => '231 Woodcreek Commons',
         :uri => 'http://www.eavesbyavalon.com/california/union-city-apartments/eaves-union-city/',
-        :rentsentinel_key => 'eaves Fremont',
         :matchers => ['866-818-1209'],
         :features => {
           :wd => true,
@@ -398,7 +385,6 @@ class AddressHarvester < Debugger
         :street => '2175 Decoto Road',
         :city => 'Union City',
         :uri => 'http://www.eavesbyavalon.com/california/union-city-apartments/eaves-union-city/',
-        :rentsentinel_key => 'eaves Union City',
         :features => {
           :wd => false,
           :dw => true,
@@ -615,32 +601,7 @@ class AddressHarvester < Debugger
     # Getting data for full mailing address (@addr_* variables)
     #
     # 1. Most reliable method -> matching against our own database of patterns
-    # 1.1. Tracking of RentSentinel.com postings
-    rentsentinel_links = @doc.search('a[@href]').map { |a| a['href'] if a['href'].match(/^http:\/\/ads.rentsentinel.com\/activity\/CLContact.aspx/) }.compact
-    if rentsentinel_links.size > 0
-      # rentsentinel.com form detected by address
-      begin
-        rsdoc = Nokogiri::HTML(open(rentsentinel_links[0]).read)
-        apartments_name = rsdoc.at_xpath("//body/form/div[@id='contact_container']/div[@id='contact_mainform']/div[@id='divBody']/div[@id='contact_leftcolumn']/h2/text()").to_s.gsub(/^(?:\r|\n| )*/,'').gsub(/(?:\r|\n| )*$/,'')
-      rescue
-        apartments_name = ''
-      end
-      if apartments_name != ''
-        # trying to find a match in our database
-        @PDB.each_pair do |name, complex|
-          if complex.include?(:rentsentinel_key)
-            matchers = complex[:rentsentinel_key].kind_of?(String) ? [ complex[:rentsentinel_key] ] : complex[:rentsentinel_key]
-            matchers.each do |pattern|
-              self.merge_attributes_from_db(name, complex) if pattern == apartments_name
-            end
-          end
-        end
-      end
-    else
-      debug("rentsentinel links not detected")
-    end
-
-    # 1.2. Looking for known patterns in posting's body
+    #  Looking for known patterns in posting's body
     self.match_against_database if @body != '' if @addr_street == ''
 
     # 2. Looking for raw mailing addresses in posting's body
